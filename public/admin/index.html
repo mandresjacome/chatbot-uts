@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel Admin — Chatbot UTS v1.2.0</title>
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Panel Admin — Chatbot UTS v1.2.0</h1>
+    <span class="badge">UTS</span>
+  </header>
+
+  <main class="container">
+    <section class="cards">
+      <div class="card">
+        <div class="card-title">Conversaciones totales</div>
+        <div id="totalConversations" class="card-value">—</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Satisfacción</div>
+        <div id="satisfactionRate" class="card-value">—%</div>
+        <div class="progress">
+          <div id="satisfactionBar" class="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Feedback recibidos</div>
+        <div id="feedbackTotal" class="card-value">—</div>
+        <small id="feedbackPos" class="muted">— positivos</small>
+      </div>
+    </section>
+
+    <section class="table-block">
+      <div class="block-header">
+        <h2>Últimas conversaciones</h2>
+        <button id="reloadBtn" class="btn">Actualizar</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Pregunta</th>
+            <th>Respuesta (preview)</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="lastConversations">
+          <tr><td colspan="5" class="muted">Sin datos…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="mini">
+      <h3>Estado del servicio</h3>
+      <ul class="kv">
+        <li><b>API /metrics</b> <span id="statusMetrics" class="pill">—</span></li>
+        <li><b>Modelo IA actual</b> <span id="modelName" class="pill">según respuestas</span></li>
+      </ul>
+      <small class="muted">
+        * El modelo se lee de las respuestas del endpoint /api/chat (campo <code>meta.model</code>).
+      </small>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Hecho por Mario Andrés Jácome Mantilla — Unidades Tecnológicas de Santander</span>
+  </footer>
+
+  <script src="./admin.js" defer></script>
+</body>
+</html>

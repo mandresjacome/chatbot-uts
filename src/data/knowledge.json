@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "pregunta": "calendario academico",
+    "respuesta_texto": "El calendario académico UTS define fechas de inscripción, matrícula, cancelaciones y evaluaciones. Consulta la versión vigente en el portal institucional.",
+    "tipo_usuario": "todos",
+    "palabras_clave": "fechas,inscripciones,matricula,parciales,calendario"
+  },
+  {
+    "id": 2,
+    "pregunta": "admisiones requisitos",
+    "respuesta_texto": "Para aspirantes: registro en línea, documento de identidad y resultados ICFES. Los cupos y programas disponibles se publican en Admisiones UTS.",
+    "tipo_usuario": "aspirante",
+    "palabras_clave": "inscripcion,icfes,documentos,cupos,programas"
+  },
+  {
+    "id": 3,
+    "pregunta": "certificados y constancias",
+    "respuesta_texto": "Los estudiantes pueden solicitar certificados/constancias desde el portal estudiantil. Revisa los derechos pecuniarios vigentes.",
+    "tipo_usuario": "estudiante",
+    "palabras_clave": "certificados,constancias,derechos pecuniarios,portal estudiantil"
+  },
+  {
+    "id": 4,
+    "pregunta": "biblioteca y recursos digitales",
+    "respuesta_texto": "La biblioteca UTS ofrece consulta de libros, bases de datos y préstamo. El acceso a recursos digitales se realiza con el usuario institucional.",
+    "tipo_usuario": "todos",
+    "palabras_clave": "biblioteca,bases de datos,préstamo,recursos digitales"
+  },
+  {
+    "id": 5,
+    "pregunta": "bienestar universitario",
+    "respuesta_texto": "Bienestar ofrece servicios de psicología, deporte y cultura. Los horarios y actividades se publican periódicamente.",
+    "tipo_usuario": "todos",
+    "palabras_clave": "bienestar,psicologia,deporte,cultura,actividades"
+  },
+  {
+    "id": 6,
+    "pregunta": "campus virtual y soporte",
+    "respuesta_texto": "Para acceso a Campus Virtual/Moodle, verifica tu usuario institucional. Si presentas problemas, contacta soporte o coordinación del programa.",
+    "tipo_usuario": "todos",
+    "palabras_clave": "campus virtual,moodle,usuario,soporte,coordinacion"
+  }
+]
