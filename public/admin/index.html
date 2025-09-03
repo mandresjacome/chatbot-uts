@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="auto">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,7 +9,10 @@
 <body>
   <header class="header">
     <h1>Panel Admin — Chatbot UTS v1.2.0</h1>
-    <span class="badge">UTS</span>
+    <div class="header-controls">
+      <button id="themeToggle" title="Tema">🌓</button>
+      <span class="badge">UTS</span>
+    </div>
   </header>
 
   <main class="container">
@@ -70,5 +73,28 @@
   </footer>
 
   <script src="./admin.js" defer></script>
+  <script>
+    // Sistema de temas para admin
+    const THEME_KEY = 'uts_theme';
+    const htmlEl = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+
+    function applyTheme(mode){
+      htmlEl.setAttribute('data-theme', mode);
+      localStorage.setItem(THEME_KEY, mode);
+      themeToggle.textContent = mode === 'dark' ? '🌙' : (mode === 'light' ? '☀️' : '🌓');
+    }
+
+    (function initTheme(){
+      const saved = localStorage.getItem(THEME_KEY) || 'auto';
+      applyTheme(saved);
+    })();
+
+    themeToggle.addEventListener('click', () => {
+      const current = htmlEl.getAttribute('data-theme') || 'auto';
+      const next = current === 'auto' ? 'dark' : current === 'dark' ? 'light' : 'auto';
+      applyTheme(next);
+    });
+  </script>
 </body>
 </html>

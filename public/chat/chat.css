@@ -1,0 +1,78 @@
+/* ====== Tema base (auto) ====== */
+:root {
+  /* por defecto (modo claro) */
+  --bg:#f7fafc; --panel:#ffffff; --bubble:#f1f5f9; --me:#38bdf8;
+  --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --ok:#16a34a; --err:#ef4444;
+}
+
+/* Forzar claro/oscuro usando data-theme en <html> */
+html[data-theme="dark"] {
+  --bg:#0b1220; --panel:#0f172a; --bubble:#1f2937; --me:#0ea5e9;
+  --text:#e5e7eb; --muted:#9ca3af; --border:#334155; --ok:#22c55e; --err:#ef4444;
+}
+html[data-theme="light"] {
+  --bg:#f7fafc; --panel:#ffffff; --bubble:#f1f5f9; --me:#38bdf8;
+  --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --ok:#16a34a; --err:#ef4444;
+}
+
+/* Si html[data-theme="auto"], sigue el sistema */
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] {
+    --bg:#0b1220; --panel:#0f172a; --bubble:#1f2937; --me:#0ea5e9;
+    --text:#e5e7eb; --muted:#9ca3af; --border:#334155; --ok:#22c55e; --err:#ef4444;
+  }
+}
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] {
+    --bg:#f7fafc; --panel:#ffffff; --bubble:#f1f5f9; --me:#38bdf8;
+    --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --ok:#16a34a; --err:#ef4444;
+  }
+}
+
+/* ====== Layout ====== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:system-ui,Segoe UI,Roboto,Ubuntu;
+  background:linear-gradient(180deg,var(--bg),var(--panel)); color:var(--text);
+  display:flex; flex-direction:column;
+}
+.top{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 14px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0;
+}
+.brand{display:flex;align-items:center}
+.brand h1{font-size:16px;margin:0}
+.controls{display:flex; gap:8px; align-items:center}
+.controls select, .controls button{
+  background:var(--bg); color:var(--text); border:1px solid var(--border);
+  padding:6px 8px; border-radius:8px; cursor:pointer;
+}
+#themeToggle{font-size:14px; line-height:1}
+
+.chat{flex:1; overflow:auto; padding:16px; display:flex; flex-direction:column; gap:12px}
+.msg{max-width:75%; padding:10px 12px; border-radius:14px; background:var(--bubble);
+  border:1px solid var(--border); line-height:1.35; white-space:pre-wrap}
+.msg.me{background:linear-gradient(90deg,var(--me),#60e1ff); color:#032231; margin-left:auto}
+.meta{font-size:12px; color:var(--muted); margin-top:6px}
+.typing{opacity:.7; font-style:italic}
+
+.bar{
+  display:flex; gap:10px; padding:10px; border-top:1px solid var(--border); background:var(--panel);
+}
+#msg{
+  flex:1; background:var(--bg); color:var(--text); border:1px solid var(--border);
+  border-radius:10px; padding:10px; resize:none; min-height:42px; max-height:120px;
+}
+#send{
+  background:var(--ok); color:#04120a; border:none; padding:10px 14px; border-radius:10px;
+  font-weight:700; cursor:pointer;
+}
+.ref{font-size:12px; color:var(--muted); margin-top:6px}
+.actions{margin-top:6px; display:flex; gap:8px}
+.actions button{
+  background:var(--bg); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:4px 8px; cursor:pointer; font-size:12px;
+}
+.err{color:var(--err)}
+@media (max-width: 640px) {.msg{max-width:90%}}

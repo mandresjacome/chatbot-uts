@@ -42,9 +42,19 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, name: 'Chatbot UTS v1.2.0', env: process.env.NODE_ENV });
 });
 
+// 👉 Página principal - Demostración con widget flotante
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
 // 👉 Atajo para acceder al panel de administración
 app.get('/admin', (_req, res) => {
   res.sendFile(path.join(publicDir, 'admin', 'index.html'));
+});
+
+// 👉 Chat directo (usado por el widget iframe)
+app.get('/chat', (_req, res) => {
+  res.sendFile(path.join(publicDir, 'chat', 'index.html'));
 });
 
 // 👉 Conectar las rutas del chatbot bajo el prefijo '/api/chat'

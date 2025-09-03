@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es" data-theme="auto">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chat — UTS v1.2.0</title>
+  <link rel="stylesheet" href="./chat.css" />
+  <link rel="stylesheet" href="./modal-user.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div id="avatar" class="avatar avatar--todos" aria-hidden="true">💬</div>
+      <h1>Chatbot UTS v1.2.0</h1>
+    </div>
+    <div class="controls">
+      <button id="themeToggle" title="Tema">🌓</button>
+    </div>
+  </header>
+
+  <main id="chat" class="chat" aria-live="polite" aria-busy="false"></main>
+
+  <footer class="bar">
+    <textarea id="msg" rows="1" placeholder="Escribe tu pregunta… (Enter para enviar)" disabled></textarea>
+    <button id="send" aria-label="Enviar" disabled>Enviar</button>
+  </footer>
+
+  <!-- Modal obligatorio de selección de perfil -->
+  <div id="userModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal__panel">
+      <div class="modal__header">
+        <h2 id="modalTitle">¿Cuál es tu perfil en las UTS?</h2>
+      </div>
+      <div class="modal__body">
+        <p class="modal__hint">Elige tu perfil para personalizar respuestas.</p>
+        <div class="card-grid" role="list">
+          <button class="card" data-type="estudiante" role="listitem">
+            <span class="card__emoji">🎓</span>
+            <span class="card__title">Estudiante</span>
+            <span class="card__desc">Ya estudias en la UTS</span>
+          </button>
+          <button class="card" data-type="aspirante" role="listitem">
+            <span class="card__emoji">�</span>
+            <span class="card__title">Aspirante</span>
+            <span class="card__desc">Quieres estudiar aquí</span>
+          </button>
+          <button class="card" data-type="docente" role="listitem">
+            <span class="card__emoji">👨‍🏫</span>
+            <span class="card__title">Docente</span>
+            <span class="card__desc">Profesor de la UTS</span>
+          </button>
+          <button class="card" data-type="visitante" role="listitem">
+            <span class="card__emoji">👋</span>
+            <span class="card__title">Visitante</span>
+            <span class="card__desc">Buscas información</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button id="modalClose" class="btn-secondary" aria-label="Cerrar" hidden>Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Módulos -->
+  <script type="module" src="./modal-user.js"></script>
+  <script type="module" src="./chat.js"></script>
+</body>
+</html>
