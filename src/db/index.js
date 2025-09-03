@@ -32,6 +32,16 @@ if (engine === 'pg') {
 
 // Ejecuta INSERT/UPDATE/DELETE; puede devolver el id insertado si hay RETURNING
 export async function exec(sql, params = []) {
+  // Convertir comparaciones booleanas para compatibilidad SQLite/PostgreSQL
+  if (engine === 'sqlite') {
+    sql = sql.replace(/WHERE\s+activo\s*=\s*true/gi, 'WHERE activo = 1');
+    sql = sql.replace(/WHERE\s+activo\s*=\s*false/gi, 'WHERE activo = 0');
+    sql = sql.replace(/activo\s*=\s*true/gi, 'activo = 1');
+    sql = sql.replace(/activo\s*=\s*false/gi, 'activo = 0');
+    sql = sql.replace(/useful\s*=\s*true/gi, 'useful = 1');
+    sql = sql.replace(/useful\s*=\s*false/gi, 'useful = 0');
+  }
+  
   if (engine === 'pg') {
     const res = await pgPool.query(sql, params);
     // Si el INSERT trae RETURNING id, devuélvelo
@@ -49,6 +59,16 @@ export async function exec(sql, params = []) {
 
 // Devuelve una sola fila
 export async function queryOne(sql, params = []) {
+  // Convertir comparaciones booleanas para compatibilidad SQLite/PostgreSQL
+  if (engine === 'sqlite') {
+    sql = sql.replace(/WHERE\s+activo\s*=\s*true/gi, 'WHERE activo = 1');
+    sql = sql.replace(/WHERE\s+activo\s*=\s*false/gi, 'WHERE activo = 0');
+    sql = sql.replace(/activo\s*=\s*true/gi, 'activo = 1');
+    sql = sql.replace(/activo\s*=\s*false/gi, 'activo = 0');
+    sql = sql.replace(/useful\s*=\s*true/gi, 'useful = 1');
+    sql = sql.replace(/useful\s*=\s*false/gi, 'useful = 0');
+  }
+  
   if (engine === 'pg') {
     const res = await pgPool.query(sql, params);
     return res.rows?.[0] ?? null;
@@ -60,6 +80,16 @@ export async function queryOne(sql, params = []) {
 
 // Devuelve varias filas
 export async function queryAll(sql, params = []) {
+  // Convertir comparaciones booleanas para compatibilidad SQLite/PostgreSQL
+  if (engine === 'sqlite') {
+    sql = sql.replace(/WHERE\s+activo\s*=\s*true/gi, 'WHERE activo = 1');
+    sql = sql.replace(/WHERE\s+activo\s*=\s*false/gi, 'WHERE activo = 0');
+    sql = sql.replace(/activo\s*=\s*true/gi, 'activo = 1');
+    sql = sql.replace(/activo\s*=\s*false/gi, 'activo = 0');
+    sql = sql.replace(/useful\s*=\s*true/gi, 'useful = 1');
+    sql = sql.replace(/useful\s*=\s*false/gi, 'useful = 0');
+  }
+  
   if (engine === 'pg') {
     const res = await pgPool.query(sql, params);
     return res.rows ?? [];

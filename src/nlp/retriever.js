@@ -34,7 +34,7 @@ async function loadKBFromDatabase() {
     const rows = await queryAll(`
       SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave, recurso_url, nombre_recurso 
       FROM knowledge_base 
-      WHERE activo = 1
+      WHERE activo = true
     `);
     
     // Procesar los datos y agregar campo de búsqueda
