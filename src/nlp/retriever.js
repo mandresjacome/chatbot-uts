@@ -32,7 +32,7 @@ function expandQuery(query) {
 async function loadKBFromDatabase() {
   try {
     const rows = await queryAll(`
-      SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave 
+      SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave, recurso_url, nombre_recurso 
       FROM knowledge_base 
       WHERE activo = 1
     `);
@@ -125,7 +125,9 @@ export function retrieveTopK({ query, userType = 'todos', k = 3 }) {
       id: it.id ?? i,
       text: it.respuesta_texto,
       titulo: it.pregunta,
-      score: (1 - (it._score ?? 1)).toFixed(2)
+      score: (1 - (it._score ?? 1)).toFixed(2),
+      url: it.recurso_url || null,
+      nombreRecurso: it.nombre_recurso || null
     }));
 
   return { chunks: results, meta: { fechasDetectadas: fechas || null } };

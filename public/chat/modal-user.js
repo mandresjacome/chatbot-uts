@@ -1,35 +1,52 @@
 // modal-user.js
-const STORAGE_KEY = 'uts_user_type';
 const TYPES = {
-  estudiante:{ emoji:'🎓' }, aspirante:{ emoji:'🌟' },
-  docente:{ emoji:'👨‍🏫' },  visitante:{ emoji:'👋' }, todos:{ emoji:'💬' }
+  estudiante: { emoji:'🎓', gif: '/ChatbotAzulEstudiante.gif' }, 
+  aspirante: { emoji:'🌟', gif: '/ChatbotVerdeAspirante.gif' },
+  docente: { emoji:'👨‍🏫', gif: '/ChatbotNaranjaDocente.gif' },  
+  visitante: { emoji:'👋', gif: '/ChatbotGrisTodos.gif' }, 
+  todos: { emoji:'💬', gif: '/ChatbotVerdeUTS.gif' }
 };
 
 const modal = document.getElementById('userModal');
-const avatar = document.getElementById('avatar');
+// El avatar ahora estará en el widget, no en el header de la página
 
-export function getUserType(){ return localStorage.getItem(STORAGE_KEY) || null; }
+export function getUserType(){ 
+  // No usar localStorage para persistir entre recargas
+  return window.currentUserType || null; 
+}
 export function setUserType(type){
   if (!TYPES[type]) return;
-  localStorage.setItem(STORAGE_KEY, type);
-  updateAvatar(type);
+  window.currentUserType = type; // Guardar en memoria, no en localStorage
+  
+  // Aplicar tema de usuario al documento
+  document.documentElement.setAttribute('data-user', type);
+  
+  updateWidgetAvatar(type);
   hideModal();
   document.dispatchEvent(new CustomEvent('uts:userTypeChanged', { detail:{ type } }));
 }
 export function showModal(){ modal.hidden = false; }
 export function hideModal(){ modal.hidden = true; }
 export function resetUserType(){
-  localStorage.removeItem(STORAGE_KEY);
-  updateAvatar('todos');
+  window.currentUserType = null; // Limpiar de memoria
+  
+  // Remover tema de usuario del documento
+  document.documentElement.removeAttribute('data-user');
+  
+  updateWidgetAvatar('todos');
   showModal();
   document.dispatchEvent(new CustomEvent('uts:userTypeChanged', { detail:{ type: null } }));
 }
 
-function updateAvatar(type){
-  if (!avatar) return;
-  avatar.className = `avatar avatar--${type || 'todos'}`;
-  const emoji = TYPES[type]?.emoji || '💬';
-  avatar.textContent = emoji;
+function updateWidgetAvatar(type){
+  // Comunicar al widget para que actualice su avatar
+  const config = TYPES[type] || TYPES['todos'];
+  window.parent.postMessage({ 
+    type: 'UTS_UPDATE_AVATAR', 
+    userType: type,
+    gif: config.gif,
+    emoji: config.emoji 
+  }, '*');
 }
 
 function attachHandlers(){
@@ -39,11 +56,10 @@ function attachHandlers(){
 }
 
 function init(){
-  const saved = getUserType();
-  if (saved) { updateAvatar(saved); hideModal(); setTimeout(()=> {
-    document.dispatchEvent(new CustomEvent('uts:userTypeChanged', { detail:{ type: saved } }));
-  }, 0); }
-  else { showModal(); }
+  // Siempre iniciar sin tipo de usuario al cargar la página
+  window.currentUserType = null;
+  updateWidgetAvatar('todos');
+  showModal(); // Siempre mostrar el modal al cargar
   attachHandlers();
 }
 

@@ -85,6 +85,12 @@ router.post('/message', async (req, res) => {
       success: true,
       response: responseText,
       evidenceCount: chunks.length,
+      references: chunks.map(c => ({
+        id: c.id,
+        titulo: c.titulo,
+        url: c.url,
+        nombreRecurso: c.nombreRecurso
+      })),
       meta: { ...meta, model: process.env.USE_LLM },
       conversationId,
       sessionId

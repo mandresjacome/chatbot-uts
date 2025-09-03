@@ -1,0 +1,98 @@
+/* Tema para Aspirantes - Verde esperanza */
+:root[data-user="aspirante"] {
+  --primary-user: #4CAF50;
+  --primary-user-light: #81C784;
+  --primary-user-dark: #388E3C;
+  --accent-user: #66BB6A;
+  --bg-user: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 50%, #A5D6A7 100%);
+  --text-user: #1B5E20;
+  --border-user: #A5D6A7;
+}
+
+/* Personalización del header */
+:root[data-user="aspirante"] .top {
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 50%, #A5D6A7 100%);
+  border-bottom: 3px solid var(--primary-user);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+:root[data-user="aspirante"] .brand h1 {
+  color: var(--primary-user-dark);
+  text-shadow: 0 1px 2px rgba(56, 142, 60, 0.2);
+  font-weight: 600;
+}
+
+:root[data-user="aspirante"] .brand h1::before {
+  content: "🌟 ";
+  margin-right: 8px;
+}
+
+:root[data-user="aspirante"] .brand h1::after {
+  content: " - Aspirantes";
+  font-size: 14px;
+  color: var(--primary-user);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+/* Personalización de mensajes del usuario */
+:root[data-user="aspirante"] .msg.me {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--accent-user) 100%);
+  color: white;
+  border: 1px solid var(--primary-user-dark);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Personalización del área de input */
+:root[data-user="aspirante"] .bar {
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 50%, #A5D6A7 100%);
+  border-top: 3px solid var(--primary-user);
+  box-shadow: 0 -2px 8px rgba(76, 175, 80, 0.1);
+}
+
+:root[data-user="aspirante"] #msg {
+  border: 2px solid var(--border-user);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-user="aspirante"] #msg:focus {
+  border-color: var(--primary-user);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+:root[data-user="aspirante"] #send {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+}
+
+:root[data-user="aspirante"] #send:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Personalización del botón flotante */
+:root[data-user="aspirante"] .theme-btn-floating {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+  box-shadow: -2px 0 12px rgba(76, 175, 80, 0.4);
+}
+
+:root[data-user="aspirante"] .theme-btn-floating:hover {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  box-shadow: -4px 0 16px rgba(76, 175, 80, 0.6);
+}
+
+:root[data-user="aspirante"] .theme-btn-floating svg {
+  fill: white;
+}
+
+/* Personalización de botones de acción */
+:root[data-user="aspirante"] .actions button {
+  border: 1px solid var(--border-user);
+}
+
+:root[data-user="aspirante"] .actions button:hover:not(:disabled) {
+  background: var(--primary-user-light);
+  color: var(--primary-user-dark);
+}

@@ -10,8 +10,8 @@ const themeToggle = $('#themeToggle');
 function newSessionId(){
   return `sess_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
 }
-let sessionId = localStorage.getItem('uts_session_id') || newSessionId();
-localStorage.setItem('uts_session_id', sessionId);
+// Generar nuevo sessionId cada vez que se carga la página (sin localStorage)
+let sessionId = newSessionId();
 
 /* ====== Tema ====== */
 const THEME_KEY = 'uts_theme';
@@ -22,7 +22,12 @@ function applyTheme(mode){
   themeToggle.textContent = mode === 'dark' ? '🌙' : (mode === 'light' ? '☀️' : '🌓');
 }
 (function initTheme(){
-  const saved = localStorage.getItem(THEME_KEY) || 'auto';
+  let saved = localStorage.getItem(THEME_KEY) || 'light';
+  // Migrar usuarios que tenían tema automático a tema claro
+  if (saved === 'auto') {
+    saved = 'light';
+    localStorage.setItem(THEME_KEY, saved);
+  }
   applyTheme(saved);
 })();
 themeToggle.addEventListener('click', () => {
@@ -40,13 +45,64 @@ function bubble(text, me=false, extras={}){
   b.className = 'msg' + (me ? ' me' : '');
   b.textContent = text;
   wrap.appendChild(b);
+  
+  // Referencias como enlaces clicables
+  if (extras.references && extras.references.length > 0) {
+    const refsDiv = document.createElement('div');
+    refsDiv.className = 'references';
+    refsDiv.innerHTML = '📚 Fuentes: ';
+    
+    extras.references.forEach((ref, i) => {
+      if (i > 0) refsDiv.appendChild(document.createTextNode(' | '));
+      
+      if (ref.url) {
+        const link = document.createElement('a');
+        link.href = ref.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = `[${i+1}] ${ref.nombreRecurso || 'Ver más'}`;
+        link.title = ref.titulo;
+        refsDiv.appendChild(link);
+      } else {
+        const span = document.createElement('span');
+        span.textContent = `[${i+1}] ${ref.titulo}`;
+        refsDiv.appendChild(span);
+      }
+    });
+    
+    wrap.appendChild(refsDiv);
+  }
+  
   if (extras.ref) { const ref=document.createElement('div'); ref.className='ref'; ref.textContent=extras.ref; wrap.appendChild(ref); }
   if (extras.feedback) {
     const actions=document.createElement('div'); actions.className='actions';
     const up=document.createElement('button'); up.textContent='👍 Útil';
     const dn=document.createElement('button'); dn.textContent='👎 No útil';
-    up.onclick=()=>sendFeedback(extras.conversationId,true);
-    dn.onclick=()=>sendFeedback(extras.conversationId,false);
+    
+    let hasVoted = false; // Variable para controlar si ya se votó
+    
+    up.onclick = () => {
+      if (hasVoted) return; // Prevenir votos múltiples
+      hasVoted = true;
+      sendFeedback(extras.conversationId, true);
+      
+      // Actualizar UI para mostrar el voto
+      up.classList.add('voted-positive');
+      dn.disabled = true;
+      dn.classList.add('disabled');
+    };
+    
+    dn.onclick = () => {
+      if (hasVoted) return; // Prevenir votos múltiples
+      hasVoted = true;
+      sendFeedback(extras.conversationId, false);
+      
+      // Actualizar UI para mostrar el voto
+      dn.classList.add('voted-negative');
+      up.disabled = true;
+      up.classList.add('disabled');
+    };
+    
     actions.append(up,dn); wrap.appendChild(actions);
   }
   chat.appendChild(wrap); chat.scrollTop=chat.scrollHeight;
@@ -61,12 +117,14 @@ function typing(on=true){
 let currentUserType = getUserType();
 function setInputEnabled(on){ ta.disabled=!on; btn.disabled=!on; if(on) ta.focus(); }
 setInputEnabled(!!currentUserType);
-if (!currentUserType) bubble('Hola 👋 Soy el Chatbot UTS v1.2.0. Selecciona tu perfil para comenzar.');
+
+// Siempre mostrar mensaje de bienvenida al cargar la página
+bubble('👋 ¡Hola! Soy AvaUTS, tu Asistente Virtual Académico. 🎓 Selecciona tu perfil para comenzar.');
 
 document.addEventListener('uts:userTypeChanged', (ev) => {
   currentUserType = ev.detail?.type || null;
   setInputEnabled(!!currentUserType);
-  if (currentUserType) bubble(`Perfil seleccionado: ${currentUserType}. ¿En qué te ayudo?`, false);
+  if (currentUserType) bubble(`✅ Perfil seleccionado: ${currentUserType}. 💬 ¿En qué te ayudo?`, false);
 });
 
 /* ====== NUEVO: "Nueva conversación" desde el widget ====== */
@@ -76,7 +134,6 @@ function clearChatUI(){
 function startNewConversation(){
   // 1) nuevo sessionId
   sessionId = newSessionId();
-  localStorage.setItem('uts_session_id', sessionId);
 
   // 2) limpiar UI, bloquear input
   clearChatUI();
@@ -87,7 +144,7 @@ function startNewConversation(){
   showModal();       // abre modal
 
   // 4) mensaje inicial
-  bubble('Nueva conversación iniciada. Selecciona tu perfil para continuar.');
+  bubble('🔄 Nueva conversación iniciada. 🎓 Selecciona tu perfil para continuar.');
 }
 window.addEventListener('message', (ev) => {
   if (!ev?.data) return;
@@ -117,12 +174,19 @@ async function send(){
     });
     const data = await res.json(); typing(false);
     if(!data.success) throw new Error(data.error||'Error');
+    
     const fecha = data.meta?.fechasDetectadas ? ` · Fechas: ${data.meta.fechasDetectadas}` : '';
-    const ref = `Modelo: ${data.meta?.model || 'n/a'}${fecha}`;
-    bubble(data.response, false, { ref, feedback:true, conversationId:data.conversationId });
+    const modelRef = `Modelo: ${data.meta?.model || 'n/a'}${fecha}`;
+    
+    bubble(data.response, false, { 
+      references: data.references || [], 
+      ref: modelRef, 
+      feedback: true, 
+      conversationId: data.conversationId 
+    });
   }catch(e){
     typing(false);
-    bubble('Ocurrió un error al procesar tu mensaje.', false, { ref:'Error' });
+    bubble('❌ Ocurrió un error al procesar tu mensaje.', false, { ref:'Error' });
   }
 }
 

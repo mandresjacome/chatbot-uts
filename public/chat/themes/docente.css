@@ -1,0 +1,98 @@
+/* Tema para Docentes - Dorado académico */
+:root[data-user="docente"] {
+  --primary-user: #FF9800;
+  --primary-user-light: #FFB74D;
+  --primary-user-dark: #F57C00;
+  --accent-user: #FFA726;
+  --bg-user: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 50%, #FFE082 100%);
+  --text-user: #E65100;
+  --border-user: #FFCC02;
+}
+
+/* Personalización del header */
+:root[data-user="docente"] .top {
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 50%, #FFE082 100%);
+  border-bottom: 3px solid var(--primary-user);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+}
+
+:root[data-user="docente"] .brand h1 {
+  color: var(--primary-user-dark);
+  text-shadow: 0 1px 2px rgba(245, 124, 0, 0.2);
+  font-weight: 600;
+}
+
+:root[data-user="docente"] .brand h1::before {
+  content: "👨‍🏫 ";
+  margin-right: 8px;
+}
+
+:root[data-user="docente"] .brand h1::after {
+  content: " - Docentes";
+  font-size: 14px;
+  color: var(--primary-user);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+/* Personalización de mensajes del usuario */
+:root[data-user="docente"] .msg.me {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--accent-user) 100%);
+  color: white;
+  border: 1px solid var(--primary-user-dark);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+/* Personalización del área de input */
+:root[data-user="docente"] .bar {
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 50%, #FFE082 100%);
+  border-top: 3px solid var(--primary-user);
+  box-shadow: 0 -2px 8px rgba(255, 152, 0, 0.1);
+}
+
+:root[data-user="docente"] #msg {
+  border: 2px solid var(--border-user);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-user="docente"] #msg:focus {
+  border-color: var(--primary-user);
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+}
+
+:root[data-user="docente"] #send {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+}
+
+:root[data-user="docente"] #send:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* Personalización del botón flotante */
+:root[data-user="docente"] .theme-btn-floating {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+  box-shadow: -2px 0 12px rgba(255, 152, 0, 0.4);
+}
+
+:root[data-user="docente"] .theme-btn-floating:hover {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  box-shadow: -4px 0 16px rgba(255, 152, 0, 0.6);
+}
+
+:root[data-user="docente"] .theme-btn-floating svg {
+  fill: white;
+}
+
+/* Personalización de botones de acción */
+:root[data-user="docente"] .actions button {
+  border: 1px solid var(--border-user);
+}
+
+:root[data-user="docente"] .actions button:hover:not(:disabled) {
+  background: var(--primary-user-light);
+  color: var(--primary-user-dark);
+}

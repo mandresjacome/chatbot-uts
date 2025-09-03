@@ -1,343 +1,137 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="auto">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UTS - Unidades Tecnológicas de Santander</title>
     <style>
-        /* ====== Tema base (auto) ====== */
-        :root {
-            /* por defecto (modo claro) */
-            --bg: #f7fafc;
-            --surface: #ffffff;
-            --card: #f1f5f9;
-            --muted: #64748b;
-            --text: #0f172a;
-            --accent: #16a34a;
-            --accent-weak: #22c55e;
-            --border: #e2e8f0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Forzar claro/oscuro usando data-theme en <html> */
-        html[data-theme="dark"] {
-            --bg: #0f172a;
-            --surface: #111827;
-            --card: #1f2937;
-            --muted: #9ca3af;
-            --text: #e5e7eb;
-            --accent: #22c55e;
-            --accent-weak: #16a34a;
-            --border: #334155;
-        }
-        html[data-theme="light"] {
-            --bg: #f7fafc;
-            --surface: #ffffff;
-            --card: #f1f5f9;
-            --muted: #64748b;
-            --text: #0f172a;
-            --accent: #16a34a;
-            --accent-weak: #22c55e;
-            --border: #e2e8f0;
-        }
-
-        /* Si html[data-theme="auto"], sigue el sistema */
-        @media (prefers-color-scheme: dark) {
-            html[data-theme="auto"] {
-                --bg: #0f172a;
-                --surface: #111827;
-                --card: #1f2937;
-                --muted: #9ca3af;
-                --text: #e5e7eb;
-                --accent: #22c55e;
-                --accent-weak: #16a34a;
-                --border: #334155;
-            }
-        }
-        @media (prefers-color-scheme: light) {
-            html[data-theme="auto"] {
-                --bg: #f7fafc;
-                --surface: #ffffff;
-                --card: #f1f5f9;
-                --muted: #64748b;
-                --text: #0f172a;
-                --accent: #16a34a;
-                --accent-weak: #22c55e;
-                --border: #e2e8f0;
-            }
-        }
-
-        * { box-sizing: border-box; }
-        html, body { height: 100%; }
-        
         body {
             margin: 0;
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
-            background: linear-gradient(180deg, #0b1220, var(--bg));
-            color: var(--text);
+            background: linear-gradient(135deg, #2C3E50 0%, #C9D72F 50%, #0b4a75 100%);
+            color: white;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
         
-        .header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 24px; background: rgba(17,24,39,.8); border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; backdrop-filter: blur(6px);
-        }
-        
-        .header h1 { margin: 0; font-size: 18px; }
-        
-        .header-controls { display: flex; gap: 12px; align-items: center; }
-        
-        .badge {
-            background: var(--accent); color: #0a0f1a; padding: 4px 10px; border-radius: 999px; font-weight: 700;
-        }
-        
-        #themeToggle {
-            background: var(--card); color: var(--text); border: 1px solid var(--border);
-            padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 14px;
-        }
-        
-        .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-        
-        .hero {
+        .center-content {
             text-align: center;
-            padding: 60px 0;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
         }
         
         .logo {
             width: 120px;
             height: 120px;
-            margin: 0 auto 20px;
-            background: var(--card);
-            border: 2px solid var(--border);
+            margin: 0 auto 30px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,.25);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
         .logo img {
             width: 80px;
-            height: auto;
+            height: 80px;
+            object-fit: contain;
         }
         
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-weak));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        h1 {
+            font-size: 2.5rem;
+            margin: 20px 0 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .subtitle {
             font-size: 1.2rem;
-            color: var(--muted);
-            margin-bottom: 30px;
+            opacity: 0.9;
+            margin: 10px 0 0 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
-        
-        .cards {
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 16px; 
-            margin: 40px 0;
+
+        .project-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
         }
-        
-        .card {
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 14px; 
-            padding: 24px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,.25);
-            transition: transform 0.3s ease;
+
+        .project-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0 0 8px 0;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        
-        .card:hover {
-            transform: translateY(-5px);
+
+        .author {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            opacity: 0.9;
         }
-        
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
+
+        .year {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin: 0;
+            font-weight: 300;
         }
-        
-        .card h3 {
-            color: var(--accent);
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-        
-        .card p {
-            color: var(--muted);
-            line-height: 1.6;
-        }
-        
-        .chat-demo {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 40px;
-            margin: 40px 0;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,.25);
-        }
-        
-        .chat-demo h2 {
-            color: var(--accent);
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-        
-        .demo-text {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: var(--muted);
-        }
-        
-        .widget-info {
-            background: var(--card);
-            border-left: 4px solid var(--accent);
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 0 10px 10px 0;
-            text-align: left;
-        }
-        
-        .widget-info h4 {
-            color: var(--accent);
-            margin-bottom: 10px;
-        }
-        
-        .widget-info p {
-            margin: 8px 0;
-            color: var(--text);
-        }
-        
-        .widget-info a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        
-        .widget-info a:hover {
-            text-decoration: underline;
-        }
-        
-        kbd {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.85em;
-            color: var(--text);
-        }
-        
-        .footer {
-            text-align: center; 
-            color: var(--muted); 
-            padding: 24px 12px;
-            border-top: 1px solid var(--border); 
-            margin-top: 40px;
-        }
-        
+
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
+            .subtitle {
+                font-size: 1rem;
             }
-            
-            .container {
-                padding: 0 10px;
+            .center-content {
+                padding: 20px;
             }
-            
-            .cards {
-                grid-template-columns: 1fr;
+            .project-title {
+                font-size: 0.8rem;
+            }
+            .author {
+                font-size: 0.9rem;
+            }
+            .year {
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>UTS — Unidades Tecnológicas de Santander</h1>
-        <div class="header-controls">
-            <button id="themeToggle" title="Tema">🌓</button>
-            <span class="badge">UTS</span>
+    <div class="center-content">
+        <div class="logo">
+            <img src="logoUTS.webp" alt="UTS Logo">
         </div>
-    </header>
-
-    <div class="container">
-        <section class="hero">
-            <div class="logo">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/37/Logo_UTS_colombia.png" alt="UTS Logo">
-            </div>
-            <h1>UTS</h1>
-            <p class="subtitle">Innovación, Tecnología y Educación de Calidad</p>
-        </section>
-
-        <div class="cards">
-            <div class="card">
-                <div class="card-icon">🎓</div>
-                <h3>Programas Académicos</h3>
-                <p>Ofrecemos programas técnicos, tecnológicos y profesionales de alta calidad, orientados a las necesidades del sector productivo.</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">💡</div>
-                <h3>Innovación</h3>
-                <p>Fomentamos la investigación y el desarrollo tecnológico para contribuir al crecimiento de la región.</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">🤝</div>
-                <h3>Vinculación Empresarial</h3>
-                <p>Mantenemos alianzas estratégicas con el sector empresarial para garantizar la inserción laboral de nuestros egresados.</p>
-            </div>
-        </div>
-
-        <div class="chat-demo">
-            <h2>🤖 Chatbot UTS v1.2.0</h2>
-            <p class="demo-text">
-                ¡Prueba nuestro asistente virtual! Puede ayudarte con información sobre:
-                admisiones, programas académicos, calendario, certificados y mucho más.
-            </p>
-            
-            <div class="widget-info">
-                <h4>💬 ¿Cómo usar el chatbot?</h4>
-                <p><strong>Opción 1:</strong> Haz clic en el botón verde flotante en la esquina inferior derecha</p>
-                <p><strong>Opción 2:</strong> Presiona <kbd>Ctrl + U</kbd> (o <kbd>Cmd + U</kbd> en Mac)</p>
-                <p><strong>Opción 3:</strong> Visita directamente <a href="/chat" target="_blank">/chat</a></p>
-            </div>
+        <p class="subtitle">Unidades Tecnológicas de Santander</p>
+        <div class="project-info">
+            <p class="project-title">Proyecto de Grado</p>
+            <p class="author">Mario Andrés Jácome Mantilla</p>
+            <p class="year">2025</p>
         </div>
     </div>
 
-    <footer class="footer">
-        <span>Hecho por Mario Andrés Jácome Mantilla — Unidades Tecnológicas de Santander</span>
-    </footer>
-
-    <!-- Widget del Chatbot Flotante -->
+    <!-- Widget del chat -->
     <script src="/chat/widget.js"></script>
-    
-    <!-- Script de control de temas -->
-    <script>
-        const THEME_KEY = 'uts_theme';
-        const htmlEl = document.documentElement;
-        const themeToggle = document.getElementById('themeToggle');
-
-        function applyTheme(mode){
-            htmlEl.setAttribute('data-theme', mode);
-            localStorage.setItem(THEME_KEY, mode);
-            themeToggle.textContent = mode === 'dark' ? '🌙' : (mode === 'light' ? '☀️' : '🌓');
-        }
-
-        (function initTheme(){
-            const saved = localStorage.getItem(THEME_KEY) || 'auto';
-            applyTheme(saved);
-        })();
-
-        themeToggle.addEventListener('click', () => {
-            const current = htmlEl.getAttribute('data-theme') || 'auto';
-            const next = current === 'auto' ? 'dark' : current === 'dark' ? 'light' : 'auto';
-            applyTheme(next);
-        });
-    </script>
 </body>
 </html>

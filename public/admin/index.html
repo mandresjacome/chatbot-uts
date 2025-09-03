@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es" data-theme="auto">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Panel Admin — Chatbot UTS v1.2.0</title>
+  <title>Panel Admin — AvaUTS v2.0.0</title>
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/metrics.css" />
   <link rel="stylesheet" href="./css/feedback.css" />
@@ -12,7 +12,10 @@
 </head>
 <body>
   <header class="header">
-    <h1>Panel Admin — Chatbot UTS v1.2.0</h1>
+    <h1>
+      <img src="/ChatbotVerdeUTS.gif" alt="AvaUTS">
+      AvaUTS — Panel de Administración v2.0
+    </h1>
     <div class="header-controls">
       <button id="themeToggle" title="Tema">🌓</button>
       <span class="badge">UTS</span>
@@ -31,7 +34,12 @@
     <section id="metrics-section" class="tab-content active">
       <div class="section-header">
         <h2>📊 Métricas del Sistema</h2>
-        <button id="refreshMetrics" class="btn btn-outline">🔄 Actualizar</button>
+        <button id="refreshMetrics" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3V9M3 9H9M3 9L6.5 5.5C8.28 3.72 10.86 2.5 13.5 2.5C18.19 2.5 22 6.31 22 11C22 15.69 18.19 19.5 13.5 19.5C10.25 19.5 7.5 17.86 6.06 15.31" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Actualizar
+        </button>
       </div>
       
       <div class="metrics-cards">
@@ -142,13 +150,24 @@
         <h2>📚 Base de Conocimiento</h2>
         <div class="kb-info">
           <span class="info-text">🎯 Verificación de fuentes UTS</span>
-          <button id="refreshKnowledge" class="btn btn-outline">🔄 Actualizar</button>
+          <button id="refreshKnowledge" class="btn btn-outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3V9M3 9H9M3 9L6.5 5.5C8.28 3.72 10.86 2.5 13.5 2.5C18.19 2.5 22 6.31 22 11C22 15.69 18.19 19.5 13.5 19.5C10.25 19.5 7.5 17.86 6.06 15.31" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Actualizar
+          </button>
         </div>
       </div>
       
       <div class="kb-search">
         <input type="text" id="kbSearchInput" placeholder="Buscar en la base de conocimiento..." class="search-input">
-        <button id="kbSearchBtn" class="btn">🔍 Buscar</button>
+        <button id="kbSearchBtn" class="btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Buscar
+        </button>
         <button id="kbClearSearch" class="btn btn-outline">Limpiar</button>
       </div>
 
@@ -191,7 +210,12 @@
       <div class="section-header">
         <h2>⚙️ Mantenimiento del Sistema</h2>
         <div class="auth-status" id="authStatus">
-          <span class="status-indicator" id="authIndicator">🔒</span>
+          <span class="status-indicator" id="authIndicator">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
           <span id="authText">No autenticado</span>
         </div>
       </div>
@@ -396,7 +420,12 @@
     }
 
     (function initTheme(){
-      const saved = localStorage.getItem(THEME_KEY) || 'auto';
+      let saved = localStorage.getItem(THEME_KEY) || 'light';
+      // Migrar usuarios que tenían tema automático a tema claro
+      if (saved === 'auto') {
+        saved = 'light';
+        localStorage.setItem(THEME_KEY, saved);
+      }
       applyTheme(saved);
     })();
 

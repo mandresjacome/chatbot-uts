@@ -1,0 +1,98 @@
+/* Tema para Estudiantes - Azul académico */
+:root[data-user="estudiante"] {
+  --primary-user: #2196F3;
+  --primary-user-light: #64B5F6;
+  --primary-user-dark: #1976D2;
+  --accent-user: #03A9F4;
+  --bg-user: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+  --text-user: #0D47A1;
+  --border-user: #90CAF9;
+}
+
+/* Personalización del header */
+:root[data-user="estudiante"] .top {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+  border-bottom: 3px solid var(--primary-user);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+}
+
+:root[data-user="estudiante"] .brand h1 {
+  color: var(--primary-user-dark);
+  text-shadow: 0 1px 2px rgba(25, 118, 210, 0.2);
+  font-weight: 600;
+}
+
+:root[data-user="estudiante"] .brand h1::before {
+  content: "🎓 ";
+  margin-right: 8px;
+}
+
+:root[data-user="estudiante"] .brand h1::after {
+  content: " - Estudiantes";
+  font-size: 14px;
+  color: var(--primary-user);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+/* Personalización de mensajes del usuario */
+:root[data-user="estudiante"] .msg.me {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--accent-user) 100%);
+  color: white;
+  border: 1px solid var(--primary-user-dark);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* Personalización del área de input */
+:root[data-user="estudiante"] .bar {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+  border-top: 3px solid var(--primary-user);
+  box-shadow: 0 -2px 8px rgba(33, 150, 243, 0.1);
+}
+
+:root[data-user="estudiante"] #msg {
+  border: 2px solid var(--border-user);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-user="estudiante"] #msg:focus {
+  border-color: var(--primary-user);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+:root[data-user="estudiante"] #send {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+}
+
+:root[data-user="estudiante"] #send:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+/* Personalización del botón flotante */
+:root[data-user="estudiante"] .theme-btn-floating {
+  background: linear-gradient(135deg, var(--primary-user) 0%, var(--primary-user-dark) 100%);
+  border: 2px solid var(--primary-user-dark);
+  box-shadow: -2px 0 12px rgba(33, 150, 243, 0.4);
+}
+
+:root[data-user="estudiante"] .theme-btn-floating:hover {
+  background: linear-gradient(135deg, var(--primary-user-dark) 0%, var(--primary-user) 100%);
+  box-shadow: -4px 0 16px rgba(33, 150, 243, 0.6);
+}
+
+:root[data-user="estudiante"] .theme-btn-floating svg {
+  fill: white;
+}
+
+/* Personalización de botones de acción */
+:root[data-user="estudiante"] .actions button {
+  border: 1px solid var(--border-user);
+}
+
+:root[data-user="estudiante"] .actions button:hover:not(:disabled) {
+  background: var(--primary-user-light);
+  color: var(--primary-user-dark);
+}

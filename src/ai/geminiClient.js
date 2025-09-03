@@ -21,11 +21,13 @@ function buildPrompt({ question, evidenceChunks, userType }) {
     'Si la evidencia no basta, pide datos concretos (programa, sede, periodo).',
     `Perfil del usuario: ${userType}.`,
     'Tono institucional, claro y conciso. Formatea con viñetas si ayuda.',
-    'Incluye referencias cortas al final (ej: ref: [#1] Pregunta título).',
+    'USA EMOJIS relevantes para hacer las respuestas más visuales y atractivas.',
+    'Incluye emojis al inicio de secciones importantes y en las viñetas.',
+    'NO incluyas referencias ni menciones de fuentes en tu respuesta.',
   ].join(' ');
 
   const evidence = evidenceChunks.length
-    ? evidenceChunks.map((c,i)=> `[#${i+1}] ${c.text} (ref: ${c.titulo})`).join('\n')
+    ? evidenceChunks.map((c,i)=> `[#${i+1}] ${c.text}`).join('\n')
     : '(no hay evidencia disponible)';
 
   const body = [
@@ -52,11 +54,11 @@ export async function answerLLM({ question, evidenceChunks, userType }) {
   // Fallback mock o sin clave
   if (USE_LLM === 'mock' || !hasKey) {
     if (!evidenceChunks?.length) {
-      return `No tengo evidencia suficiente sobre "${question}". ` +
-             `Indícame programa/sede/periodo para ayudarte mejor.`;
+      return `🤔 No tengo evidencia suficiente sobre "${question}". ` +
+             `📝 Indícame programa/sede/periodo para ayudarte mejor.`;
     }
-    const bullets = evidenceChunks.map((c,i)=>`• ${c.text} (ref: ${c.titulo})`).join('\n');
-    return `${bullets}\n\n¿Deseas detalles para tu programa o sede específicos?`;
+    const bullets = evidenceChunks.map((c,i)=> `📌 ${c.text}`).join('\n');
+    return `${bullets}\n\n❓ ¿Deseas detalles para tu programa o sede específicos?`;
   }
 
   // Gemini "evidencia primero"

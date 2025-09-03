@@ -9,6 +9,18 @@
 
 .status-indicator {
   font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: var(--text-secondary);
+  min-width: 18px;
+  min-height: 18px;
+}
+
+.status-indicator svg {
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .auth-section {
