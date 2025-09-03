@@ -1,0 +1,44 @@
+{
+  "automation": {
+    "enabled": true,
+    "mode": "smart",
+    "schedules": {
+      "change_detection": "*/6 * * * *",
+      "full_update": "0 2 * * *",
+      "smart_update": "0 */2 * * *"
+    },
+    "monitoring": {
+      "urls": [
+        "https://www.uts.edu.co/sitio/programas-academicos/tecnologia-en-desarrollo-de-sistemas-informaticos/",
+        "https://www.uts.edu.co/sitio/programas-academicos/ingenieria-de-sistemas/",
+        "https://www.uts.edu.co/sitio/aspirantes/",
+        "https://www.uts.edu.co/sitio/docentes/",
+        "https://www.uts.edu.co/sitio/estudiantes/"
+      ],
+      "timeout": 30000,
+      "retries": 3
+    },
+    "updates": {
+      "auto_keywords": true,
+      "auto_synonyms": true,
+      "auto_reload": true,
+      "skip_on_error": false
+    },
+    "notifications": {
+      "enabled": false,
+      "email": "",
+      "webhook": ""
+    }
+  },
+  "logging": {
+    "level": "info",
+    "max_file_size": "10MB",
+    "max_files": 5,
+    "include_timestamps": true
+  },
+  "performance": {
+    "max_parallel_scrapers": 3,
+    "scraper_timeout": 60000,
+    "database_timeout": 10000
+  }
+}

@@ -30,7 +30,8 @@ export const Conversations = {
 
   async last(n = 10) {
     return queryAll(
-      `SELECT id, session_id, pregunta, substr(respuesta,1,120) AS respuesta_preview, 
+      `SELECT id, session_id as user_id, pregunta as question, 
+              substr(respuesta,1,120) AS response_text, 
               tipo_usuario, created_at
        FROM conversations
        ORDER BY id DESC
@@ -68,7 +69,29 @@ export const Feedback = {
     const row = rows?.[0] || {};
     const total = Number(row.total || 0);
     const positives = Number(row.positives || 0);
+    const negatives = total - positives;
     const satisfaction = total ? Math.round((positives / total) * 100) : 0;
-    return { total, positives, satisfaction };
+    return { total, positive: positives, negative: negatives, satisfactionRate: satisfaction };
+  },
+
+  async list() {
+    const query = `
+      SELECT 
+        f.id,
+        f.conversation_id,
+        f.useful,
+        f.comment,
+        f.created_at,
+        c.pregunta as question,
+        c.respuesta as response,
+        c.session_id as user_id,
+        CASE WHEN f.useful ${isPg ? 'IS TRUE' : '= 1'} THEN 'positive' ELSE 'negative' END as sentiment,
+        CASE WHEN f.useful ${isPg ? 'IS TRUE' : '= 1'} THEN 5 ELSE 1 END as rating
+      FROM feedback f
+      LEFT JOIN conversations c ON f.conversation_id = c.id
+      ORDER BY f.created_at DESC
+      LIMIT 100
+    `;
+    return queryAll(query);
   },
 };

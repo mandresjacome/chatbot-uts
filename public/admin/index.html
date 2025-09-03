@@ -4,7 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Panel Admin — Chatbot UTS v1.2.0</title>
-  <link rel="stylesheet" href="./admin.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/metrics.css" />
+  <link rel="stylesheet" href="./css/feedback.css" />
+  <link rel="stylesheet" href="./css/knowledge.css" />
+  <link rel="stylesheet" href="./css/maintenance.css" />
 </head>
 <body>
   <header class="header">
@@ -15,56 +19,358 @@
     </div>
   </header>
 
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="metrics">📊 Métricas</button>
+    <button class="tab-btn" data-tab="feedback">💬 Feedback</button>
+    <button class="tab-btn" data-tab="knowledge">📚 Base de Conocimiento</button>
+    <button class="tab-btn" data-tab="maintenance">⚙️ Mantenimiento</button>
+  </nav>
+
   <main class="container">
-    <section class="cards">
-      <div class="card">
-        <div class="card-title">Conversaciones totales</div>
-        <div id="totalConversations" class="card-value">—</div>
+    <!-- SECCIÓN 1: MÉTRICAS (solo lectura) -->
+    <section id="metrics-section" class="tab-content active">
+      <div class="section-header">
+        <h2>📊 Métricas del Sistema</h2>
+        <button id="refreshMetrics" class="btn btn-outline">🔄 Actualizar</button>
       </div>
-      <div class="card">
-        <div class="card-title">Satisfacción</div>
-        <div id="satisfactionRate" class="card-value">—%</div>
-        <div class="progress">
-          <div id="satisfactionBar" class="progress-bar" style="width:0%"></div>
+      
+      <div class="metrics-cards">
+        <div class="metric-card">
+          <div class="metric-icon">💬</div>
+          <div class="metric-content">
+            <div class="metric-title">Conversaciones Totales</div>
+            <div id="totalConversations" class="metric-value">—</div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">😊</div>
+          <div class="metric-content">
+            <div class="metric-title">Satisfacción</div>
+            <div id="satisfactionRate" class="metric-value">—%</div>
+            <div class="progress">
+              <div id="satisfactionBar" class="progress-bar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">📝</div>
+          <div class="metric-content">
+            <div class="metric-title">Feedback Recibidos</div>
+            <div id="feedbackTotal" class="metric-value">—</div>
+            <small id="feedbackDetails" class="metric-details">— positivos, — negativos</small>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">🤖</div>
+          <div class="metric-content">
+            <div class="metric-title">Modelo IA</div>
+            <div id="modelName" class="metric-value">—</div>
+            <small class="metric-details">Estado del servicio</small>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Feedback recibidos</div>
-        <div id="feedbackTotal" class="card-value">—</div>
-        <small id="feedbackPos" class="muted">— positivos</small>
+
+      <div class="recent-conversations">
+        <h3>Últimas Conversaciones</h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Pregunta</th>
+                <th>Respuesta (preview)</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="recentConversationsTable">
+              <tr><td colspan="5" class="loading">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <section class="table-block">
-      <div class="block-header">
-        <h2>Últimas conversaciones</h2>
-        <button id="reloadBtn" class="btn">Actualizar</button>
+    <!-- SECCIÓN 2: FEEDBACK (solo lectura, con filtros) -->
+    <section id="feedback-section" class="tab-content">
+      <div class="section-header">
+        <h2>💬 Feedback de Usuarios</h2>
+        <div class="feedback-filters">
+          <select id="feedbackType" class="filter-select">
+            <option value="all">Todos</option>
+            <option value="positive">Positivos</option>
+            <option value="negative">Negativos</option>
+          </select>
+          <select id="feedbackPeriod" class="filter-select">
+            <option value="all">Todo el tiempo</option>
+            <option value="today">Hoy</option>
+            <option value="week">Esta semana</option>
+            <option value="month">Este mes</option>
+          </select>
+          <button id="applyFeedbackFilters" class="btn btn-outline">Filtrar</button>
+        </div>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Usuario</th>
-            <th>Pregunta</th>
-            <th>Respuesta (preview)</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-        <tbody id="lastConversations">
-          <tr><td colspan="5" class="muted">Sin datos…</td></tr>
-        </tbody>
-      </table>
+      
+      <div class="feedback-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total:</span>
+          <span id="feedbackStatsTotal" class="stat-value">—</span>
+        </div>
+        <div class="stat-item positive">
+          <span class="stat-label">Positivos:</span>
+          <span id="feedbackStatsPositive" class="stat-value">—</span>
+        </div>
+        <div class="stat-item negative">
+          <span class="stat-label">Negativos:</span>
+          <span id="feedbackStatsNegative" class="stat-value">—</span>
+        </div>
+      </div>
+
+      <div class="feedback-list">
+        <div id="feedbackContainer" class="feedback-items">
+          <div class="loading">Cargando feedback...</div>
+        </div>
+      </div>
     </section>
 
-    <section class="mini">
-      <h3>Estado del servicio</h3>
-      <ul class="kv">
-        <li><b>API /metrics</b> <span id="statusMetrics" class="pill">—</span></li>
-        <li><b>Modelo IA actual</b> <span id="modelName" class="pill">según respuestas</span></li>
-      </ul>
-      <small class="muted">
-        * El modelo se lee de las respuestas del endpoint /api/chat (campo <code>meta.model</code>).
-      </small>
+    <!-- SECCIÓN 3: BASE DE CONOCIMIENTO (solo lectura y verificación) -->
+    <section id="knowledge-section" class="tab-content">
+      <div class="section-header">
+        <h2>📚 Base de Conocimiento</h2>
+        <div class="kb-info">
+          <span class="info-text">🎯 Verificación de fuentes UTS</span>
+          <button id="refreshKnowledge" class="btn btn-outline">🔄 Actualizar</button>
+        </div>
+      </div>
+      
+      <div class="kb-search">
+        <input type="text" id="kbSearchInput" placeholder="Buscar en la base de conocimiento..." class="search-input">
+        <button id="kbSearchBtn" class="btn">🔍 Buscar</button>
+        <button id="kbClearSearch" class="btn btn-outline">Limpiar</button>
+      </div>
+
+      <div class="kb-stats">
+        <div class="kb-stat">
+          <span class="kb-stat-label">Entradas totales:</span>
+          <span id="kbTotalEntries" class="kb-stat-value">—</span>
+        </div>
+        <div class="kb-stat">
+          <span class="kb-stat-label">Última actualización:</span>
+          <span id="kbLastUpdate" class="kb-stat-value">—</span>
+        </div>
+        <div class="kb-stat">
+          <span class="kb-stat-label">Fuentes verificadas:</span>
+          <span id="kbVerifiedSources" class="kb-stat-value">—</span>
+        </div>
+      </div>
+
+      <div class="kb-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Pregunta/Tema</th>
+              <th>Tipo Usuario</th>
+              <th>Fuente UTS</th>
+              <th>Actualización</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="knowledgeTable">
+            <tr><td colspan="6" class="loading">Cargando base de conocimiento...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: MANTENIMIENTO (protegido con token) -->
+    <section id="maintenance-section" class="tab-content">
+      <div class="section-header">
+        <h2>⚙️ Mantenimiento del Sistema</h2>
+        <div class="auth-status" id="authStatus">
+          <span class="status-indicator" id="authIndicator">🔒</span>
+          <span id="authText">No autenticado</span>
+        </div>
+      </div>
+
+      <div class="auth-section" id="authSection">
+        <div class="auth-card">
+          <h3>🔐 Autenticación Requerida</h3>
+          <p>Ingresa el token de administrador para acceder a las funciones de mantenimiento:</p>
+          <div class="auth-input-group">
+            <input type="password" id="adminToken" placeholder="ADMIN_TOKEN" class="auth-input">
+            <button id="authenticateBtn" class="btn btn-primary">Autenticar</button>
+          </div>
+          <small class="auth-help">Solo el administrador del sistema puede ejecutar estas operaciones.</small>
+        </div>
+      </div>
+
+      <div class="maintenance-actions" id="maintenanceActions" style="display: none;">
+        <div class="action-grid">
+          <!-- AUTOMATIZACIÓN -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>🤖 Sistema de Automatización</h3>
+              <span class="action-status" id="automationStatus">Listo</span>
+            </div>
+            <p>Control inteligente del sistema de automatización para mantenimiento continuo.</p>
+            <div class="action-buttons">
+              <button id="detectChangesBtn" class="btn btn-info">
+                <span class="btn-icon">🔍</span>
+                Detectar Cambios
+              </button>
+              <button id="autoUpdateBtn" class="btn btn-primary">
+                <span class="btn-icon">🔄</span>
+                Actualización Completa
+              </button>
+              <button id="quickUpdateBtn" class="btn btn-secondary">
+                <span class="btn-icon">⚡</span>
+                Actualización Rápida
+              </button>
+            </div>
+            <div id="automationOutput" class="action-output"></div>
+          </div>
+
+          <!-- PALABRAS CLAVE Y SINÓNIMOS -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>🔤 Optimización de Búsqueda</h3>
+              <span class="action-status" id="optimizationStatus">Listo</span>
+            </div>
+            <p>Mejora automática de palabras clave y regeneración de sinónimos específicos.</p>
+            <div class="action-buttons">
+              <button id="improveKeywordsBtn" class="btn btn-warning">
+                <span class="btn-icon">🎯</span>
+                Mejorar Keywords
+              </button>
+              <button id="generateSynonymsBtn" class="btn btn-success">
+                <span class="btn-icon">📝</span>
+                Generar Sinónimos
+              </button>
+            </div>
+            <div id="optimizationOutput" class="action-output"></div>
+          </div>
+
+          <!-- SCRAPERS TRADICIONALES -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>�️ Scrapers Manuales</h3>
+              <span class="action-status" id="scrapersStatus">Listo</span>
+            </div>
+            <p>Ejecuta scrapers individuales para páginas específicas de la UTS.</p>
+            <div class="action-buttons">
+              <button id="runAllScrapersBtn" class="btn btn-primary">
+                <span class="btn-icon">▶️</span>
+                Todos los Scrapers
+              </button>
+              <button id="runAspirantesBtn" class="btn btn-outline">
+                <span class="btn-icon">👥</span>
+                Aspirantes
+              </button>
+              <button id="runDocentesBtn" class="btn btn-outline">
+                <span class="btn-icon">👨‍🏫</span>
+                Docentes
+              </button>
+              <button id="runEstudiantesBtn" class="btn btn-outline">
+                <span class="btn-icon">🎓</span>
+                Estudiantes
+              </button>
+              <button id="runTecnologiaBtn" class="btn btn-outline">
+                <span class="btn-icon">�</span>
+                Tecnología
+              </button>
+            </div>
+            <div id="scrapersOutput" class="action-output"></div>
+          </div>
+
+          <!-- SISTEMA TRADICIONAL -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>� Operaciones del Sistema</h3>
+              <span class="action-status" id="systemOpsStatus">Listo</span>
+            </div>
+            <p>Operaciones básicas del sistema como recarga de índice y backups.</p>
+            <div class="action-buttons">
+              <button id="reloadKbBtn" class="btn btn-secondary">
+                <span class="btn-icon">🔄</span>
+                Recargar KB
+              </button>
+              <button id="backupDbBtn" class="btn btn-outline">
+                <span class="btn-icon">💾</span>
+                Crear Backup
+              </button>
+            </div>
+            <div id="systemOpsOutput" class="action-output"></div>
+          </div>
+
+          <!-- MONITOREO EN TIEMPO REAL -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>📊 Monitoreo del Sistema</h3>
+              <span class="action-status" id="monitoringStatus">Monitoreando</span>
+            </div>
+            <div class="system-info">
+              <div class="info-item">
+                <span class="info-label">Servidor:</span>
+                <span id="serverStatus" class="info-value">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Base de datos:</span>
+                <span id="dbStatus" class="info-value">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">IA (Gemini):</span>
+                <span id="aiStatus" class="info-value">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Registros KB:</span>
+                <span id="kbRecordsStatus" class="info-value">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Última actualización:</span>
+                <span id="lastUpdateStatus" class="info-value">—</span>
+              </div>
+            </div>
+            <button id="checkSystemBtn" class="btn btn-info">
+              <span class="btn-icon">🔍</span>
+              Verificar Estado
+            </button>
+          </div>
+
+          <!-- CONFIGURACIÓN DE AUTOMATIZACIÓN -->
+          <div class="action-card">
+            <div class="action-header">
+              <h3>⚙️ Configuración Automática</h3>
+              <span class="action-status" id="configStatus">Disponible</span>
+            </div>
+            <p>Configurar tareas programadas para automatización del sistema.</p>
+            <div class="system-info">
+              <div class="info-item">
+                <span class="info-label">Estado de tareas:</span>
+                <span id="scheduledTasksStatus" class="info-value">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Última detección:</span>
+                <span id="lastDetectionStatus" class="info-value">—</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button id="setupAutomationBtn" class="btn btn-success">
+                <span class="btn-icon">⚙️</span>
+                Configurar Tareas
+              </button>
+              <button id="viewLogsBtn" class="btn btn-outline">
+                <span class="btn-icon">📋</span>
+                Ver Logs
+              </button>
+            </div>
+            <div id="configOutput" class="action-output"></div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -72,9 +378,13 @@
     <span>Hecho por Mario Andrés Jácome Mantilla — Unidades Tecnológicas de Santander</span>
   </footer>
 
-  <script src="./admin.js" defer></script>
+  <!-- Scripts modulares -->
+  <script src="./js/metrics.js" defer></script>
+  <script src="./js/feedback.js" defer></script>
+  <script src="./js/knowledge.js" defer></script>
+  <script src="./js/maintenance.js" defer></script>
   <script>
-    // Sistema de temas para admin
+    // Sistema de temas y navegación de tabs
     const THEME_KEY = 'uts_theme';
     const htmlEl = document.documentElement;
     const themeToggle = document.getElementById('themeToggle');
@@ -95,6 +405,34 @@
       const next = current === 'auto' ? 'dark' : current === 'dark' ? 'light' : 'auto';
       applyTheme(next);
     });
+
+    // Sistema de navegación por tabs
+    function initTabs() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTab = btn.dataset.tab;
+          
+          // Remover clases activas
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          // Activar tab seleccionado
+          btn.classList.add('active');
+          document.getElementById(`${targetTab}-section`).classList.add('active');
+          
+          // Trigger de inicialización específica por sección
+          if (window[`init${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`]) {
+            window[`init${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`]();
+          }
+        });
+      });
+    }
+
+    // Inicializar tabs cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', initTabs);
   </script>
 </body>
 </html>

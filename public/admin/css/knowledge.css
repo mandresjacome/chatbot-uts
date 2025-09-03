@@ -1,0 +1,355 @@
+/* Knowledge CSS - Estilos para la sección de base de conocimiento */
+
+.kb-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.info-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kb-search {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.kb-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kb-stat {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.kb-stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.kb-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Tabla de conocimiento */
+.kb-table-wrapper {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+#knowledgeTable {
+  min-height: 400px;
+}
+
+.kb-entry-id {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.kb-question {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kb-user-type {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kb-user-type.todos {
+  background-color: rgb(99 102 241 / 0.1);
+  color: #6366f1;
+}
+
+.kb-user-type.estudiante {
+  background-color: rgb(34 197 94 / 0.1);
+  color: var(--success);
+}
+
+.kb-user-type.aspirante {
+  background-color: rgb(245 158 11 / 0.1);
+  color: var(--warning);
+}
+
+.kb-user-type.docente {
+  background-color: rgb(239 68 68 / 0.1);
+  color: var(--danger);
+}
+
+.kb-source {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kb-source-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.kb-source-link:hover {
+  text-decoration: underline;
+}
+
+.kb-source-verified {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--success);
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.kb-source-verified::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.kb-source-unverified {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--warning);
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.kb-source-unverified::after {
+  content: '?';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.kb-last-update {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.kb-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.kb-action-btn {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.kb-view-btn {
+  background-color: var(--info);
+  color: white;
+}
+
+.kb-view-btn:hover {
+  background-color: #0e7490;
+}
+
+.kb-source-btn {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.kb-source-btn:hover {
+  background-color: #374151;
+}
+
+/* Modal para ver detalles */
+.kb-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.kb-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.kb-modal-content {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  transition: var(--transition);
+}
+
+.kb-modal.active .kb-modal-content {
+  transform: translateY(0);
+}
+
+.kb-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.kb-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.kb-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.kb-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.kb-modal-body {
+  line-height: 1.6;
+}
+
+.kb-modal-field {
+  margin-bottom: 1rem;
+}
+
+.kb-modal-field-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.kb-modal-field-value {
+  color: var(--text-primary);
+}
+
+/* Estados de búsqueda */
+.kb-search-results {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.kb-no-results {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-muted);
+}
+
+.kb-no-results-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Responsive para knowledge base */
+@media (max-width: 768px) {
+  .kb-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-input {
+    min-width: auto;
+  }
+  
+  .kb-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .kb-actions {
+    flex-direction: column;
+  }
+  
+  .data-table {
+    font-size: 0.875rem;
+  }
+  
+  .kb-question {
+    max-width: 150px;
+  }
+  
+  .kb-modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+}

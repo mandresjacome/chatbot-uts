@@ -1,0 +1,583 @@
+/* Maintenance CSS - Estilos para la sección de mantenimiento */
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.status-indicator {
+  font-size: 1rem;
+}
+
+.auth-section {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.auth-card {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.auth-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.auth-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.auth-input-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.auth-input {
+  flex: 1;
+}
+
+.auth-help {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Acciones de mantenimiento */
+.maintenance-actions {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.action-card {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.action-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.action-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.action-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Estados de botones de acción */
+.action-status.ready {
+  background-color: rgb(34 197 94 / 0.1);
+  color: var(--success);
+}
+
+.action-status.running {
+  background-color: rgb(245 158 11 / 0.1);
+  color: var(--warning);
+}
+
+.action-status.error {
+  background-color: rgb(239 68 68 / 0.1);
+  color: var(--danger);
+}
+
+.action-status.monitoring {
+  background-color: rgb(59 130 246 / 0.1);
+  color: var(--info);
+}
+
+.action-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.action-card .btn {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* Output de acciones */
+.action-output {
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  display: none;
+}
+
+.action-output.active {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+.action-output.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  font-style: italic;
+}
+
+.action-output.success {
+  border-color: var(--success);
+  background-color: rgb(34 197 94 / 0.05);
+}
+
+.action-output.error {
+  border-color: var(--danger);
+  background-color: rgb(239 68 68 / 0.05);
+}
+
+/* Sistema de información */
+.system-info {
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.info-value.online {
+  color: var(--success);
+}
+
+.info-value.offline {
+  color: var(--danger);
+}
+
+.info-value.warning {
+  color: var(--warning);
+}
+
+/* Logs en tiempo real */
+.live-logs {
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  max-height: 300px;
+  overflow-y: auto;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.log-entry {
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 0;
+}
+
+.log-timestamp {
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+}
+
+.log-level {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  text-transform: uppercase;
+}
+
+.log-level.info {
+  color: var(--info);
+}
+
+.log-level.success {
+  color: var(--success);
+}
+
+.log-level.warning {
+  color: var(--warning);
+}
+
+.log-level.error {
+  color: var(--danger);
+}
+
+.log-message {
+  color: var(--text-primary);
+}
+
+/* Progress indicators */
+.progress-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Estados de botones de acción */
+.btn.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.btn.loading .btn-icon {
+  display: none;
+}
+
+.btn.loading::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+/* Responsive para mantenimiento */
+@media (max-width: 768px) {
+  .action-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .action-card {
+    padding: 1.5rem;
+  }
+  
+  .auth-input-group {
+    flex-direction: column;
+  }
+  
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 200px;
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estados de autenticación */
+.auth-status.authenticated {
+  color: var(--success);
+}
+
+.auth-status.authenticated .status-indicator {
+  color: var(--success);
+}
+
+.auth-status.error {
+  color: var(--danger);
+}
+
+.auth-status.error .status-indicator {
+  color: var(--danger);
+}
+
+/* ===== NUEVOS ESTILOS PARA AUTOMATIZACIÓN ===== */
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.action-buttons .btn {
+  flex: 1;
+  min-width: 120px;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.action-buttons .btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border);
+}
+
+.action-buttons .btn-outline:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* Automation status indicators */
+.automation-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.automation-indicator.active {
+  background-color: rgb(34 197 94 / 0.1);
+  color: var(--success);
+}
+
+.automation-indicator.inactive {
+  background-color: rgb(156 163 175 / 0.1);
+  color: var(--text-muted);
+}
+
+.automation-indicator.error {
+  background-color: rgb(239 68 68 / 0.1);
+  color: var(--danger);
+}
+
+/* Enhanced system info */
+.enhanced-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-card-mini {
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.info-card-mini .info-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-card-mini .info-title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.info-card-mini .info-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Automation progress */
+.automation-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* Automation alerts */
+.automation-alert {
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+  font-size: 0.875rem;
+}
+
+.automation-alert.info {
+  background-color: rgb(59 130 246 / 0.1);
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.automation-alert.success {
+  background-color: rgb(34 197 94 / 0.1);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.automation-alert.warning {
+  background-color: rgb(245 158 11 / 0.1);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.automation-alert.error {
+  background-color: rgb(239 68 68 / 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Enhanced button states */
+.btn.automation-active {
+  background-color: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.btn.automation-active:hover {
+  background-color: var(--success);
+  opacity: 0.9;
+}
+
+.btn.automation-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Responsive for automation features */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .enhanced-info {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .automation-progress {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .progress-text {
+    text-align: center;
+    min-width: auto;
+  }
+}
+
+/* Animation for automation */
+.automation-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

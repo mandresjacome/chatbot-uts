@@ -2,52 +2,119 @@
 import Fuse from 'fuse.js';
 // Importar compromise para procesamiento de lenguaje natural
 import nlp from 'compromise';
-// Importar módulos del sistema de archivos y rutas
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 // Importar función de normalización de texto
 import { normalize } from '../utils/normalize.js';
+// Importar función para consultas a la base de datos
+import { queryAll } from '../db/index.js';
+// Importar sinónimos generados automáticamente
+import { synonyms } from './synonyms.js';
 
-// Obtener la ruta del archivo actual y directorio para módulos ES
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-// Construir la ruta al archivo de base de conocimiento
-const kbPath = path.join(__dirname, '..', 'data', 'knowledge.json');
+// Variable para almacenar la KB cargada desde la base de datos
+let KB = [];
+let fuse = null;
 
-// Cargar y parsear la base de conocimiento desde el archivo JSON
-const KB = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
+// Función para expandir consulta con sinónimos generados automáticamente
+function expandQuery(query) {
+  let expandedQuery = query.toLowerCase();
+  
+  // Expandir usando sinónimos generados automáticamente de la base de conocimiento
+  Object.keys(synonyms).forEach(word => {
+    if (expandedQuery.includes(word)) {
+      const syns = synonyms[word];
+      expandedQuery += ' ' + syns.join(' ');
+    }
+  });
+  
+  return expandedQuery;
+}
 
-// Precalcular campo combinado para búsqueda
-KB.forEach(item => {
-  item.searchText = normalize(
-    `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
-  );
-});
+// Función para cargar la base de conocimiento desde la base de datos
+async function loadKBFromDatabase() {
+  try {
+    const rows = await queryAll(`
+      SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave 
+      FROM knowledge_base 
+      WHERE activo = 1
+    `);
+    
+    // Procesar los datos y agregar campo de búsqueda
+    KB = rows.map(item => ({
+      ...item,
+      searchText: normalize(
+        `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
+      )
+    }));
 
-// Configurar Fuse.js para búsqueda difusa inteligente
-const fuse = new Fuse(KB, {
-  includeScore: true,
-  threshold: 0.55,        // tolerancia razonable
-  ignoreLocation: true,
-  minMatchCharLength: 2,
-  keys: [
-    { name: 'pregunta',       weight: 0.45 },
-    { name: 'palabras_clave', weight: 0.45 },
-    { name: 'searchText',     weight: 0.10 }
-  ]
-});
+    // Configurar Fuse.js para búsqueda difusa inteligente
+    fuse = new Fuse(KB, {
+      includeScore: true,
+      threshold: 0.4,         // Más tolerante a errores de escritura
+      ignoreLocation: true,
+      minMatchCharLength: 2,
+      keys: [
+        { name: 'palabras_clave', weight: 0.5 },  // Mayor peso a palabras clave
+        { name: 'pregunta',       weight: 0.3 },  
+        { name: 'searchText',     weight: 0.2 }   // Búsqueda en contenido completo
+      ]
+    });
+
+    return KB.length;
+  } catch (error) {
+    console.error('Error cargando KB desde base de datos:', error);
+    return 0;
+  }
+}
+
+// Cargar la KB al inicializar el módulo
+await loadKBFromDatabase();
+
+/**
+ * Recarga la base de conocimiento desde la base de datos
+ */
+export async function reloadKB() {
+  return await loadKBFromDatabase();
+}
+
+/**
+ * Regenera los sinónimos ejecutando el script automático
+ */
+export async function regenerateSynonyms() {
+  try {
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+    
+    console.log('🔄 Regenerando sinónimos automáticamente...');
+    await execAsync('node scripts/generate-synonyms.cjs');
+    console.log('✅ Sinónimos regenerados');
+    
+    // Recargar el retriever
+    await reloadKB();
+    return true;
+  } catch (error) {
+    console.error('❌ Error regenerando sinónimos:', error);
+    return false;
+  }
+}
 
 /**
  * Recupera los mejores k fragmentos para la pregunta del usuario
  * filtrando por tipo de usuario cuando aplique.
  */
 export function retrieveTopK({ query, userType = 'todos', k = 3 }) {
-  // Normalizar la consulta para mejorar la búsqueda
-  const clean = normalize(query);
+  // Verificar que fuse esté inicializado
+  if (!fuse || KB.length === 0) {
+    console.warn('Base de conocimiento no cargada. Reintentando...');
+    return { chunks: [], meta: { fechasDetectadas: null } };
+  }
+
+  // Expandir consulta con sinónimos básicos y normalizar
+  const expandedQuery = expandQuery(query);
+  const clean = normalize(expandedQuery);
+  
   // Entities por si luego quieres usarlas (fechas, lugares, etc.)
   const doc = nlp(query);
-  const fechas = doc.match('#Date').text(); // ejemplo leve
+  const fechas = doc.match('#Date').text();
 
   // Realizar búsqueda difusa y procesar resultados
   const results = fuse.search(clean)
