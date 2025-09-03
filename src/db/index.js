@@ -90,16 +90,29 @@ export async function bootstrapSchema() {
       useful BOOLEAN NOT NULL,
       comment TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS knowledge_base (
+      id SERIAL PRIMARY KEY,
+      pregunta TEXT NOT NULL,
+      respuesta_texto TEXT,
+      tipo_usuario TEXT NOT NULL DEFAULT 'todos',
+      recurso_url TEXT,
+      tipo_recurso TEXT,
+      nombre_recurso TEXT,
+      palabras_clave TEXT,
+      activo BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
     );`;
     await exec(sql);
     console.log('✅ Esquema PostgreSQL verificado');
     return;
   }
 
-  // SQLite
-  const sql = `
-  PRAGMA foreign_keys = ON;
-  CREATE TABLE IF NOT EXISTS conversations (
+  // SQLite - ejecutar cada CREATE TABLE por separado
+  await exec('PRAGMA foreign_keys = ON;');
+  
+  await exec(`CREATE TABLE IF NOT EXISTS conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id TEXT NOT NULL,
     pregunta   TEXT NOT NULL,
@@ -107,15 +120,29 @@ export async function bootstrapSchema() {
     tipo_usuario TEXT,
     knowledge_refs TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE TABLE IF NOT EXISTS feedback (
+  );`);
+  
+  await exec(`CREATE TABLE IF NOT EXISTS feedback (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     conversation_id INTEGER NOT NULL,
     useful  INTEGER NOT NULL CHECK (useful IN (0,1)),
     comment TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
-  );`;
-  await exec(sql);
+  );`);
+  
+  await exec(`CREATE TABLE IF NOT EXISTS knowledge_base (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pregunta TEXT NOT NULL,
+    respuesta_texto TEXT,
+    tipo_usuario TEXT NOT NULL DEFAULT 'todos',
+    recurso_url TEXT,
+    tipo_recurso TEXT,
+    nombre_recurso TEXT,
+    palabras_clave TEXT,
+    activo INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );`);
   console.log('✅ Esquema SQLite verificado');
 }
