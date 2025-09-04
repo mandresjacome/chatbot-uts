@@ -1,5 +1,5 @@
 // Sinónimos específicos por tipo de conocimiento
-// Generado automáticamente el: 3/9/2025, 12:58:40 p. m.
+// Generado automáticamente el: 3/9/2025, 9:02:38 p. m.
 // Cada entrada mantiene sus sinónimos propios sin mezclarse
 // Total de grupos: 21
 
@@ -159,6 +159,6 @@ export const synonyms = {
 };
 
 // Términos más frecuentes en la base de conocimiento:
-// sistemas (63), ingenier (46), informaci (30), tecnolog (30), aspirantes (26), acad (23), ingeniero (20), tecn (19), logo (19), docentes (17), mico (10), desarrollo (10), inform (10), perfil (8), micos (8), docente (8), aprendizaje (6), calendario (6), plataformas (6), ticos (6)
+// sistemas (63), ingenier (47), tecnolog (34), informaci (30), aspirantes (26), ingeniero (20), acad (20), tecn (20), logo (20), docentes (17), semestre (11), desarrollo (11), inform (10), perfil (8), micos (8), docente (8), profesional (7), mico (7), aprendizaje (6), calendario (6)
 
 export default synonyms;

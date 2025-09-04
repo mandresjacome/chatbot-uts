@@ -5,7 +5,7 @@ const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const hasKey = Boolean(process.env.GEMINI_API_KEY);
 
 const MAX_EVIDENCE = Number(process.env.MAX_CHARS_EVIDENCE || 2500);
-const MAX_RESPONSE = Number(process.env.MAX_CHARS_RESPONSE || 1200);
+const MAX_RESPONSE = Number(process.env.MAX_CHARS_RESPONSE || 1800);
 
 // Recorta texto por caracteres (defensivo)
 function cut(text = '', max = 2000) {

@@ -39,11 +39,45 @@ themeToggle.addEventListener('click', () => {
 function autoGrow(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight, 120)+'px'; }
 ta.addEventListener('input', () => autoGrow(ta));
 
+// Función para procesar Markdown básico
+function processMarkdown(text) {
+  if (!text) return '';
+  
+  // Escapar HTML para seguridad
+  const escapeHtml = (str) => {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  };
+  
+  let processed = escapeHtml(text);
+  
+  // Procesar negritas con asteriscos **texto** y *texto*
+  processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  processed = processed.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+  
+  // Procesar cursivas con guiones bajos (opcional)
+  processed = processed.replace(/_(.*?)_/g, '<em>$1</em>');
+  
+  // Preservar saltos de línea
+  processed = processed.replace(/\n/g, '<br>');
+  
+  return processed;
+}
+
 function bubble(text, me=false, extras={}){
   const wrap = document.createElement('div');
   const b = document.createElement('div');
   b.className = 'msg' + (me ? ' me' : '');
-  b.textContent = text;
+  
+  if (me) {
+    // Para mensajes del usuario, usar textContent (sin formateo)
+    b.textContent = text;
+  } else {
+    // Para mensajes del bot, procesar Markdown
+    b.innerHTML = processMarkdown(text);
+  }
+  
   wrap.appendChild(b);
   
   // Referencias como enlaces clicables
@@ -118,13 +152,41 @@ let currentUserType = getUserType();
 function setInputEnabled(on){ ta.disabled=!on; btn.disabled=!on; if(on) ta.focus(); }
 setInputEnabled(!!currentUserType);
 
-// Siempre mostrar mensaje de bienvenida al cargar la página
-bubble('👋 ¡Hola! Soy AvaUTS, tu Asistente Virtual Académico. 🎓 Selecciona tu perfil para comenzar.');
+// Solo mostrar mensaje de bienvenida si ya hay un perfil seleccionado
+if (currentUserType) {
+  showWelcomeMessage(currentUserType);
+}
+
+function showWelcomeMessage(userType) {
+  let welcomeMessage = '';
+  
+  switch(userType) {
+    case 'visitante':
+      welcomeMessage = '👋 ¡Bienvenido! Estoy aquí para darte información sobre la Pagina de Ingenieria de Sistemas UTS.';
+      break;
+    case 'estudiante':
+      welcomeMessage = '👋 ¡Hola estudiante! ¿En qué tema te puedo ayudar?';
+      break;
+    case 'docente':
+      welcomeMessage = '👋 ¡Hola! Como docente, ¿qué información necesitas?';
+      break;
+    case 'aspirante':
+      welcomeMessage = '👋 ¡Hola futuro Uteista! ¿Qué quieres saber?';
+      break;
+    default:
+      welcomeMessage = `👋 ¡Hola! Como ${userType}, ¿en qué te puedo ayudar?`;
+  }
+  
+  bubble(welcomeMessage, false);
+}
 
 document.addEventListener('uts:userTypeChanged', (ev) => {
   currentUserType = ev.detail?.type || null;
   setInputEnabled(!!currentUserType);
-  if (currentUserType) bubble(`✅ Perfil seleccionado: ${currentUserType}. 💬 ¿En qué te ayudo?`, false);
+  
+  if (currentUserType) {
+    showWelcomeMessage(currentUserType);
+  }
 });
 
 /* ====== NUEVO: "Nueva conversación" desde el widget ====== */
@@ -143,8 +205,7 @@ function startNewConversation(){
   resetUserType();   // borra tipo y emite uts:userTypeChanged con null
   showModal();       // abre modal
 
-  // 4) mensaje inicial
-  bubble('🔄 Nueva conversación iniciada. 🎓 Selecciona tu perfil para continuar.');
+  // 4) No mostrar mensaje redundante - el modal y el mensaje personalizado son suficientes
 }
 window.addEventListener('message', (ev) => {
   if (!ev?.data) return;
