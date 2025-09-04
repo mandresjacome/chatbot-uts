@@ -18,18 +18,13 @@
     "scraper:docentes": "node scrapers/scraper_docentes.cjs",
     "scraper:estudiantes": "node scrapers/scraper_estudiantes.cjs",
     "scraper:tecnologia": "node scrapers/scraper_tecnologia.cjs",
-    "scraper:fixed": "node scrapers/scraper_fixed.cjs",
-    "deploy:init": "node scripts/deploy-init.cjs",
-    "build": "npm run deploy:init"
+    "scraper:fixed": "node scrapers/scraper_fixed.cjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "type": "module",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.11.0",

@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { isTeacherSearchQuery, findTeacherByName, formatTeacherInfo } from '../nlp/teacherSearch.js';
 
 const USE_LLM = process.env.USE_LLM || 'gemini';
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
@@ -51,7 +52,24 @@ if (hasKey) {
 }
 
 export async function answerLLM({ question, evidenceChunks, userType }) {
-  // Fallback mock o sin clave
+  // Verificar si es una búsqueda de docente específico
+  if (isTeacherSearchQuery(question)) {
+    // Buscar información de docentes en los chunks de evidencia
+    const teacherChunk = evidenceChunks.find(chunk => 
+      chunk.text.includes('DOCENTE') || 
+      chunk.text.includes('Correo Institucional') ||
+      chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@uts.edu.co')
+    );
+    
+    if (teacherChunk) {
+      const teacher = findTeacherByName(question, teacherChunk.text);
+      if (teacher) {
+        return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(teacher)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
+      }
+    }
+  }
+
+  // Fallback mock o sin clave (funcionamiento original)
   if (USE_LLM === 'mock' || !hasKey) {
     if (!evidenceChunks?.length) {
       return `🤔 No tengo evidencia suficiente sobre "${question}". ` +
@@ -61,7 +79,7 @@ export async function answerLLM({ question, evidenceChunks, userType }) {
     return `${bullets}\n\n❓ ¿Deseas detalles para tu programa o sede específicos?`;
   }
 
-  // Gemini "evidencia primero"
+  // Gemini "evidencia primero" (funcionamiento original)
   const model = genAI.getGenerativeModel({ model: MODEL });
 
   const prompt = buildPrompt({ question, evidenceChunks, userType });
