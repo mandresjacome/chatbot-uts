@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { isTeacherSearchQuery, findTeacherByName, formatTeacherInfo } from '../nlp/teacherSearch.js';
 
 const USE_LLM = process.env.USE_LLM || 'gemini';
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
@@ -52,21 +51,29 @@ if (hasKey) {
 }
 
 export async function answerLLM({ question, evidenceChunks, userType }) {
-  // Verificar si es una búsqueda de docente específico
-  if (isTeacherSearchQuery(question)) {
-    // Buscar información de docentes en los chunks de evidencia
-    const teacherChunk = evidenceChunks.find(chunk => 
-      chunk.text.includes('DOCENTE') || 
-      chunk.text.includes('Correo Institucional') ||
-      chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@uts.edu.co')
-    );
+  // Verificar si es una búsqueda de docente específico (con import dinámico seguro)
+  try {
+    const teacherSearchModule = await import('../nlp/teacherSearch.js');
+    const { isTeacherSearchQuery, findTeacherByName, formatTeacherInfo } = teacherSearchModule;
     
-    if (teacherChunk) {
-      const teacher = findTeacherByName(question, teacherChunk.text);
-      if (teacher) {
-        return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(teacher)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
+    if (isTeacherSearchQuery(question)) {
+      // Buscar información de docentes en los chunks de evidencia
+      const teacherChunk = evidenceChunks.find(chunk => 
+        chunk.text.includes('DOCENTE') || 
+        chunk.text.includes('Correo Institucional') ||
+        chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@uts.edu.co')
+      );
+      
+      if (teacherChunk) {
+        const teacher = findTeacherByName(question, teacherChunk.text);
+        if (teacher) {
+          return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(teacher)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
+        }
       }
     }
+  } catch (error) {
+    // Si falla el import del módulo de búsqueda de docentes, continúa con el flujo normal
+    console.warn('Búsqueda de docentes no disponible, continuando con flujo normal');
   }
 
   // Fallback mock o sin clave (funcionamiento original)
