@@ -23,15 +23,24 @@ class MallaNavigator {
   /**
    * Inicializa el navegador cargando datos y configurando eventos
    */
-  async inicializar() {
+  async initialize() {
     try {
       await this.cargarDatosMalla();
+      this.configurarEventos();
+      this.renderizarMalla();
       this.isInitialized = true;
       console.log('✅ MallaNavigator inicializado correctamente');
     } catch (error) {
       console.error('❌ Error inicializando MallaNavigator:', error);
-      this.usarDatosFallback();
+      this.mostrarError(error.message);
     }
+  }
+
+  /**
+   * Alias para compatibilidad
+   */
+  async inicializar() {
+    return this.initialize();
   }
 
   /**
@@ -44,10 +53,15 @@ class MallaNavigator {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      this.mallaDatos = await response.json();
-      console.log('📚 Datos de malla curricular cargados');
+      const result = await response.json();
+      if (result.success && result.data) {
+        this.mallaDatos = result.data;
+        console.log('📚 Datos de malla curricular cargados:', Object.keys(this.mallaDatos));
+      } else {
+        throw new Error('Respuesta del servidor no válida');
+      }
     } catch (error) {
-      console.warn('⚠️ Error cargando datos del servidor, usando fallback:', error.message);
+      console.warn('⚠️ Error cargando datos del servidor:', error.message);
       throw error;
     }
   }
@@ -91,6 +105,100 @@ class MallaNavigator {
     };
     this.isInitialized = true;
     console.log('📚 Usando datos de fallback para malla curricular');
+  }
+
+  /**
+   * Muestra un error en el contenedor de la malla
+   */
+  mostrarError(mensaje) {
+    const contenido = document.querySelector('.malla-content');
+    if (contenido) {
+      contenido.innerHTML = `
+        <div class="malla-error">
+          <p>❌ ${mensaje}</p>
+          <button onclick="location.reload()">🔄 Reintentar</button>
+        </div>
+      `;
+    }
+  }
+
+  /**
+   * Configura los event listeners
+   */
+  configurarEventos() {
+    // Botones de programa
+    document.querySelectorAll('.program-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const programa = e.target.dataset.program;
+        this.cambiarPrograma(programa);
+      });
+    });
+
+    // Botones de navegación
+    const btnAnterior = document.getElementById('prevLevel');
+    const btnSiguiente = document.getElementById('nextLevel');
+    
+    if (btnAnterior) {
+      btnAnterior.addEventListener('click', () => this.cambiarNivel(-1));
+    }
+    
+    if (btnSiguiente) {
+      btnSiguiente.addEventListener('click', () => this.cambiarNivel(1));
+    }
+
+    // Botón expandir
+    const btnExpandir = document.getElementById('expandMalla');
+    if (btnExpandir) {
+      btnExpandir.addEventListener('click', () => this.maximizarMalla());
+    }
+  }
+
+  /**
+   * Renderiza la malla inicial
+   */
+  renderizarMalla() {
+    if (!this.mallaDatos) {
+      this.mostrarError('No se pudieron cargar los datos de la malla curricular');
+      return;
+    }
+    
+    // Ocultar spinner de carga
+    const spinner = document.querySelector('.loading-spinner');
+    if (spinner) {
+      spinner.style.display = 'none';
+    }
+    
+    // Mostrar contenido de la malla
+    this.crearContenidoMalla();
+    this.actualizarTarjeta();
+  }
+
+  /**
+   * Crea el contenido inicial de la malla
+   */
+  crearContenidoMalla() {
+    const mallaContent = document.querySelector('.malla-content');
+    if (!mallaContent) return;
+
+    mallaContent.innerHTML = `
+      <div class="nivel-info">
+        <h4 class="nivel-titulo">Nivel <span id="nivel-actual">${this.nivelActual}</span> de <span id="total-niveles">${this.getMaxNivel()}</span></h4>
+        <p class="nivel-creditos">${this.getNivelData()?.creditos || 0} créditos</p>
+      </div>
+      
+      <div id="materias-container" class="materias-container">
+        <div class="materias-lista">
+          <!-- Las materias se cargarán dinámicamente -->
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Obtiene los datos del nivel actual
+   */
+  getNivelData() {
+    return this.mallaDatos?.[this.programaActual]?.niveles?.[this.nivelActual];
   }
 
   /**

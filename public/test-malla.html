@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Malla API</title>
+</head>
+<body>
+    <h1>Prueba de API Malla Curricular</h1>
+    <button onclick="testAPI()">Probar API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Cargando...';
+            
+            try {
+                console.log('🔍 Probando API...');
+                const response = await fetch('/api/malla-curricular');
+                console.log('📡 Respuesta recibida:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('📚 Datos recibidos:', data);
+                
+                result.innerHTML = `
+                    <h2>✅ API funcionando correctamente</h2>
+                    <h3>Programas disponibles:</h3>
+                    <ul>
+                        ${Object.keys(data.data || {}).map(programa => 
+                            `<li><strong>${programa}</strong>: ${data.data[programa]?.nombre || 'Sin nombre'}</li>`
+                        ).join('')}
+                    </ul>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                console.error('❌ Error:', error);
+                result.innerHTML = `
+                    <h2>❌ Error en la API</h2>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

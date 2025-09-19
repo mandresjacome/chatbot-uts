@@ -286,11 +286,10 @@ async function createMallaComponent(parentElement) {
       document.head.appendChild(cssLink);
     }
 
-    // Cargar JavaScript de malla si no está cargado
-    if (!window.MallaNavigator) {
+    // Cargar JavaScript de malla simplificado para debugging
+    if (!window.SimpleMallaNavigator) {
       const script = document.createElement('script');
-      script.src = '/chat/malla-navigator.js';
-      script.type = 'module';
+      script.src = '/chat/simple-malla.js';
       document.head.appendChild(script);
       
       // Esperar a que el script se cargue
@@ -334,15 +333,31 @@ async function createMallaComponent(parentElement) {
     // Inicializar el navegador de malla
     setTimeout(async () => {
       try {
-        if (window.MallaNavigator) {
-          const navigator = new window.MallaNavigator();
+        console.log('🔧 Intentando inicializar MallaNavigator...');
+        
+        if (window.SimpleMallaNavigator) {
+          console.log('✅ SimpleMallaNavigator encontrado, creando instancia...');
+          const navigator = new window.SimpleMallaNavigator();
           await navigator.initialize();
+          console.log('✅ SimpleMallaNavigator inicializado exitosamente');
+        } else {
+          console.error('❌ SimpleMallaNavigator no está disponible en window');
+          throw new Error('SimpleMallaNavigator no cargado');
         }
       } catch (error) {
-        console.error('Error inicializando MallaNavigator:', error);
-        mallaContainer.querySelector('.loading-spinner p').textContent = 'Error cargando la malla curricular';
+        console.error('❌ Error inicializando MallaNavigator:', error);
+        const spinner = mallaContainer.querySelector('.loading-spinner');
+        if (spinner) {
+          spinner.innerHTML = `
+            <div class="malla-error">
+              <p>❌ Error cargando la malla curricular</p>
+              <p>Detalles: ${error.message}</p>
+              <button onclick="location.reload()">🔄 Recargar página</button>
+            </div>
+          `;
+        }
       }
-    }, 100);
+    }, 500);
 
   } catch (error) {
     console.error('Error creando componente de malla:', error);
