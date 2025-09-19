@@ -21,13 +21,13 @@ async function loadMallaData() {
 loadMallaData();
 
 /**
- * Endpoint para obtener toda la malla curricular
+ * Endpoint para obtener toda la malla curricular (programa completo 10 niveles)
  */
 router.get('/malla-curricular', (req, res) => {
   try {
     logger.info('MALLA', 'Solicitando malla curricular completa');
     
-    if (!mallaCurricular) {
+    if (!mallaCurricular || !mallaCurricular.programa_completo) {
       return res.status(500).json({
         success: false,
         error: 'Datos de malla curricular no disponibles'
@@ -36,7 +36,7 @@ router.get('/malla-curricular', (req, res) => {
 
     res.json({
       success: true,
-      data: mallaCurricular,
+      data: mallaCurricular.programa_completo,
       timestamp: new Date().toISOString()
     });
 

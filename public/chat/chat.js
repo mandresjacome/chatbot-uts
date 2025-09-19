@@ -305,10 +305,10 @@ async function createMallaComponent(parentElement) {
     mallaContainer.innerHTML = `
       <div class="malla-card">
         <div class="malla-header">
-          <h3>🎓 Malla Curricular UTS</h3>
-          <div class="program-selector">
-            <button class="program-btn active" data-program="tecnologia">📱 Tecnología</button>
-            <button class="program-btn" data-program="ingenieria">⚙️ Ingeniería</button>
+          <h3>🎓 Ingeniería de Sistemas</h3>
+          <div class="nivel-info">
+            <span id="nivel-actual">I</span> de <span id="total-niveles">X</span>
+            <small class="tipo-nivel" id="tipo-nivel">Nivel Tecnológico</small>
           </div>
         </div>
         

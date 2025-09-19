@@ -1,208 +1,160 @@
 // Datos de la Malla Curricular UTS - Pensum 2019
-// Basado en el documento oficial de malla curricular
+// Programa de Ingeniería de Sistemas con dos niveles de formación
+// Basado en el documento oficial: Gráfica 5. Malla Curricular del programa incluyendo los dos niveles de formación
 
 const mallaCurricular = {
-  tecnologia: {
-    nombre: "Tecnología en Desarrollo de Sistemas Informáticos",
-    duracion: "6 semestres",
-    creditos_total: 120,
-    niveles: {
-      1: {
-        nombre: "Primer Nivel",
-        creditos: 20,
-        materias: [
-          { codigo: "TDS101", nombre: "Matemáticas Básicas", creditos: 4 },
-          { codigo: "TDS102", nombre: "Introducción a la Programación", creditos: 4 },
-          { codigo: "TDS103", nombre: "Física I", creditos: 3 },
-          { codigo: "TDS104", nombre: "Comunicación Oral y Escrita", creditos: 3 },
-          { codigo: "TDS105", nombre: "Metodología de la Investigación", creditos: 2 },
-          { codigo: "TDS106", nombre: "Ética Profesional", creditos: 2 },
-          { codigo: "TDS107", nombre: "Cátedra UTS", creditos: 2 }
-        ]
-      },
-      2: {
-        nombre: "Segundo Nivel", 
-        creditos: 20,
-        materias: [
-          { codigo: "TDS201", nombre: "Cálculo Diferencial", creditos: 4 },
-          { codigo: "TDS202", nombre: "Programación I", creditos: 4 },
-          { codigo: "TDS203", nombre: "Física II", creditos: 3 },
-          { codigo: "TDS204", nombre: "Inglés I", creditos: 3 },
-          { codigo: "TDS205", nombre: "Estadística Descriptiva", creditos: 3 },
-          { codigo: "TDS206", nombre: "Constitución Política", creditos: 2 },
-          { codigo: "TDS207", nombre: "Emprendimiento", creditos: 1 }
-        ]
-      },
-      3: {
-        nombre: "Tercer Nivel",
-        creditos: 20,
-        materias: [
-          { codigo: "TDS301", nombre: "Cálculo Integral", creditos: 4 },
-          { codigo: "TDS302", nombre: "Programación II", creditos: 4 },
-          { codigo: "TDS303", nombre: "Electromagnetismo", creditos: 3 },
-          { codigo: "TDS304", nombre: "Inglés II", creditos: 3 },
-          { codigo: "TDS305", nombre: "Estadística Inferencial", creditos: 3 },
-          { codigo: "TDS306", nombre: "Economía", creditos: 2 },
-          { codigo: "TDS307", nombre: "Electiva I", creditos: 1 }
-        ]
-      },
-      4: {
-        nombre: "Cuarto Nivel",
-        creditos: 20,
-        materias: [
-          { codigo: "TDS401", nombre: "Ecuaciones Diferenciales", creditos: 3 },
-          { codigo: "TDS402", nombre: "Estructura de Datos", creditos: 4 },
-          { codigo: "TDS403", nombre: "Circuitos Eléctricos", creditos: 4 },
-          { codigo: "TDS404", nombre: "Base de Datos I", creditos: 4 },
-          { codigo: "TDS405", nombre: "Análisis y Diseño de Sistemas", creditos: 3 },
-          { codigo: "TDS406", nombre: "Gestión de Proyectos", creditos: 2 }
-        ]
-      },
-      5: {
-        nombre: "Quinto Nivel",
-        creditos: 20,
-        materias: [
-          { codigo: "TDS501", nombre: "Métodos Numéricos", creditos: 3 },
-          { codigo: "TDS502", nombre: "Algoritmos y Programación", creditos: 4 },
-          { codigo: "TDS503", nombre: "Electrónica Digital", creditos: 4 },
-          { codigo: "TDS504", nombre: "Base de Datos II", creditos: 4 },
-          { codigo: "TDS505", nombre: "Ingeniería de Software", creditos: 3 },
-          { codigo: "TDS506", nombre: "Electiva II", creditos: 2 }
-        ]
-      },
-      6: {
-        nombre: "Sexto Nivel",
-        creditos: 20,
-        materias: [
-          { codigo: "TDS601", nombre: "Proyecto de Grado I", creditos: 6 },
-          { codigo: "TDS602", nombre: "Arquitectura de Software", creditos: 4 },
-          { codigo: "TDS603", nombre: "Redes de Computadores", creditos: 4 },
-          { codigo: "TDS604", nombre: "Seguridad Informática", creditos: 3 },
-          { codigo: "TDS605", nombre: "Práctica Profesional", creditos: 3 }
-        ]
-      }
-    }
-  },
-  ingenieria: {
+  programa_completo: {
     nombre: "Ingeniería de Sistemas",
-    duracion: "10 semestres",
-    creditos_total: 200,
+    descripcion: "Programa completo con nivel tecnológico (I-VI) y universitario (VII-X)",
+    duracion_total: "10 semestres",
+    creditos_total: 160,
+    nivel_tecnologico: {
+      nombre: "Nivel Tecnológico",
+      niveles: "I - VI",
+      duracion: "6 semestres", 
+      titulo: "Tecnología en Desarrollo de Sistemas Informáticos"
+    },
+    nivel_universitario: {
+      nombre: "Nivel Universitario", 
+      niveles: "VII - X",
+      duracion: "4 semestres",
+      titulo: "Ingeniería de Sistemas"
+    },
     niveles: {
       1: {
+        nivel_romano: "I",
         nombre: "Primer Nivel",
-        creditos: 20,
+        tipo: "Tecnológico",
+        creditos: 16,
         materias: [
-          { codigo: "ING101", nombre: "Cálculo Diferencial", creditos: 4 },
-          { codigo: "ING102", nombre: "Álgebra Lineal", creditos: 3 },
-          { codigo: "ING103", nombre: "Química General", creditos: 3 },
-          { codigo: "ING104", nombre: "Introducción a la Ingeniería", creditos: 3 },
-          { codigo: "ING105", nombre: "Comunicación", creditos: 3 },
-          { codigo: "ING106", nombre: "Cátedra UTS", creditos: 2 },
-          { codigo: "ING107", nombre: "Deportes", creditos: 2 }
+          { codigo: "A", nombre: "Cálculo Diferencial", creditos: 4 },
+          { codigo: "A", nombre: "Álgebra Superior", creditos: 4 },
+          { codigo: "A", nombre: "Cultura Física", creditos: 2 },
+          { codigo: "A", nombre: "Comunicación y Lectura Crítica y Escritura", creditos: 3 },
+          { codigo: "OPTA I", nombre: "Optativa I", creditos: 3 }
         ]
       },
       2: {
+        nivel_romano: "II",
         nombre: "Segundo Nivel",
-        creditos: 20,
+        tipo: "Tecnológico", 
+        creditos: 16,
         materias: [
-          { codigo: "ING201", nombre: "Cálculo Integral", creditos: 4 },
-          { codigo: "ING202", nombre: "Física I", creditos: 4 },
-          { codigo: "ING203", nombre: "Programación I", creditos: 4 },
-          { codigo: "ING204", nombre: "Álgebra", creditos: 3 },
-          { codigo: "ING205", nombre: "Inglés I", creditos: 3 },
-          { codigo: "ING206", nombre: "Humanidades I", creditos: 2 }
+          { codigo: "A", nombre: "Cálculo Integral", creditos: 4 },
+          { codigo: "A", nombre: "Mecánica", creditos: 4 },
+          { codigo: "B", nombre: "Pensamiento Lógico", creditos: 2 },
+          { codigo: "B", nombre: "Fundamentos de Programación", creditos: 3 },
+          { codigo: "B", nombre: "Sistemas Digitales", creditos: 3 }
         ]
       },
       3: {
-        nombre: "Tercer Nivel", 
-        creditos: 20,
+        nivel_romano: "III",
+        nombre: "Tercer Nivel",
+        tipo: "Tecnológico",
+        creditos: 16,
         materias: [
-          { codigo: "ING301", nombre: "Cálculo Multivariable", creditos: 4 },
-          { codigo: "ING302", nombre: "Física II", creditos: 4 },
-          { codigo: "ING303", nombre: "Programación II", creditos: 4 },
-          { codigo: "ING304", nombre: "Matemáticas Discretas", creditos: 3 },
-          { codigo: "ING305", nombre: "Inglés II", creditos: 3 },
-          { codigo: "ING306", nombre: "Humanidades II", creditos: 2 }
+          { codigo: "A", nombre: "Electromagnetismo", creditos: 3 },
+          { codigo: "A", nombre: "Laboratorio de Física", creditos: 1 },
+          { codigo: "B", nombre: "Aplicación de Métodos Numéricos", creditos: 3 },
+          { codigo: "B", nombre: "Estructura de Datos", creditos: 3 },
+          { codigo: "B", nombre: "Aplicaciones Móviles", creditos: 3 },
+          { codigo: "B", nombre: "Redes", creditos: 3 }
         ]
       },
       4: {
+        nivel_romano: "IV",
         nombre: "Cuarto Nivel",
-        creditos: 20,
+        tipo: "Tecnológico",
+        creditos: 16,
         materias: [
-          { codigo: "ING401", nombre: "Ecuaciones Diferenciales", creditos: 4 },
-          { codigo: "ING402", nombre: "Física III", creditos: 4 },
-          { codigo: "ING403", nombre: "Estructura de Datos", creditos: 4 },
-          { codigo: "ING404", nombre: "Probabilidad y Estadística", creditos: 3 },
-          { codigo: "ING405", nombre: "Economía", creditos: 3 },
-          { codigo: "ING406", nombre: "Constitución Política", creditos: 2 }
+          { codigo: "B", nombre: "Programación Orientada a Objetos", creditos: 3 },
+          { codigo: "B", nombre: "Programación Web", creditos: 3 },
+          { codigo: "B", nombre: "Programación en Java", creditos: 3 },
+          { codigo: "A", nombre: "Nuevas Tecnologías Aplicadas", creditos: 3 },
+          { codigo: "A", nombre: "Inglés Técnico", creditos: 2 },
+          { codigo: "B", nombre: "Electiva de Profundización I", creditos: 2 }
         ]
       },
       5: {
+        nivel_romano: "V",
         nombre: "Quinto Nivel",
-        creditos: 20,
+        tipo: "Tecnológico",
+        creditos: 16,
         materias: [
-          { codigo: "ING501", nombre: "Métodos Numéricos", creditos: 4 },
-          { codigo: "ING502", nombre: "Electrónica", creditos: 4 },
-          { codigo: "ING503", nombre: "Algoritmos", creditos: 4 },
-          { codigo: "ING504", nombre: "Base de Datos I", creditos: 4 },
-          { codigo: "ING505", nombre: "Investigación de Operaciones", creditos: 2 },
-          { codigo: "ING506", nombre: "Ética Profesional", creditos: 2 }
+          { codigo: "B", nombre: "Administración de Bases de Datos", creditos: 3 },
+          { codigo: "B", nombre: "Metodología de la Investigación", creditos: 2 },
+          { codigo: "A", nombre: "Ingeniería del Software", creditos: 3 },
+          { codigo: "A", nombre: "Auditoría de la Información", creditos: 2 },
+          { codigo: "A", nombre: "Gestión y Gobierno de TI", creditos: 3 },
+          { codigo: "B", nombre: "Electiva de Profundización II", creditos: 2 },
+          { codigo: "B", nombre: "Inglés B1", creditos: 1 }
         ]
       },
       6: {
-        nombre: "Sexto Nivel",
-        creditos: 20,
+        nivel_romano: "VI",
+        nombre: "Sexto Nivel", 
+        tipo: "Tecnológico",
+        creditos: 16,
         materias: [
-          { codigo: "ING601", nombre: "Análisis de Sistemas", creditos: 4 },
-          { codigo: "ING602", nombre: "Arquitectura de Computadores", creditos: 4 },
-          { codigo: "ING603", nombre: "Programación Orientada a Objetos", creditos: 4 },
-          { codigo: "ING604", nombre: "Base de Datos II", creditos: 4 },
-          { codigo: "ING605", nombre: "Gestión de Proyectos", creditos: 2 },
-          { codigo: "ING606", nombre: "Electiva I", creditos: 2 }
+          { codigo: "B", nombre: "Arquitectura y Patrones de Software", creditos: 3 },
+          { codigo: "B", nombre: "Calidad de Software", creditos: 3 },
+          { codigo: "A", nombre: "Gerencia de Datos", creditos: 3 },
+          { codigo: "A", nombre: "Análisis de Datos a Partir de Metodología de Investigación", creditos: 3 },
+          { codigo: "B", nombre: "Electiva de Profundización III", creditos: 2 },
+          { codigo: "B", nombre: "Inglés B2", creditos: 2 }
         ]
       },
       7: {
+        nivel_romano: "VII",
         nombre: "Séptimo Nivel",
-        creditos: 20,
+        tipo: "Universitario", 
+        creditos: 16,
         materias: [
-          { codigo: "ING701", nombre: "Ingeniería de Software I", creditos: 4 },
-          { codigo: "ING702", nombre: "Sistemas Operativos", creditos: 4 },
-          { codigo: "ING703", nombre: "Redes de Computadores I", creditos: 4 },
-          { codigo: "ING704", nombre: "Inteligencia Artificial", creditos: 4 },
-          { codigo: "ING705", nombre: "Emprendimiento", creditos: 2 },
-          { codigo: "ING706", nombre: "Electiva II", creditos: 2 }
+          { codigo: "A", nombre: "Introducción a la Ingeniería", creditos: 2 },
+          { codigo: "B", nombre: "Metodología y Evaluación de la Tecnología", creditos: 3 },
+          { codigo: "A", nombre: "Cálculo Multivariable", creditos: 4 },
+          { codigo: "A", nombre: "Álgebra Lineal", creditos: 3 },
+          { codigo: "A", nombre: "Análisis Numérico", creditos: 4 }
         ]
       },
       8: {
+        nivel_romano: "VIII", 
         nombre: "Octavo Nivel",
-        creditos: 20,
+        tipo: "Universitario",
+        creditos: 16,
         materias: [
-          { codigo: "ING801", nombre: "Ingeniería de Software II", creditos: 4 },
-          { codigo: "ING802", nombre: "Sistemas Distribuidos", creditos: 4 },
-          { codigo: "ING803", nombre: "Redes de Computadores II", creditos: 4 },
-          { codigo: "ING804", nombre: "Seguridad Informática", creditos: 4 },
-          { codigo: "ING805", nombre: "Electiva III", creditos: 2 },
-          { codigo: "ING806", nombre: "Electiva IV", creditos: 2 }
+          { codigo: "A", nombre: "Investigación de Operaciones", creditos: 4 },
+          { codigo: "A", nombre: "Configuraciones", creditos: 2 },
+          { codigo: "A", nombre: "Simulación Digital", creditos: 3 },
+          { codigo: "A", nombre: "Arquitectura de Arquitectura", creditos: 3 },
+          { codigo: "B", nombre: "Ética y Legislación Profesional", creditos: 2 },
+          { codigo: "B", nombre: "Electiva de Profundización IV", creditos: 2 }
         ]
       },
       9: {
-        nombre: "Noveno Nivel",
-        creditos: 20,
+        nivel_romano: "IX",
+        nombre: "Noveno Nivel", 
+        tipo: "Universitario",
+        creditos: 16,
         materias: [
-          { codigo: "ING901", nombre: "Proyecto de Grado I", creditos: 6 },
-          { codigo: "ING902", nombre: "Práctica Profesional", creditos: 8 },
-          { codigo: "ING903", nombre: "Seminario de Investigación", creditos: 3 },
-          { codigo: "ING904", nombre: "Electiva V", creditos: 3 }
+          { codigo: "A", nombre: "Gerencia de Datos", creditos: 3 },
+          { codigo: "A", nombre: "Metodología de la Investigación", creditos: 3 },
+          { codigo: "B", nombre: "Electiva de Profundización V", creditos: 2 },
+          { codigo: "A", nombre: "Optativa III", creditos: 4 },
+          { codigo: "A", nombre: "Optativa IV", creditos: 4 }
         ]
       },
       10: {
+        nivel_romano: "X",
         nombre: "Décimo Nivel",
-        creditos: 20,
+        tipo: "Universitario",
+        creditos: 16,
         materias: [
-          { codigo: "ING1001", nombre: "Proyecto de Grado II", creditos: 8 },
-          { codigo: "ING1002", nombre: "Auditoría de Sistemas", creditos: 4 },
-          { codigo: "ING1003", nombre: "Gerencia de Proyectos", creditos: 4 },
-          { codigo: "ING1004", nombre: "Electiva VI", creditos: 4 }
+          { codigo: "B", nombre: "Electiva de Profundización VI", creditos: 2 },
+          { codigo: "A", nombre: "Emprendimiento", creditos: 3 },
+          { codigo: "A", nombre: "Optativa V", creditos: 4 },
+          { codigo: "A", nombre: "Optativa VI", creditos: 4 },
+          { codigo: "A", nombre: "Optativa VII", creditos: 3 }
         ]
       }
     }

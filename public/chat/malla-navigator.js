@@ -5,7 +5,6 @@
 
 class MallaNavigator {
   constructor() {
-    this.programaActual = 'tecnologia';
     this.nivelActual = 1;
     this.zoomLevel = 100;
     this.mallaDatos = null;
@@ -284,10 +283,10 @@ class MallaNavigator {
   }
 
   /**
-   * Cambia el nivel actual
+   * Cambia el nivel actual (I-X)
    */
   cambiarNivel(direccion) {
-    if (!this.mallaDatos || !this.mallaDatos[this.programaActual]) return;
+    if (!this.mallaDatos?.niveles) return;
 
     const maxNivel = this.getMaxNivel();
     const nuevoNivel = this.nivelActual + direccion;
@@ -297,16 +296,17 @@ class MallaNavigator {
       this.actualizarTarjeta();
       this.animarCambio();
       
-      console.log(`📈 Nivel cambiado a: ${nuevoNivel}/${maxNivel}`);
+      const nivelRomano = this.mallaDatos.niveles[nuevoNivel]?.nivel_romano || nuevoNivel;
+      console.log(`📈 Nivel cambiado a: ${nivelRomano} (${nuevoNivel}/${maxNivel})`);
     }
   }
 
   /**
-   * Obtiene el número máximo de niveles para el programa actual
+   * Obtiene el número máximo de niveles (ahora son 10 niveles en total)
    */
   getMaxNivel() {
-    if (!this.mallaDatos || !this.mallaDatos[this.programaActual]) return 1;
-    return Object.keys(this.mallaDatos[this.programaActual].niveles).length;
+    if (!this.mallaDatos?.niveles) return 1;
+    return Object.keys(this.mallaDatos.niveles).length;
   }
 
   /**
@@ -318,21 +318,18 @@ class MallaNavigator {
       return;
     }
 
-    console.log(`🔄 Actualizando tarjeta - Programa: ${this.programaActual}, Nivel: ${this.nivelActual}`);
+    const nivelData = this.mallaDatos?.niveles[this.nivelActual];
     
-    const programaData = this.mallaDatos[this.programaActual];
-    const nivelData = programaData?.niveles[this.nivelActual];
-    
-    console.log('📊 Programa data:', programaData);
+    console.log(`🔄 Actualizando tarjeta - Nivel: ${nivelData?.nivel_romano || this.nivelActual}`);
     console.log('📋 Nivel data:', nivelData);
     
     if (!nivelData) {
-      console.warn(`Nivel ${this.nivelActual} no encontrado para ${this.programaActual}`);
+      console.warn(`Nivel ${this.nivelActual} no encontrado`);
       return;
     }
 
     // Actualizar información del nivel
-    this.actualizarInfoNivel(nivelData, programaData);
+    this.actualizarInfoNivel(nivelData, this.mallaDatos);
     
     // Actualizar lista de materias
     console.log('📚 Materias a mostrar:', nivelData.materias);
