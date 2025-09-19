@@ -415,7 +415,6 @@ class MallaNavigator {
   actualizarBotonesNavegacion() {
     const btnAnterior = document.getElementById('prevLevel');
     const btnSiguiente = document.getElementById('nextLevel');
-    const levelIndicator = document.querySelector('.level-indicator');
     const maxNivel = this.getMaxNivel();
     
     if (btnAnterior) {
@@ -424,10 +423,6 @@ class MallaNavigator {
     
     if (btnSiguiente) {
       btnSiguiente.disabled = this.nivelActual >= maxNivel;
-    }
-    
-    if (levelIndicator) {
-      levelIndicator.textContent = `Nivel ${this.nivelActual}`;
     }
   }
 

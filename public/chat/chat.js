@@ -320,7 +320,6 @@ async function createMallaComponent(parentElement) {
         </div>
         
         <div class="malla-controls">
-          <span class="level-indicator">Nivel 1</span>
           <div class="nav-buttons-group">
             <button class="nav-btn" id="prevLevel">← Anterior</button>
             <button class="nav-btn" id="nextLevel">Siguiente →</button>
