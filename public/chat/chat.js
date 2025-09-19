@@ -286,10 +286,10 @@ async function createMallaComponent(parentElement) {
       document.head.appendChild(cssLink);
     }
 
-    // Cargar JavaScript de malla simplificado para debugging
-    if (!window.SimpleMallaNavigator) {
+    // Cargar JavaScript de malla completo
+    if (!window.MallaNavigator) {
       const script = document.createElement('script');
-      script.src = '/chat/simple-malla.js';
+      script.src = '/chat/malla-navigator.js';
       document.head.appendChild(script);
       
       // Esperar a que el script se cargue
@@ -335,14 +335,14 @@ async function createMallaComponent(parentElement) {
       try {
         console.log('🔧 Intentando inicializar MallaNavigator...');
         
-        if (window.SimpleMallaNavigator) {
-          console.log('✅ SimpleMallaNavigator encontrado, creando instancia...');
-          const navigator = new window.SimpleMallaNavigator();
+        if (window.MallaNavigator) {
+          console.log('✅ MallaNavigator encontrado, creando instancia...');
+          const navigator = new window.MallaNavigator();
           await navigator.initialize();
-          console.log('✅ SimpleMallaNavigator inicializado exitosamente');
+          console.log('✅ MallaNavigator inicializado exitosamente');
         } else {
-          console.error('❌ SimpleMallaNavigator no está disponible en window');
-          throw new Error('SimpleMallaNavigator no cargado');
+          console.error('❌ MallaNavigator no está disponible en window');
+          throw new Error('MallaNavigator no cargado');
         }
       } catch (error) {
         console.error('❌ Error inicializando MallaNavigator:', error);

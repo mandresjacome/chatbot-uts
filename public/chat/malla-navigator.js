@@ -187,9 +187,9 @@ class MallaNavigator {
       </div>
       
       <div id="materias-container" class="materias-container">
-        <div class="materias-lista">
+        <ul class="materias-lista">
           <!-- Las materias se cargarán dinámicamente -->
-        </div>
+        </ul>
       </div>
     `;
   }
@@ -374,8 +374,9 @@ class MallaNavigator {
    * Actualiza el estado de los botones de navegación
    */
   actualizarBotonesNavegacion() {
-    const btnAnterior = document.getElementById('btn-anterior');
-    const btnSiguiente = document.getElementById('btn-siguiente');
+    const btnAnterior = document.getElementById('prevLevel');
+    const btnSiguiente = document.getElementById('nextLevel');
+    const levelIndicator = document.querySelector('.level-indicator');
     const maxNivel = this.getMaxNivel();
     
     if (btnAnterior) {
@@ -385,14 +386,18 @@ class MallaNavigator {
     if (btnSiguiente) {
       btnSiguiente.disabled = this.nivelActual >= maxNivel;
     }
+    
+    if (levelIndicator) {
+      levelIndicator.textContent = `Nivel ${this.nivelActual}`;
+    }
   }
 
   /**
    * Actualiza el estado activo de los botones de programa
    */
   actualizarBotonesPrograma() {
-    document.querySelectorAll('.btn-programa').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.programa === this.programaActual);
+    document.querySelectorAll('.program-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.program === this.programaActual);
     });
   }
 
