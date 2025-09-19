@@ -74,8 +74,32 @@ function bubble(text, me=false, extras={}){
     // Para mensajes del usuario, usar textContent (sin formateo)
     b.textContent = text;
   } else {
-    // Para mensajes del bot, procesar Markdown
-    b.innerHTML = processMarkdown(text);
+    // Para mensajes del bot, verificar si contiene componente de malla curricular
+    if (text.includes('**MALLA_CURRICULAR_COMPONENT**')) {
+      // Dividir el texto en partes antes y después del componente
+      const parts = text.split('**MALLA_CURRICULAR_COMPONENT**');
+      const textoBefore = parts[0] || '';
+      const textoAfter = parts[1] || '';
+      
+      // Procesar la parte antes del componente
+      if (textoBefore.trim()) {
+        b.innerHTML = processMarkdown(textoBefore.trim());
+      }
+      
+      // Crear y añadir el componente de malla curricular
+      createMallaComponent(wrap);
+      
+      // Procesar la parte después del componente
+      if (textoAfter.trim()) {
+        const afterDiv = document.createElement('div');
+        afterDiv.innerHTML = processMarkdown(textoAfter.trim());
+        afterDiv.style.marginTop = '15px';
+        wrap.appendChild(afterDiv);
+      }
+    } else {
+      // Para mensajes normales, procesar Markdown
+      b.innerHTML = processMarkdown(text);
+    }
   }
   
   wrap.appendChild(b);
@@ -248,6 +272,89 @@ async function send(){
   }catch(e){
     typing(false);
     bubble('❌ Ocurrió un error al procesar tu mensaje.', false, { ref:'Error' });
+  }
+}
+
+/* ====== Componente Malla Curricular ====== */
+async function createMallaComponent(parentElement) {
+  try {
+    // Cargar CSS si no está cargado
+    if (!document.querySelector('link[href*="malla-curricular.css"]')) {
+      const cssLink = document.createElement('link');
+      cssLink.rel = 'stylesheet';
+      cssLink.href = '/chat/malla-curricular.css';
+      document.head.appendChild(cssLink);
+    }
+
+    // Cargar JavaScript de malla si no está cargado
+    if (!window.MallaNavigator) {
+      const script = document.createElement('script');
+      script.src = '/chat/malla-navigator.js';
+      script.type = 'module';
+      document.head.appendChild(script);
+      
+      // Esperar a que el script se cargue
+      await new Promise((resolve, reject) => {
+        script.onload = resolve;
+        script.onerror = reject;
+      });
+    }
+
+    // Crear contenedor del componente
+    const mallaContainer = document.createElement('div');
+    mallaContainer.className = 'malla-container';
+    mallaContainer.innerHTML = `
+      <div class="malla-card">
+        <div class="malla-header">
+          <h3>🎓 Malla Curricular UTS</h3>
+          <div class="program-selector">
+            <button class="program-btn active" data-program="tecnologia">📱 Tecnología</button>
+            <button class="program-btn" data-program="ingenieria">⚙️ Ingeniería</button>
+          </div>
+        </div>
+        
+        <div class="malla-content">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Cargando malla curricular...</p>
+          </div>
+        </div>
+        
+        <div class="malla-controls">
+          <button class="nav-btn" id="prevLevel">← Anterior</button>
+          <span class="level-indicator">Nivel 1</span>
+          <button class="nav-btn" id="nextLevel">Siguiente →</button>
+          <button class="zoom-btn" id="expandMalla">🔍 Expandir</button>
+        </div>
+      </div>
+    `;
+
+    parentElement.appendChild(mallaContainer);
+
+    // Inicializar el navegador de malla
+    setTimeout(async () => {
+      try {
+        if (window.MallaNavigator) {
+          const navigator = new window.MallaNavigator();
+          await navigator.initialize();
+        }
+      } catch (error) {
+        console.error('Error inicializando MallaNavigator:', error);
+        mallaContainer.querySelector('.loading-spinner p').textContent = 'Error cargando la malla curricular';
+      }
+    }, 100);
+
+  } catch (error) {
+    console.error('Error creando componente de malla:', error);
+    
+    // Mostrar error en el componente
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'malla-error';
+    errorDiv.innerHTML = `
+      <p>❌ Error cargando la malla curricular</p>
+      <button onclick="this.parentElement.style.display='none'">Cerrar</button>
+    `;
+    parentElement.appendChild(errorDiv);
   }
 }
 

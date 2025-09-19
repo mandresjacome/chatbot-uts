@@ -13,6 +13,8 @@ import chatRouter from './routes/chat.js';
 import feedbackRouter from './routes/feedback.js';
 // Importar el router de admin (métricas)
 import adminRouter from './routes/admin.js';
+// Importar el router de malla curricular
+import mallaRouter from './routes/malla.js';
 // Importar middleware de autenticación admin
 import { adminAuth } from './middlewares/adminAuth.js';
 // Importar función para inicializar el esquema de base de datos
@@ -210,6 +212,9 @@ app.use('/api/chat', chatRouter);
 
 // 👉 Conectar las rutas del feedback bajo el prefijo '/api/feedback'
 app.use('/api/feedback', feedbackRouter);
+
+// 👉 Conectar las rutas de malla curricular bajo el prefijo '/api'
+app.use('/api', mallaRouter);
 
 // 👉 Conectar las rutas de admin PROTEGIDAS bajo el prefijo '/api/admin' 
 // Solo las operaciones de mantenimiento que requieren autenticación

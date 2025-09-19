@@ -1,6 +1,48 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { isTeacherSearchQuery, findTeacherByName, formatTeacherInfo } from '../nlp/teacherSearch.js';
 
+// Función para detectar consultas de malla curricular
+function isMallaQuery(question) {
+  const mallaKeywords = [
+    'malla', 'pensum', 'plan de estudios', 'curriculum', 'materias',
+    'asignaturas', 'semestres', 'niveles', 'créditos', 'estructura curricular'
+  ];
+  
+  const questionLower = question.toLowerCase();
+  return mallaKeywords.some(keyword => questionLower.includes(keyword));
+}
+
+// Función para generar respuesta con componente de malla curricular
+function generateMallaResponse(question) {
+  const questionLower = question.toLowerCase();
+  
+  // Determinar si se pregunta por un programa específico
+  let programa = null;
+  if (questionLower.includes('tecnología') || questionLower.includes('tecnolog')) {
+    programa = 'tecnologia';
+  } else if (questionLower.includes('ingeniería') || questionLower.includes('ingenier')) {
+    programa = 'ingenieria';
+  }
+
+  return `
+🎓 **Malla Curricular - Unidades Tecnológicas de Santander**
+
+📋 Te muestro la estructura curricular de nuestros programas de Sistemas. Puedes navegar por los diferentes niveles académicos y explorar las materias de cada semestre.
+
+${programa ? `🔍 Has consultado específicamente sobre **${programa === 'tecnologia' ? 'Tecnología en Desarrollo de Sistemas Informáticos' : 'Ingeniería de Sistemas'}**.` : '🔍 Puedes explorar tanto **Tecnología** como **Ingeniería de Sistemas**.'}
+
+**MALLA_CURRICULAR_COMPONENT**
+
+💡 **Características principales:**
+📌 Navega por niveles usando las flechas
+📌 Haz clic en cualquier materia para ver detalles
+📌 Usa el zoom para mejor visualización
+📌 Cambia entre programas con los botones superiores
+
+¿Te gustaría información específica sobre alguna materia o nivel en particular? 🤓
+`.trim();
+}
+
 const USE_LLM = process.env.USE_LLM || 'gemini';
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const hasKey = Boolean(process.env.GEMINI_API_KEY);
@@ -63,6 +105,11 @@ if (hasKey) {
 }
 
 export async function answerLLM({ question, evidenceChunks, userType, conversationHistory = [] }) {
+  // Verificar si es consulta sobre malla curricular
+  if (isMallaQuery(question)) {
+    return generateMallaResponse(question);
+  }
+
   // Verificar si es una búsqueda de docente específico
   if (isTeacherSearchQuery(question)) {
     // Buscar información de docentes en los chunks de evidencia

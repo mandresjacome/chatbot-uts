@@ -139,6 +139,20 @@ export const synonyms = {
     "curriculum tecnología",
     "pensum tecnología"
   ],
+  "malla_curricular": [
+    "malla curricular",
+    "malla",
+    "pensum",
+    "plan de estudios",
+    "curriculum",
+    "materias por semestre",
+    "estructura curricular",
+    "programa académico",
+    "asignaturas",
+    "créditos académicos",
+    "niveles académicos",
+    "semestres académicos"
+  ],
   "sistemas": [
     "sistemas",
     "informática",
