@@ -162,6 +162,8 @@ class MallaNavigator {
       return;
     }
     
+    console.log('🎨 Renderizando malla inicial...');
+    
     // Ocultar spinner de carga
     const spinner = document.querySelector('.loading-spinner');
     if (spinner) {
@@ -170,7 +172,11 @@ class MallaNavigator {
     
     // Mostrar contenido de la malla
     this.crearContenidoMalla();
-    this.actualizarTarjeta();
+    
+    // Actualizar con datos del nivel actual
+    setTimeout(() => {
+      this.actualizarTarjeta();
+    }, 100);
   }
 
   /**
@@ -291,10 +297,18 @@ class MallaNavigator {
    * Actualiza el contenido de la tarjeta
    */
   actualizarTarjeta() {
-    if (!this.isInitialized) return;
+    if (!this.isInitialized) {
+      console.warn('⚠️ MallaNavigator no está inicializado');
+      return;
+    }
 
+    console.log(`🔄 Actualizando tarjeta - Programa: ${this.programaActual}, Nivel: ${this.nivelActual}`);
+    
     const programaData = this.mallaDatos[this.programaActual];
     const nivelData = programaData?.niveles[this.nivelActual];
+    
+    console.log('📊 Programa data:', programaData);
+    console.log('📋 Nivel data:', nivelData);
     
     if (!nivelData) {
       console.warn(`Nivel ${this.nivelActual} no encontrado para ${this.programaActual}`);
@@ -305,6 +319,7 @@ class MallaNavigator {
     this.actualizarInfoNivel(nivelData, programaData);
     
     // Actualizar lista de materias
+    console.log('📚 Materias a mostrar:', nivelData.materias);
     this.actualizarMaterias(nivelData.materias || []);
     
     // Actualizar botones de navegación
@@ -339,14 +354,22 @@ class MallaNavigator {
    * Actualiza la lista de materias
    */
   actualizarMaterias(materias) {
+    console.log('🔍 actualizarMaterias llamado con:', materias);
+    
     const materiasContainer = document.getElementById('materias-container');
-    if (!materiasContainer) return;
+    if (!materiasContainer) {
+      console.error('❌ No se encontró materias-container');
+      return;
+    }
 
     const materiasLista = materiasContainer.querySelector('.materias-lista') || 
                          materiasContainer.querySelector('ul') ||
                          materiasContainer;
+    
+    console.log('📋 materiasLista encontrada:', materiasLista);
 
-    if (materias.length === 0) {
+    if (!materias || materias.length === 0) {
+      console.warn('⚠️ No hay materias para mostrar');
       materiasLista.innerHTML = '<li class="materia-item">No hay materias disponibles</li>';
       return;
     }
