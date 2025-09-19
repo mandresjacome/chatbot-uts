@@ -61,11 +61,34 @@
       </div>
     </div>
 
+    <button onclick="testNavigation()">🧪 Probar Navegación</button>
+    
+    <script src="/chat/malla-navigator.js"></script>
     <script>
         console.log('🔍 Página de debug cargada');
         console.log('📋 Materias container:', document.getElementById('materias-container'));
         console.log('📚 Materias lista:', document.querySelector('.materias-lista'));
         console.log('🎯 Items de materia:', document.querySelectorAll('.materia-item'));
+        
+        let navigator;
+        
+        async function testNavigation() {
+            try {
+                console.log('🧪 Iniciando test de navegación...');
+                
+                if (!window.MallaNavigator) {
+                    console.error('❌ MallaNavigator no disponible');
+                    return;
+                }
+                
+                navigator = new window.MallaNavigator();
+                await navigator.initialize();
+                
+                console.log('✅ Navigator inicializado para debug');
+            } catch (error) {
+                console.error('❌ Error en test:', error);
+            }
+        }
     </script>
 </body>
 </html>

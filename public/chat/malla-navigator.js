@@ -184,8 +184,14 @@ class MallaNavigator {
    */
   crearContenidoMalla() {
     const mallaContent = document.querySelector('.malla-content');
-    if (!mallaContent) return;
+    if (!mallaContent) {
+      console.error('❌ No se encontró .malla-content');
+      return;
+    }
 
+    console.log('🏗️ Creando contenido de malla...');
+
+    // Reemplazar completamente el contenido (quitar spinner)
     mallaContent.innerHTML = `
       <div class="nivel-info">
         <h4 class="nivel-titulo">Nivel <span id="nivel-actual">${this.nivelActual}</span> de <span id="total-niveles">${this.getMaxNivel()}</span></h4>
@@ -194,10 +200,12 @@ class MallaNavigator {
       
       <div id="materias-container" class="materias-container">
         <ul class="materias-lista">
-          <!-- Las materias se cargarán dinámicamente -->
+          <li class="materia-item">Cargando materias...</li>
         </ul>
       </div>
     `;
+
+    console.log('✅ Contenido de malla creado');
   }
 
   /**
