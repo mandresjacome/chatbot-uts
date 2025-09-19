@@ -126,10 +126,17 @@ class MallaNavigator {
    * Configura los event listeners
    */
   configurarEventos() {
+    console.log('🔧 Configurando eventos...');
+    
     // Botones de programa
-    document.querySelectorAll('.program-btn').forEach(btn => {
+    const programBtns = document.querySelectorAll('.program-btn');
+    console.log('📱 Botones de programa encontrados:', programBtns.length);
+    
+    programBtns.forEach(btn => {
+      console.log('🔗 Configurando evento para:', btn.dataset.program);
       btn.addEventListener('click', (e) => {
         const programa = e.target.dataset.program;
+        console.log('🔄 Cambiando a programa:', programa);
         this.cambiarPrograma(programa);
       });
     });
@@ -173,8 +180,9 @@ class MallaNavigator {
     // Mostrar contenido de la malla
     this.crearContenidoMalla();
     
-    // Actualizar con datos del nivel actual
+    // Configurar eventos después de crear el contenido
     setTimeout(() => {
+      this.configurarEventos();
       this.actualizarTarjeta();
     }, 100);
   }
