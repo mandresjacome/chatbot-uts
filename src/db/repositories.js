@@ -22,6 +22,17 @@ export const Conversations = {
     }
   },
 
+  async getHistoryBySession(session_id, limit = 5) {
+    return queryAll(
+      `SELECT pregunta, respuesta, created_at
+       FROM conversations
+       WHERE session_id = ${isPg ? '$1' : '?'}
+       ORDER BY id ASC
+       LIMIT ${isPg ? '$2' : '?'}`,
+      [session_id, limit]
+    );
+  },
+
   async totals() {
     const row = await queryOne(`SELECT COUNT(*) AS total FROM conversations`);
     // PG devuelve string en COUNT(); SQLite número. Normalizamos:

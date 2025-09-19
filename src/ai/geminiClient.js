@@ -14,8 +14,8 @@ function cut(text = '', max = 2000) {
   return text.length > max ? text.slice(0, max) + '…' : text;
 }
 
-// Prompt "evidencia primero"
-function buildPrompt({ question, evidenceChunks, userType }) {
+// Prompt "evidencia primero" con contexto de conversación
+function buildPrompt({ question, evidenceChunks, userType, conversationHistory = [] }) {
   const system = [
     'Eres el Chatbot UTS v1.2.0 para las Unidades Tecnológicas de Santander.',
     'Responde ÚNICAMENTE con la evidencia proporcionada.',
@@ -25,21 +25,32 @@ function buildPrompt({ question, evidenceChunks, userType }) {
     'USA EMOJIS relevantes para hacer las respuestas más visuales y atractivas.',
     'Incluye emojis al inicio de secciones importantes y en las viñetas.',
     'NO incluyas referencias ni menciones de fuentes en tu respuesta.',
+    'MANTÉN COHERENCIA con la conversación anterior si existe contexto previo.',
   ].join(' ');
 
   const evidence = evidenceChunks.length
     ? evidenceChunks.map((c,i)=> `[#${i+1}] ${c.text}`).join('\n')
     : '(no hay evidencia disponible)';
 
+  // Incluir historial de conversación si existe
+  let contextSection = '';
+  if (conversationHistory.length > 0) {
+    const historyText = conversationHistory.map(conv => 
+      `Usuario: ${conv.pregunta}\nAsistente: ${conv.respuesta}`
+    ).join('\n\n');
+    contextSection = `CONVERSACIÓN ANTERIOR:\n${cut(historyText, 800)}\n\n`;
+  }
+
   const body = [
     system,
     '',
-    `Pregunta del usuario: ${question}`,
+    contextSection,
+    `Pregunta actual del usuario: ${question}`,
     '',
     'EVIDENCIA:',
     cut(evidence, MAX_EVIDENCE),
     '',
-    `Redacta la mejor respuesta posible en <= ${MAX_RESPONSE} caracteres, fiel a la evidencia.`
+    `Redacta la mejor respuesta posible en <= ${MAX_RESPONSE} caracteres, considerando el contexto de la conversación y siendo fiel a la evidencia.`
   ].join('\n');
 
   return body;
@@ -51,7 +62,7 @@ if (hasKey) {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
-export async function answerLLM({ question, evidenceChunks, userType }) {
+export async function answerLLM({ question, evidenceChunks, userType, conversationHistory = [] }) {
   // Verificar si es una búsqueda de docente específico
   if (isTeacherSearchQuery(question)) {
     // Buscar información de docentes en los chunks de evidencia
@@ -69,20 +80,25 @@ export async function answerLLM({ question, evidenceChunks, userType }) {
     }
   }
 
-  // Fallback mock o sin clave (funcionamiento original)
+  // Fallback mock o sin clave con contexto
   if (USE_LLM === 'mock' || !hasKey) {
+    let contextNote = '';
+    if (conversationHistory.length > 0) {
+      contextNote = '\n\n💬 Continuando nuestra conversación anterior... ';
+    }
+    
     if (!evidenceChunks?.length) {
       return `🤔 No tengo evidencia suficiente sobre "${question}". ` +
-             `📝 Indícame programa/sede/periodo para ayudarte mejor.`;
+             `📝 Indícame programa/sede/periodo para ayudarte mejor.${contextNote}`;
     }
     const bullets = evidenceChunks.map((c,i)=> `📌 ${c.text}`).join('\n');
-    return `${bullets}\n\n❓ ¿Deseas detalles para tu programa o sede específicos?`;
+    return `${bullets}${contextNote}\n\n❓ ¿Deseas detalles para tu programa o sede específicos?`;
   }
 
-  // Gemini "evidencia primero" (funcionamiento original)
+  // Gemini "evidencia primero" con historial de conversación
   const model = genAI.getGenerativeModel({ model: MODEL });
 
-  const prompt = buildPrompt({ question, evidenceChunks, userType });
+  const prompt = buildPrompt({ question, evidenceChunks, userType, conversationHistory });
   const result = await model.generateContent({
     contents: [{ role: 'user', parts: [{ text: prompt }] }]
   });

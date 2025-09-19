@@ -19,7 +19,7 @@ const htmlEl = document.documentElement;
 function applyTheme(mode){
   htmlEl.setAttribute('data-theme', mode);
   localStorage.setItem(THEME_KEY, mode);
-  themeToggle.textContent = mode === 'dark' ? '🌙' : (mode === 'light' ? '☀️' : '🌓');
+  themeToggle.textContent = mode === 'dark' ? '🌙' : '☀️';
 }
 (function initTheme(){
   let saved = localStorage.getItem(THEME_KEY) || 'light';
@@ -31,8 +31,8 @@ function applyTheme(mode){
   applyTheme(saved);
 })();
 themeToggle.addEventListener('click', () => {
-  const cur = htmlEl.getAttribute('data-theme') || 'auto';
-  applyTheme(cur === 'auto' ? 'dark' : cur === 'dark' ? 'light' : 'auto');
+  const cur = htmlEl.getAttribute('data-theme') || 'light';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
 });
 
 /* ====== Util ====== */

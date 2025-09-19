@@ -30,7 +30,17 @@ router.post('/message', async (req, res) => {
       questionLength: clean.length
     });
 
-    // 1) Búsqueda de evidencia local
+    // 1) Obtener historial de conversación
+    const historyStart = Date.now();
+    const conversationHistory = await Conversations.getHistoryBySession(sessionId, 5);
+    const historyTime = Date.now() - historyStart;
+    
+    logger.info('HISTORY', `Historial recuperado`, {
+      historyTimeMs: historyTime,
+      conversationsFound: conversationHistory.length
+    });
+
+    // 2) Búsqueda de evidencia local
     const retrievalStart = Date.now();
     const { chunks, meta } = retrieveTopK({ query: clean, userType, k: 3 });
     const retrievalTime = Date.now() - retrievalStart;
@@ -40,12 +50,13 @@ router.post('/message', async (req, res) => {
       evidenceCount: chunks.length
     });
 
-    // 2) Generación de respuesta con IA
+    // 3) Generación de respuesta con IA (incluyendo historial)
     const llmStart = Date.now();
     const responseText = await answerLLM({
       question: clean,
       evidenceChunks: chunks,
-      userType
+      userType,
+      conversationHistory
     });
     const llmTime = Date.now() - llmStart;
     
@@ -54,7 +65,7 @@ router.post('/message', async (req, res) => {
       responseLength: responseText.length
     });
 
-    // 3) Guardar conversación en base de datos
+    // 4) Guardar conversación en base de datos
     const dbStart = Date.now();
     const knowledgeRefs = chunks.length ? chunks.map(c => c.titulo).join(' | ') : null;
     const conversationId = await Conversations.create({
@@ -73,9 +84,10 @@ router.post('/message', async (req, res) => {
 
     const totalTime = Date.now() - startTime;
     
-    // Log final de la conversación completa
+    // Log final de la conversación completa (incluyendo tiempo de historial)
     logger.conversation(sessionId, userType, clean, responseText, chunks, {
       totalTimeMs: totalTime,
+      historyTimeMs: historyTime,
       retrievalTimeMs: retrievalTime,
       llmTimeMs: llmTime,
       dbTimeMs: dbTime
