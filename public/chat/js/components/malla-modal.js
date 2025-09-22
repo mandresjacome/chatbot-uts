@@ -8,6 +8,30 @@
  * - Aplicar colores de líneas de formación
  */
 
+/**
+ * Función auxiliar para acceso seguro a documentos en contexto de iframe
+ */
+function getSafeDocument() {
+  const isInIframe = window.self !== window.top;
+  
+  if (!isInIframe) {
+    return document;
+  }
+  
+  // Intentar acceso seguro a window.top.document
+  try {
+    if (window.top?.document) {
+      return window.top.document;
+    }
+  } catch (error) {
+    console.warn('⚠️ Error de seguridad accediendo a window.top.document:', error.message);
+  }
+  
+  // Fallback a documento actual
+  console.log('🔄 Fallback a documento actual');
+  return document;
+}
+
 class MallaModal {
   constructor(mallaNavigator) {
     this.navigator = mallaNavigator;
@@ -31,9 +55,9 @@ class MallaModal {
   maximizar() {
     console.log('🚀 Iniciando maximización del modal...');
     
-    // Detectar contexto
+    // Obtener documento de forma segura
+    const targetDocument = getSafeDocument();
     const isInIframe = window.self !== window.top;
-    const targetDocument = isInIframe ? window.top.document : document;
     
     console.log(`🔍 Contexto de maximización: ${isInIframe ? 'iframe' : 'ventana principal'}`);
     
@@ -57,9 +81,9 @@ class MallaModal {
    * Crea el modal HTML si no existe
    */
   crearModal() {
-    // Detectar si estamos en un iframe
+    // Obtener documento de forma segura
+    const targetDocument = getSafeDocument();
     const isInIframe = window.self !== window.top;
-    const targetDocument = isInIframe ? window.top.document : document;
     const targetWindow = isInIframe ? window.top : window;
     
     // Crear estilos CSS en la ventana principal si estamos en iframe
@@ -489,9 +513,9 @@ class MallaModal {
   cerrar() {
     console.log('🔴 Intentando cerrar modal...');
     
-    // Detectar contexto
+    // Obtener documento de forma segura
+    const targetDocument = getSafeDocument();
     const isInIframe = window.self !== window.top;
-    const targetDocument = isInIframe ? window.top.document : document;
     
     console.log(`🔍 Contexto: ${isInIframe ? 'iframe' : 'ventana principal'}`);
     
@@ -519,11 +543,16 @@ class MallaModal {
 window.toggleMateriaConnections = function(materiaId) {
   console.log('🔍 Mostrando conexiones para:', materiaId);
   
-  // Detectar contexto correcto (modal está en ventana principal)
-  const isInIframe = window.self !== window.top;
-  const targetDocument = isInIframe ? window.top.document : document;
+  // Obtener documento de forma segura
+  const targetDocument = getSafeDocument();
   
-  console.log(`🎯 Buscando conexiones en: ${isInIframe ? 'ventana principal' : 'documento actual'}`);
+  console.log(`🎯 Documento obtenido: ${targetDocument === window.top?.document ? 'ventana principal' : 'documento actual'}`);
+  
+  // Validar que targetDocument esté disponible
+  if (!targetDocument) {
+    console.error('❌ No hay documento disponible para mostrar conexiones');
+    return;
+  }
   
   // Verificar si ya está en modo conexión para esta materia
   const materiaActual = targetDocument.querySelector(`[data-materia-id="${materiaId}"]`);
