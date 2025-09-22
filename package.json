@@ -9,6 +9,7 @@
     "scrapers": "node scripts/run-scrapers.cjs",
     "generate-synonyms": "node scripts/generate-synonyms.cjs",
     "improve-keywords": "node scripts/improve-keywords.cjs",
+    "sync-teachers": "node scripts/sync-teacher-keywords.cjs --force",
     "auto-update": "node scripts/auto-update-system.cjs full",
     "auto-update-quick": "node scripts/auto-update-system.cjs quick",
     "detect-changes": "node scripts/change-detector.cjs detect",

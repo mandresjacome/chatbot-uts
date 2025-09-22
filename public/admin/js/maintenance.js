@@ -41,6 +41,10 @@ class MaintenanceManager {
     this.bindButton('autoUpdateBtn', () => this.runAutoUpdate('full'));
     this.bindButton('quickUpdateBtn', () => this.runAutoUpdate('quick'));
     
+    // Sincronización de Docentes
+    this.bindButton('syncTeachersBtn', () => this.syncTeachers());
+    this.bindButton('checkTeachersBtn', () => this.checkTeachersChanges());
+    
     // Optimización de Búsqueda
     this.bindButton('improveKeywordsBtn', () => this.improveKeywords());
     this.bindButton('generateSynonymsBtn', () => this.generateSynonyms());
@@ -314,6 +318,8 @@ class MaintenanceManager {
     const buttonMappings = {
       'automation': ['detectChangesBtn', 'autoUpdateBtn', 'quickUpdateBtn'],
       'optimization': ['improveKeywordsBtn', 'generateSynonymsBtn'],
+      'teacher-sync': ['syncTeachersBtn'],
+      'teacher-check': ['checkTeachersBtn'],
       'scrapers': ['runAllScrapersBtn', 'runAspirantesBtn', 'runDocentesBtn', 'runEstudiantesBtn', 'runTecnologiaBtn'],
       'systemOps': ['reloadKbBtn', 'backupDbBtn'],
       'config': ['setupAutomationBtn', 'viewLogsBtn']
@@ -321,7 +327,9 @@ class MaintenanceManager {
 
     const statusMappings = {
       'automation': 'automationStatus',
-      'optimization': 'optimizationStatus', 
+      'optimization': 'optimizationStatus',
+      'teacher-sync': 'teacherSyncStatus',
+      'teacher-check': 'teacherSyncStatus',
       'scrapers': 'scrapersStatus',
       'systemOps': 'systemOpsStatus',
       'config': 'configStatus'
@@ -596,6 +604,102 @@ class MaintenanceManager {
       }
     } catch (error) {
       console.error('Synonyms error:', error);
+      this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
+      this.setTaskStatus(taskId, 'error');
+    } finally {
+      this.runningTasks.delete(taskId);
+    }
+  }
+
+  async syncTeachers() {
+    if (!this.authenticated) return;
+
+    const taskId = 'teacher-sync';
+    if (this.runningTasks.has(taskId)) {
+      this.showAlert('La sincronización de docentes ya está en progreso', 'warning');
+      return;
+    }
+
+    this.setTaskStatus(taskId, 'running');
+    this.showTaskOutput(taskId, '👨‍🏫 Sincronizando palabras clave de docentes...\n');
+
+    try {
+      const response = await fetch('/api/admin/sync-teachers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': this.adminToken
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.appendTaskOutput(taskId, '✅ Sincronización completada exitosamente\n');
+        if (result.stats) {
+          this.appendTaskOutput(taskId, `   Docentes procesados: ${result.stats.processed}\n`);
+          this.appendTaskOutput(taskId, `   Nombres añadidos: ${result.stats.added}\n`);
+          this.appendTaskOutput(taskId, `   Registros actualizados: ${result.stats.updated}\n`);
+        }
+        this.setTaskStatus(taskId, 'success');
+        this.showAlert('Palabras clave de docentes sincronizadas exitosamente', 'success');
+      } else {
+        this.appendTaskOutput(taskId, `❌ Error: ${result.error}\n`);
+        this.setTaskStatus(taskId, 'error');
+      }
+    } catch (error) {
+      console.error('Teacher sync error:', error);
+      this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
+      this.setTaskStatus(taskId, 'error');
+    } finally {
+      this.runningTasks.delete(taskId);
+    }
+  }
+
+  async checkTeachersChanges() {
+    if (!this.authenticated) return;
+
+    const taskId = 'teacher-check';
+    if (this.runningTasks.has(taskId)) {
+      this.showAlert('La verificación de cambios ya está en progreso', 'warning');
+      return;
+    }
+
+    this.setTaskStatus(taskId, 'running');
+    this.showTaskOutput(taskId, '🔍 Verificando cambios en docentes...\n');
+
+    try {
+      const response = await fetch('/api/admin/check-teachers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': this.adminToken
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const hasChanges = result.data.hasChanges;
+        const statusIcon = hasChanges ? '⚠️' : '✅';
+        const statusText = hasChanges ? 'Cambios detectados' : 'Sin cambios';
+        
+        this.appendTaskOutput(taskId, `${statusIcon} ${statusText}\n`);
+        this.appendTaskOutput(taskId, `   Última actualización: ${result.data.lastUpdate}\n`);
+        this.appendTaskOutput(taskId, `   Docentes en base: ${result.data.teachersCount}\n`);
+        
+        if (hasChanges) {
+          this.appendTaskOutput(taskId, '   💡 Se recomienda ejecutar la sincronización\n');
+        }
+        
+        this.setTaskStatus(taskId, hasChanges ? 'warning' : 'success');
+        this.showAlert(`Verificación completada: ${statusText}`, hasChanges ? 'warning' : 'success');
+      } else {
+        this.appendTaskOutput(taskId, `❌ Error: ${result.error}\n`);
+        this.setTaskStatus(taskId, 'error');
+      }
+    } catch (error) {
+      console.error('Teacher check error:', error);
       this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
       this.setTaskStatus(taskId, 'error');
     } finally {

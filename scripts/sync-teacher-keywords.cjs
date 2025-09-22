@@ -3,8 +3,12 @@
  * Se ejecuta periódicamente para mantener actualizadas las búsquedas por nombre
  */
 
-async function syncTeacherKeywords() {
-    console.log('🔄 Iniciando sincronización de nombres de docentes...');
+async function syncTeacherKeywords(checkOnly = false) {
+    if (checkOnly) {
+        console.log('� Verificando cambios en docentes...');
+    } else {
+        console.log('�🔄 Iniciando sincronización de nombres de docentes...');
+    }
     
     try {
         // Importar funciones necesarias
@@ -71,10 +75,27 @@ async function syncTeacherKeywords() {
         
         // 6. Verificar si hay cambios necesarios
         const currentKeywords = record.palabras_clave || '';
+        const hasChanges = currentKeywords !== keywordString;
         
-        if (currentKeywords === keywordString) {
+        if (checkOnly) {
+            // Solo verificar cambios, no hacer actualización
+            return {
+                hasChanges,
+                teachersCount: uniqueNames.length,
+                lastUpdate: record.updated_at || 'Nunca',
+                processed: uniqueNames.length,
+                added: hasChanges ? uniqueNames.length - (currentKeywords.split(', ').length - baseKeywords.length) : 0
+            };
+        }
+        
+        if (!hasChanges) {
             console.log('✅ No se requieren cambios - palabras clave ya están actualizadas');
-            return false;
+            return {
+                hasChanges: false,
+                processed: uniqueNames.length,
+                added: 0,
+                updated: 0
+            };
         }
         
         // 7. Actualizar la base de datos
@@ -93,7 +114,12 @@ async function syncTeacherKeywords() {
         console.log(`📊 Items recargados en retriever: ${reloadedCount}`);
         console.log(`🔑 Nuevas búsquedas disponibles para: ${uniqueNames.slice(0, 5).join(', ')}...`);
         
-        return true;
+        return {
+            hasChanges: true,
+            processed: uniqueNames.length,
+            added: uniqueNames.length,
+            updated: 1
+        };
         
     } catch (error) {
         console.error('❌ Error durante la sincronización:', error.message);

@@ -13,41 +13,6 @@ function parseTeachersFromText(teachersText) {
     
     // Si el texto está todo en una línea, intentar separar por patrones de correo
     if (!teachersText.includes('\n') && teachersText.includes('@correo.uts.edu.co')) {
-        // Usar regex para encontrar patrones de docentes
-        // Patrón: nombre + correo@uts.edu.co + información adicional + URL CvLAC
-        const teacherPattern = /([A-ZÁÉÍÓÚÑÜ][a-záéíóúñü\s]+[a-záéíóúñü])\s+([a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\s+(.*?)(?=\s+[A-ZÁÉÍÓÚÑÜ][a-záéíóúñü\s]+[a-záéíóúñü]\s+[a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|$)/g;
-        
-        let match;
-        while ((match = teacherPattern.exec(teachersText)) !== null) {
-            const [, nombre, correo, info] = match;
-            
-            if (nombre && correo && correo.includes('@uts.edu.co')) {
-                // Extraer información adicional del texto
-                const infoText = info.trim();
-                
-                // Buscar CvLAC URL al final
-                const cvlacMatch = infoText.match(/(https:\/\/scienti\.minciencias\.gov\.co\/cvlac\/[^\s]+)/);
-                const cvlac = cvlacMatch ? cvlacMatch[1] : '';
-                
-                // Remover CvLAC del texto para extraer el resto
-                const remainingInfo = cvlac ? infoText.replace(cvlac, '').trim() : infoText;
-                
-                const teacher = {
-                    nombre: nombre.trim(),
-                    correo: correo.trim(),
-                    estudios: remainingInfo.substring(0, 200) + '...', // Primeros 200 chars como estudios
-                    cursos: '', // Difícil de extraer del formato actual
-                    experienciaTotal: '',
-                    experienciaUTS: '',
-                    cvlac: cvlac
-                };
-                
-                teachers.push(teacher);
-            }
-        }
-        
-        // Si no funciona el regex complejo, usar método más simple
-        if (teachers.length === 0) {
             // Buscar todos los correos @correo.uts.edu.co y extraer contexto alrededor
             const emailPattern = /([a-zA-Z0-9._%+-]+@correo\.uts\.edu\.co)/g;
             let emailMatch;
@@ -84,7 +49,6 @@ function parseTeachersFromText(teachersText) {
                     });
                 }
             }
-        }
     } else {
         // Método original para texto con líneas separadas
         const lines = teachersText.split('\n').filter(line => line.trim());

@@ -234,6 +234,82 @@ router.post('/generate-synonyms', async (_req, res) => {
   }
 });
 
+// Sincronización de palabras clave de docentes
+router.post('/sync-teachers', async (_req, res) => {
+  try {
+    console.log('[admin] Sincronizando palabras clave de docentes...');
+    
+    const { stdout } = await execAsync('node scripts/sync-teacher-keywords.cjs', {
+      cwd: path.join(__dirname, '..', '..'),
+      timeout: 60000
+    });
+    
+    // Parsear la salida para extraer estadísticas
+    const lines = stdout.split('\n').filter(line => line.trim());
+    const stats = {
+      processed: 0,
+      added: 0,
+      updated: 0
+    };
+    
+    lines.forEach(line => {
+      if (line.includes('Docentes procesados:')) {
+        stats.processed = parseInt(line.match(/\d+/)?.[0] || '0');
+      }
+      if (line.includes('nombres añadidos')) {
+        stats.added = parseInt(line.match(/\d+/)?.[0] || '0');
+      }
+      if (line.includes('registros actualizados')) {
+        stats.updated = parseInt(line.match(/\d+/)?.[0] || '0');
+      }
+    });
+    
+    res.json({
+      success: true,
+      stats,
+      output: stdout
+    });
+  } catch (error) {
+    console.error('[admin/sync-teachers] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error sincronizando docentes: ${error.message}`
+    });
+  }
+});
+
+// Verificar cambios en docentes
+router.get('/check-teachers', async (_req, res) => {
+  try {
+    console.log('[admin] Verificando cambios en docentes...');
+    
+    const { stdout } = await execAsync('node -e "' +
+      'const { syncTeacherKeywords } = require(\"./scripts/sync-teacher-keywords.cjs\"); ' +
+      'syncTeacherKeywords(true).then(result => console.log(JSON.stringify(result)));' +
+      '"', {
+      cwd: path.join(__dirname, '..', '..'),
+      timeout: 30000
+    });
+    
+    const result = JSON.parse(stdout.trim());
+    
+    res.json({
+      success: true,
+      data: {
+        hasChanges: result.hasChanges,
+        lastUpdate: result.lastUpdate || 'Nunca',
+        teachersCount: result.teachersCount || 0
+      }
+    });
+  } catch (error) {
+    console.error('[admin/check-teachers] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error verificando docentes: ${error.message}`
+    });
+  }
+});
+
 // Obtener logs del sistema
 router.get('/logs', async (_req, res) => {
   try {
