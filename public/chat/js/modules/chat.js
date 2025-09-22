@@ -1,5 +1,5 @@
 // chat.js
-import { getUserType, resetUserType, showModal } from './modal-user.js';
+import { getUserType, resetUserType, showModal } from '../components/modal-user.js';
 
 const $ = s => document.querySelector(s);
 const chat = $('#chat');
