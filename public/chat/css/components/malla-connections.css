@@ -1,0 +1,226 @@
+/**
+ * 🔗 Malla Connections - Estilos para conexiones de prerrequisitos
+ * 
+ * Este archivo maneja específicamente las visualizaciones de conexiones
+ * entre materias cuando se hace clic para mostrar prerrequisitos y dependientes
+ */
+
+/* ========================================
+   ESTADO BASE - Materias sin conexión (Blanco y Negro)
+   ======================================== */
+
+.materia-horizontal.connection-mode {
+  /* Convertir a escala de grises cuando se activa el modo conexión */
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  border: 2px solid #ddd !important;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.materia-horizontal.connection-mode .materia-codigo,
+.materia-horizontal.connection-mode .materia-nombre,
+.materia-horizontal.connection-mode .materia-stats {
+  color: #666 !important;
+}
+
+/* ========================================
+   ESTADOS DE CONEXIÓN ACTIVOS
+   ======================================== */
+
+/* 🟡 MATERIA SELECCIONADA - Borde amarillo */
+.materia-horizontal.highlighted {
+  background-color: #fff9c4 !important;
+  color: #856404 !important;
+  border: 3px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
+  opacity: 1 !important;
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+.materia-horizontal.highlighted .materia-codigo,
+.materia-horizontal.highlighted .materia-nombre,
+.materia-horizontal.highlighted .materia-stats {
+  color: #856404 !important;
+  font-weight: bold;
+}
+
+/* 🟢 PRERREQUISITOS - Borde verde */
+.materia-horizontal.prerequisito {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border: 3px solid #28a745 !important;
+  box-shadow: 0 0 12px rgba(40, 167, 69, 0.5) !important;
+  opacity: 1 !important;
+  transform: scale(1.01);
+  z-index: 8;
+}
+
+.materia-horizontal.prerequisito .materia-codigo,
+.materia-horizontal.prerequisito .materia-nombre,
+.materia-horizontal.prerequisito .materia-stats {
+  color: #155724 !important;
+  font-weight: 600;
+}
+
+/* 🔵 DEPENDIENTES - Borde azul */
+.materia-horizontal.dependiente {
+  background-color: #d1ecf1 !important;
+  color: #0c5460 !important;
+  border: 3px solid #17a2b8 !important;
+  box-shadow: 0 0 12px rgba(23, 162, 184, 0.5) !important;
+  opacity: 1 !important;
+  transform: scale(1.01);
+  z-index: 8;
+}
+
+.materia-horizontal.dependiente .materia-codigo,
+.materia-horizontal.dependiente .materia-nombre,
+.materia-horizontal.dependiente .materia-stats {
+  color: #0c5460 !important;
+  font-weight: 600;
+}
+
+/* ========================================
+   EFECTOS DE HOVER MEJORADOS
+   ======================================== */
+
+.materia-horizontal.connection-mode:hover {
+  opacity: 0.8;
+  transform: scale(1.01);
+}
+
+.materia-horizontal.highlighted:hover,
+.materia-horizontal.prerequisito:hover,
+.materia-horizontal.dependiente:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   ICONOS DE PRERREQUISITOS MEJORADOS
+   ======================================== */
+
+.materia-horizontal.prerequisito .prerequisitos-info,
+.materia-horizontal.dependiente .prerequisitos-info {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.materia-horizontal.highlighted .prerequisitos-info {
+  background-color: rgba(255, 215, 0, 0.2);
+  border: 1px solid #ffd700;
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+
+@keyframes pulseHighlight {
+  0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9); }
+  100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+}
+
+@keyframes pulsePrerequisite {
+  0% { box-shadow: 0 0 12px rgba(40, 167, 69, 0.5); }
+  50% { box-shadow: 0 0 18px rgba(40, 167, 69, 0.8); }
+  100% { box-shadow: 0 0 12px rgba(40, 167, 69, 0.5); }
+}
+
+@keyframes pulseDependent {
+  0% { box-shadow: 0 0 12px rgba(23, 162, 184, 0.5); }
+  50% { box-shadow: 0 0 18px rgba(23, 162, 184, 0.8); }
+  100% { box-shadow: 0 0 12px rgba(23, 162, 184, 0.5); }
+}
+
+/* Aplicar animaciones a las conexiones */
+.materia-horizontal.highlighted.animate {
+  animation: pulseHighlight 2s ease-in-out infinite;
+}
+
+.materia-horizontal.prerequisito.animate {
+  animation: pulsePrerequisite 2s ease-in-out infinite;
+}
+
+.materia-horizontal.dependiente.animate {
+  animation: pulseDependent 2s ease-in-out infinite;
+}
+
+/* ========================================
+   LEYENDA DE CONEXIONES
+   ======================================== */
+
+.connections-legend {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: none;
+}
+
+.connections-legend.active {
+  display: block;
+}
+
+.connections-legend h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  margin-right: 8px;
+  border: 2px solid;
+}
+
+.legend-color.highlighted {
+  background-color: #fff9c4;
+  border-color: #ffd700;
+}
+
+.legend-color.prerequisito {
+  background-color: #d4edda;
+  border-color: #28a745;
+}
+
+.legend-color.dependiente {
+  background-color: #d1ecf1;
+  border-color: #17a2b8;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .connections-legend {
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    padding: 8px;
+  }
+  
+  .materia-horizontal.highlighted,
+  .materia-horizontal.prerequisito,
+  .materia-horizontal.dependiente {
+    transform: none; /* Disable scaling on mobile */
+  }
+}

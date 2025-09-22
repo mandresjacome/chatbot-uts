@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AvaUTS — Asistente Virtual Académico UTS</title>
-  <link rel="stylesheet" href="./chat.css" />
-  <link rel="stylesheet" href="./modal-user.css" />
+  <link rel="stylesheet" href="./css/layouts/chat.css" />
+  <link rel="stylesheet" href="./css/components/modal-user.css" />
   <!-- Temas de usuario -->
   <link rel="stylesheet" href="./themes/estudiante.css" />
   <link rel="stylesheet" href="./themes/aspirante.css" />
@@ -37,7 +37,7 @@
     <div class="modal__panel">
       <div class="modal__header">
         <div class="modal__title-container">
-          <img src="/ChatbotVerdeUTS.gif" alt="Chatbot UTS" class="modal__mascot">
+          <img src="/assets/animations/ChatbotVerdeUTS.gif" alt="Chatbot UTS" class="modal__mascot">
           <h2 id="modalTitle">¿Cuál es tu perfil en las UTS?</h2>
         </div>
       </div>
@@ -73,7 +73,8 @@
   </div>
 
   <!-- Módulos -->
-  <script type="module" src="./modal-user.js"></script>
-  <script type="module" src="./chat.js"></script>
+  <script type="module" src="./js/components/modal-user.js"></script>
+  <script src="./js/components/malla-modal.js"></script>
+  <script type="module" src="./js/modules/chat.js"></script>
 </body>
 </html>

@@ -42,7 +42,7 @@ router.post('/message', async (req, res) => {
 
     // 2) Búsqueda de evidencia local
     const retrievalStart = Date.now();
-    const { chunks, meta } = retrieveTopK({ query: clean, userType, k: 3 });
+    let { chunks, meta } = retrieveTopK({ query: clean, userType, k: 3 });
     const retrievalTime = Date.now() - retrievalStart;
     
     logger.info('RETRIEVER', `Evidencia encontrada`, {
@@ -59,6 +59,17 @@ router.post('/message', async (req, res) => {
       conversationHistory
     });
     const llmTime = Date.now() - llmStart;
+    
+    // Si es consulta de malla curricular, usar referencias especiales
+    const isMallaQuery = /\b(malla|curricular|materia|asignatura|semestre|nivel|credito)/i.test(clean);
+    if (isMallaQuery && responseText.includes('**MALLA_CURRICULAR_COMPONENT**')) {
+      chunks = [{
+        id: 'coordinacion-sistemas',
+        titulo: 'Coordinación de Ingeniería de Sistemas - UTS',
+        url: null,
+        nombreRecurso: 'Coordinación Académica'
+      }];
+    }
     
     logger.info('AI', `Respuesta generada`, {
       llmTimeMs: llmTime,

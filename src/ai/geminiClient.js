@@ -25,21 +25,11 @@ function generateMallaResponse(question) {
   }
 
   return `
-🎓 **Malla Curricular - Unidades Tecnológicas de Santander**
+🎓 **Malla Curricular de Sistemas - UTS**
 
-📋 Te muestro la estructura curricular de nuestros programas de Sistemas. Puedes navegar por los diferentes niveles académicos y explorar las materias de cada semestre.
-
-${programa ? `🔍 Has consultado específicamente sobre **${programa === 'tecnologia' ? 'Tecnología en Desarrollo de Sistemas Informáticos' : 'Ingeniería de Sistemas'}**.` : '🔍 Puedes explorar tanto **Tecnología** como **Ingeniería de Sistemas**.'}
+📋 Explora la estructura académica completa de nuestros programas de Sistemas.
 
 **MALLA_CURRICULAR_COMPONENT**
-
-💡 **Características principales:**
-📌 Navega por niveles usando las flechas
-📌 Haz clic en cualquier materia para ver detalles
-📌 Usa el zoom para mejor visualización
-📌 Cambia entre programas con los botones superiores
-
-¿Te gustaría información específica sobre alguna materia o nivel en particular? 🤓
 `.trim();
 }
 

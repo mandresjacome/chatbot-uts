@@ -282,14 +282,14 @@ async function createMallaComponent(parentElement) {
     if (!document.querySelector('link[href*="malla-curricular.css"]')) {
       const cssLink = document.createElement('link');
       cssLink.rel = 'stylesheet';
-      cssLink.href = '/chat/malla-curricular.css';
+      cssLink.href = '/chat/css/components/malla-curricular.css';
       document.head.appendChild(cssLink);
     }
 
     // Cargar JavaScript de malla completo
     if (!window.MallaNavigator) {
       const script = document.createElement('script');
-      script.src = '/chat/malla-navigator.js';
+      script.src = '/chat/js/modules/malla-navigator.js';
       document.head.appendChild(script);
       
       // Esperar a que el script se cargue
@@ -306,10 +306,6 @@ async function createMallaComponent(parentElement) {
       <div class="malla-card">
         <div class="malla-header">
           <h3>🎓 Ingeniería de Sistemas</h3>
-          <div class="nivel-info">
-            <span id="nivel-actual">I</span> de <span id="total-niveles">X</span>
-            <small class="tipo-nivel" id="tipo-nivel">Nivel Tecnológico</small>
-          </div>
         </div>
         
         <div class="malla-content">
@@ -341,8 +337,55 @@ async function createMallaComponent(parentElement) {
         if (window.MallaNavigator) {
           console.log('✅ MallaNavigator encontrado, creando instancia...');
           const navigator = new window.MallaNavigator();
+          console.log('🔧 Navigator creado:', navigator);
+          
+          console.log('🔧 Llamando a initialize()...');
           await navigator.initialize();
-          console.log('✅ MallaNavigator inicializado exitosamente');
+          console.log('🔧 Initialize completado');
+          
+          console.log('🔧 Asignando a window.mallaNavigator...');
+          window.mallaNavigator = navigator;
+          
+          // MONITOR para detectar cuándo se elimina
+          let checkCount = 0;
+          const monitor = setInterval(() => {
+            checkCount++;
+            if (!window.mallaNavigator) {
+              console.error(`🚨 window.mallaNavigator ELIMINADO después de ${checkCount} segundos!`);
+              console.error('🔍 Propiedades de window con "malla":', 
+                Object.keys(window).filter(k => k.toLowerCase().includes('malla')));
+              clearInterval(monitor);
+            } else if (checkCount >= 20) {
+              console.log('✅ window.mallaNavigator sigue existiendo después de 20 segundos');
+              clearInterval(monitor);
+            }
+          }, 1000);
+          
+          // También usar múltiples referencias
+          window._mallaNavigatorBackup = navigator;
+          window.debugMallaNavigator = navigator;
+          
+          // Función helper que siempre funciona
+          window.getMallaNavigator = function() {
+            return window.mallaNavigator || window._mallaNavigatorBackup || window.debugMallaNavigator;
+          };
+          
+          // Función de test que siempre funciona
+          window.testMallaNivel = function(direccion = 1) {
+            const nav = window.getMallaNavigator();
+            if (nav) {
+              console.log(`🧪 Cambiando nivel desde ${nav.nivelActual} con dirección ${direccion}`);
+              nav.cambiarNivel(direccion);
+            } else {
+              console.error('❌ No se puede encontrar mallaNavigator en ninguna referencia');
+            }
+          };
+          
+          console.log('✅ Verificación final:');
+          console.log('   - window.mallaNavigator existe:', !!window.mallaNavigator);
+          console.log('   - Nivel actual:', window.mallaNavigator?.nivelActual);
+          console.log('   - IsInitialized:', window.mallaNavigator?.isInitialized);
+          
         } else {
           console.error('❌ MallaNavigator no está disponible en window');
           throw new Error('MallaNavigator no cargado');

@@ -25,136 +25,790 @@ const mallaCurricular = {
         nivel_romano: "I",
         nombre: "Primer Nivel",
         tipo: "Tecnológico",
-        creditos: 16,
+        htd_total: 27,
+        hti_total: 30,
+        creditos: 19,
         materias: [
-          { codigo: "A", nombre: "Cálculo Diferencial", creditos: 4 },
-          { codigo: "A", nombre: "Álgebra Superior", creditos: 4 },
-          { codigo: "A", nombre: "Cultura Física", creditos: 2 },
-          { codigo: "A", nombre: "Comunicación y Lectura Crítica y Escritura", creditos: 3 },
-          { codigo: "OPTA I", nombre: "Optativa I", creditos: 3 }
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Cálculo Diferencial",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Álgebra Superior",
+            linea_formacion: "amarillo_matematicas", 
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Pensamiento Algorítmico",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: [], 
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Matemáticas Discretas",
+            linea_formacion: "morado_datos",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Herramientas Digitales",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          },
+          { 
+            codigo: "D", 
+            color: "Rosa", 
+            nombre: "Cultura Física",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 1, 
+            creditos: 1 
+          },
+          { 
+            codigo: "D", 
+            color: "Rosa", 
+            nombre: "Procesos de Lectura y Escritura",
+            linea_formacion: "celeste_humanidades",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 3 
+          }
         ]
       },
       2: {
         nivel_romano: "II",
         nombre: "Segundo Nivel",
         tipo: "Tecnológico", 
-        creditos: 16,
+        htd_total: 26,
+        hti_total: 34,
+        creditos: 20,
         materias: [
-          { codigo: "A", nombre: "Cálculo Integral", creditos: 4 },
-          { codigo: "A", nombre: "Mecánica", creditos: 4 },
-          { codigo: "B", nombre: "Pensamiento Lógico", creditos: 2 },
-          { codigo: "B", nombre: "Fundamentos de Programación", creditos: 3 },
-          { codigo: "B", nombre: "Sistemas Digitales", creditos: 3 }
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Cálculo Integral",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: ["calculo_diferencial"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Mecánica",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: ["algebra_superior"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Fundamentos de POO",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["pensamiento_algoritmico"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Diseño de Bases de Datos",
+            linea_formacion: "morado_datos", 
+            prerequisitos: ["matematicas_discretas"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Sistemas Digitales",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["matematicas_discretas"], 
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Estructura de Computadores",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["herramientas_digitales"], 
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Optativa I",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       3: {
         nivel_romano: "III",
         nombre: "Tercer Nivel",
         tipo: "Tecnológico",
-        creditos: 16,
+        htd_total: 26,
+        hti_total: 34,
+        creditos: 20,
         materias: [
-          { codigo: "A", nombre: "Electromagnetismo", creditos: 3 },
-          { codigo: "A", nombre: "Laboratorio de Física", creditos: 1 },
-          { codigo: "B", nombre: "Aplicación de Métodos Numéricos", creditos: 3 },
-          { codigo: "B", nombre: "Estructura de Datos", creditos: 3 },
-          { codigo: "B", nombre: "Aplicaciones Móviles", creditos: 3 },
-          { codigo: "B", nombre: "Redes", creditos: 3 }
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Electromagnetismo",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: ["calculo_integral", "mecanica"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Planeación de Sistemas Informáticos",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: ["fundamentos_poo"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Programación Orientada a Objetos",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["fundamentos_poo"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Motores de Bases de Datos",
+            linea_formacion: "morado_datos",
+            prerequisitos: ["diseño_bases_datos"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Programación de Dispositivos",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["sistemas_digitales"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Sistemas Operativos",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["estructura_computadores"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Epistemología",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       4: {
         nivel_romano: "IV",
         nombre: "Cuarto Nivel",
         tipo: "Tecnológico",
-        creditos: 16,
+        htd_total: 25,
+        hti_total: 20,
+        creditos: 15,
         materias: [
-          { codigo: "B", nombre: "Programación Orientada a Objetos", creditos: 3 },
-          { codigo: "B", nombre: "Programación Web", creditos: 3 },
-          { codigo: "B", nombre: "Programación en Java", creditos: 3 },
-          { codigo: "A", nombre: "Nuevas Tecnologías Aplicadas", creditos: 3 },
-          { codigo: "A", nombre: "Inglés Técnico", creditos: 2 },
-          { codigo: "B", nombre: "Electiva de Profundización I", creditos: 2 }
+          { 
+            codigo: "D", 
+            color: "Amarillo", 
+            nombre: "Laboratorio de Física",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: ["electromagnetismo"],
+            htd: 3, 
+            hti: 0, 
+            creditos: 1 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Estructura de Datos",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: ["programacion_orientada_objetos"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Programación Web",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["programacion_orientada_objetos", "motores_bases_datos"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Redes",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["sistemas_operativos"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Inglés I",
+            linea_formacion: "celeste_humanidades",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización I",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Optativa II",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       5: {
         nivel_romano: "V",
         nombre: "Quinto Nivel",
         tipo: "Tecnológico",
+        htd_total: 24,
+        hti_total: 24,
         creditos: 16,
         materias: [
-          { codigo: "B", nombre: "Administración de Bases de Datos", creditos: 3 },
-          { codigo: "B", nombre: "Metodología de la Investigación", creditos: 2 },
-          { codigo: "A", nombre: "Ingeniería del Software", creditos: 3 },
-          { codigo: "A", nombre: "Auditoría de la Información", creditos: 2 },
-          { codigo: "A", nombre: "Gestión y Gobierno de TI", creditos: 3 },
-          { codigo: "B", nombre: "Electiva de Profundización II", creditos: 2 },
-          { codigo: "B", nombre: "Inglés B1", creditos: 1 }
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Aplicaciones Móviles",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["programacion_web"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Programación en Java",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["programacion_web"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Metodología de la Investigación I",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Administración de Servicios",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["redes"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Inglés II",
+            linea_formacion: "celeste_humanidades",
+            prerequisitos: ["ingles_i"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización II",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Ética",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       6: {
         nivel_romano: "VI",
         nombre: "Sexto Nivel", 
         tipo: "Tecnológico",
-        creditos: 16,
+        htd_total: 26,
+        hti_total: 28,
+        creditos: 18,
         materias: [
-          { codigo: "B", nombre: "Arquitectura y Patrones de Software", creditos: 3 },
-          { codigo: "B", nombre: "Calidad de Software", creditos: 3 },
-          { codigo: "A", nombre: "Gerencia de Datos", creditos: 3 },
-          { codigo: "A", nombre: "Análisis de Datos a Partir de Metodología de Investigación", creditos: 3 },
-          { codigo: "B", nombre: "Electiva de Profundización III", creditos: 2 },
-          { codigo: "B", nombre: "Inglés B2", creditos: 2 }
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Introducción a la Ingeniería",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Selección y Evaluación de Tecnología",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Cálculo Multivariable",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Desarrollo de Aplicaciones Empresariales",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["programacion_java"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Nuevas Tecnologías de Desarrollo",
+            linea_formacion: "naranja_programacion",
+            prerequisitos: ["programacion_java"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Seguridad de las Tecnologías de la Información",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["administracion_servicios"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización III",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          }
         ]
       },
       7: {
         nivel_romano: "VII",
         nombre: "Séptimo Nivel",
         tipo: "Universitario", 
-        creditos: 16,
+        htd_total: 22,
+        hti_total: 38,
+        creditos: 20,
         materias: [
-          { codigo: "A", nombre: "Introducción a la Ingeniería", creditos: 2 },
-          { codigo: "B", nombre: "Metodología y Evaluación de la Tecnología", creditos: 3 },
-          { codigo: "A", nombre: "Cálculo Multivariable", creditos: 4 },
-          { codigo: "A", nombre: "Álgebra Lineal", creditos: 3 },
-          { codigo: "A", nombre: "Análisis Numérico", creditos: 4 }
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Álgebra Lineal",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Ecuaciones Diferenciales",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Amarillo", 
+            nombre: "Estadística para Ingenieros",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Ingeniería del Software",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Gestión y Gobierno de TI",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 8, 
+            creditos: 2
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Inglés III",
+            linea_formacion: "celeste_humanidades",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          }
         ]
       },
       8: {
         nivel_romano: "VIII", 
         nombre: "Octavo Nivel",
         tipo: "Universitario",
-        creditos: 16,
+        htd_total: 26,
+        hti_total: 28,
+        creditos: 18,
         materias: [
-          { codigo: "A", nombre: "Investigación de Operaciones", creditos: 4 },
-          { codigo: "A", nombre: "Configuraciones", creditos: 2 },
-          { codigo: "A", nombre: "Simulación Digital", creditos: 3 },
-          { codigo: "A", nombre: "Arquitectura de Arquitectura", creditos: 3 },
-          { codigo: "B", nombre: "Ética y Legislación Profesional", creditos: 2 },
-          { codigo: "B", nombre: "Electiva de Profundización IV", creditos: 2 }
+          { 
+            codigo: "B", 
+            color: "Amarillo", 
+            nombre: "Análisis Numérico",
+            linea_formacion: "amarillo_matematicas",
+            prerequisitos: ["ecuaciones_diferenciales"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Autómatas y Lenguajes Formales",
+            linea_formacion: "amarillo_pastel_algoritmos",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Investigación de Operaciones",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Arquitectura de Software",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: ["ingenieria_software"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Inglés IV",
+            linea_formacion: "celeste_humanidades",
+            prerequisitos: ["ingles_iii"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización IV",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Optativa III",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       9: {
         nivel_romano: "IX",
         nombre: "Noveno Nivel", 
         tipo: "Universitario",
-        creditos: 16,
+        htd_total: 24,
+        hti_total: 30,
+        creditos: 18,
         materias: [
-          { codigo: "A", nombre: "Gerencia de Datos", creditos: 3 },
-          { codigo: "A", nombre: "Metodología de la Investigación", creditos: 3 },
-          { codigo: "B", nombre: "Electiva de Profundización V", creditos: 2 },
-          { codigo: "A", nombre: "Optativa III", creditos: 4 },
-          { codigo: "A", nombre: "Optativa IV", creditos: 4 }
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Compiladores",
+            linea_formacion: "amarillo_pastel_algoritmos",
+            prerequisitos: ["automatas_lenguajes_formales"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Simulación Digital",
+            linea_formacion: "amarillo_pastel_algoritmos",
+            prerequisitos: ["automatas_lenguajes_formales"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Calidad de Software",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: ["gestion_gobierno_ti"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Minería de Datos",
+            linea_formacion: "morado_datos",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Metodología de la Investigación II",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización V",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Emprendimiento",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       },
       10: {
         nivel_romano: "X",
         nombre: "Décimo Nivel",
         tipo: "Universitario",
+        htd_total: 24,
+        hti_total: 24,
         creditos: 16,
         materias: [
-          { codigo: "B", nombre: "Electiva de Profundización VI", creditos: 2 },
-          { codigo: "A", nombre: "Emprendimiento", creditos: 3 },
-          { codigo: "A", nombre: "Optativa V", creditos: 4 },
-          { codigo: "A", nombre: "Optativa VI", creditos: 4 },
-          { codigo: "A", nombre: "Optativa VII", creditos: 3 }
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Dinámica de Sistemas",
+            linea_formacion: "amarillo_pastel_algoritmos",
+            prerequisitos: ["simulacion_digital"],
+            htd: 4, 
+            hti: 8, 
+            creditos: 4 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Ética y Legislación Informática",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Gestión de Proyectos de Software",
+            linea_formacion: "azul_sistemas",
+            prerequisitos: ["calidad_software"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Patrones de Software",
+            linea_formacion: "mostaza_investigacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Verde", 
+            nombre: "Análisis de Datos a Gran Escala",
+            linea_formacion: "morado_datos",
+            prerequisitos: ["mineria_datos"],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "B", 
+            color: "Verde", 
+            nombre: "Electiva de Profundización VI",
+            linea_formacion: "verde_electivas_profundizacion",
+            prerequisitos: [],
+            htd: 4, 
+            hti: 2, 
+            creditos: 2 
+          },
+          { 
+            codigo: "A", 
+            color: "Rosa", 
+            nombre: "Optativa IV",
+            linea_formacion: "rosa_electivas",
+            prerequisitos: [],
+            htd: 2, 
+            hti: 4, 
+            creditos: 2 
+          }
         ]
       }
     }

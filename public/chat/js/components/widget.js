@@ -80,6 +80,7 @@
 
   let open = false, shell = null, iframe = null, title = null;
   let currentUserType = null;
+  let isMinimized = false; // Estado de minimizado
 
   function borderColor(){ 
     const theme = USER_THEMES[currentUserType] || USER_THEMES.default;
@@ -161,6 +162,31 @@
       }
     };
 
+    // Botón Minimizar
+    const minimize = document.createElement('button');
+    Object.assign(minimize.style, {
+      background:'rgba(255,255,255,0.2)', color:'white',
+      border:'1px solid rgba(255,255,255,0.3)', borderRadius:'8px',
+      cursor:'pointer', fontSize:'14px', padding:'6px 8px',
+      fontWeight: '600', transition: 'all 0.2s ease',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    });
+    
+    minimize.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    `;
+    minimize.title = 'Minimizar (preserva conversación)';
+    minimize.onmouseenter = () => {
+      minimize.style.background = 'rgba(255,255,255,0.3)';
+    };
+    minimize.onmouseleave = () => {
+      minimize.style.background = 'rgba(255,255,255,0.2)';
+    };
+    minimize.onclick = minimizeChat;
+
+    // Botón Cerrar
     const close = document.createElement('button');
     Object.assign(close.style, {
       background:'rgba(255,255,255,0.2)', color:'white',
@@ -170,12 +196,12 @@
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     });
     
-    // Ícono SVG para cerrar
     close.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     `;
+    close.title = 'Cerrar completamente';
     close.onmouseenter = () => {
       close.style.background = 'rgba(255,0,0,0.3)';
     };
@@ -185,6 +211,7 @@
     close.onclick = closeChat;
 
     right.appendChild(newBtn);
+    right.appendChild(minimize);
     right.appendChild(close);
     top.appendChild(title);
     top.appendChild(right);
@@ -211,16 +238,56 @@
     `;
   }
 
+  function minimizeChat(){
+    if (!open || !shell) return;
+    isMinimized = true;
+    shell.style.display = 'none';
+    
+    // Restaurar el GIF cuando está minimizado
+    btn.innerHTML = '';
+    btn.appendChild(btnIcon);
+    console.log('💬 Chat minimizado (conversación preservada)');
+  }
+
+  function maximizeChat(){
+    if (!shell) {
+      // Si no existe, crear por primera vez
+      openChat();
+      return;
+    }
+    
+    isMinimized = false;
+    shell.style.display = 'block';
+    
+    // Cambiar el botón a X cuando está maximizado
+    btn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    `;
+    console.log('💬 Chat maximizado (conversación mantenida)');
+  }
+
   function closeChat(){
     if (!open) return;
     shell.remove(); shell = null; iframe = null; open = false;
+    isMinimized = false;
     
     // Restaurar el GIF cuando está cerrado
     btn.innerHTML = '';
     btn.appendChild(btnIcon);
+    console.log('💬 Chat cerrado completamente');
   }
 
-  btn.addEventListener('click', () => open ? closeChat() : openChat());
+  btn.addEventListener('click', () => {
+    if (!open) {
+      openChat();
+    } else if (isMinimized) {
+      maximizeChat();
+    } else {
+      minimizeChat();
+    }
+  });
 
   // Escuchar mensajes del iframe para actualizar el avatar y tema
   window.addEventListener('message', (event) => {
