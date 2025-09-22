@@ -1,10 +1,10 @@
 // modal-user.js
 const TYPES = {
-  estudiante: { emoji:'🎓', gif: '/ChatbotAzulEstudiante.gif' }, 
-  aspirante: { emoji:'🌟', gif: '/ChatbotVerdeAspirante.gif' },
-  docente: { emoji:'👨‍🏫', gif: '/ChatbotNaranjaDocente.gif' },  
-  visitante: { emoji:'👋', gif: '/ChatbotGrisTodos.gif' }, 
-  todos: { emoji:'💬', gif: '/ChatbotVerdeUTS.gif' }
+  estudiante: { emoji:'🎓', gif: '/assets/animations/ChatbotAzulEstudiante.gif' }, 
+  aspirante: { emoji:'🌟', gif: '/assets/animations/ChatbotVerdeAspirante.gif' },
+  docente: { emoji:'👨‍🏫', gif: '/assets/animations/ChatbotNaranjaDocente.gif' },  
+  visitante: { emoji:'👋', gif: '/assets/animations/ChatbotGrisTodos.gif' }, 
+  todos: { emoji:'💬', gif: '/assets/animations/ChatbotVerdeUTS.gif' }
 };
 
 const modal = document.getElementById('userModal');

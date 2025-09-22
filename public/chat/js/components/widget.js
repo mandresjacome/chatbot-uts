@@ -57,7 +57,7 @@
   
   // Crear el GIF para el botón
   const btnIcon = document.createElement('img');
-  btnIcon.src = '/ChatbotVerdeUTS.gif';
+  btnIcon.src = '/assets/animations/ChatbotVerdeUTS.gif';
   btnIcon.alt = 'AvaUTS';
   Object.assign(btnIcon.style, {
     width: '40px',
@@ -115,7 +115,7 @@
     title.style.fontWeight = '700';
     
     const icon = document.createElement('img');
-    icon.src = '/ChatbotVerdeUTS.gif';
+    icon.src = '/assets/animations/ChatbotVerdeUTS.gif';
     icon.alt = 'AvaUTS';
     Object.assign(icon.style, {
       width: '32px',
