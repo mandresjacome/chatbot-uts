@@ -11,33 +11,109 @@
 function parseTeachersFromText(teachersText) {
     const teachers = [];
     
-    // Dividir por líneas y filtrar líneas vacías
-    const lines = teachersText.split('\n').filter(line => line.trim());
-    
-    for (const line of lines) {
-        // Saltar líneas que no parecen ser datos de docentes
-        if (line.includes('DOCENTE') || line.includes('Correo Institucional') || 
-            line.includes('---') || line.length < 10) {
-            continue;
+    // Si el texto está todo en una línea, intentar separar por patrones de correo
+    if (!teachersText.includes('\n') && teachersText.includes('@correo.uts.edu.co')) {
+        // Usar regex para encontrar patrones de docentes
+        // Patrón: nombre + correo@uts.edu.co + información adicional + URL CvLAC
+        const teacherPattern = /([A-ZÁÉÍÓÚÑÜ][a-záéíóúñü\s]+[a-záéíóúñü])\s+([a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\s+(.*?)(?=\s+[A-ZÁÉÍÓÚÑÜ][a-záéíóúñü\s]+[a-záéíóúñü]\s+[a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|$)/g;
+        
+        let match;
+        while ((match = teacherPattern.exec(teachersText)) !== null) {
+            const [, nombre, correo, info] = match;
+            
+            if (nombre && correo && correo.includes('@uts.edu.co')) {
+                // Extraer información adicional del texto
+                const infoText = info.trim();
+                
+                // Buscar CvLAC URL al final
+                const cvlacMatch = infoText.match(/(https:\/\/scienti\.minciencias\.gov\.co\/cvlac\/[^\s]+)/);
+                const cvlac = cvlacMatch ? cvlacMatch[1] : '';
+                
+                // Remover CvLAC del texto para extraer el resto
+                const remainingInfo = cvlac ? infoText.replace(cvlac, '').trim() : infoText;
+                
+                const teacher = {
+                    nombre: nombre.trim(),
+                    correo: correo.trim(),
+                    estudios: remainingInfo.substring(0, 200) + '...', // Primeros 200 chars como estudios
+                    cursos: '', // Difícil de extraer del formato actual
+                    experienciaTotal: '',
+                    experienciaUTS: '',
+                    cvlac: cvlac
+                };
+                
+                teachers.push(teacher);
+            }
         }
         
-        // Dividir por tabulaciones o múltiples espacios
-        const parts = line.split(/\t+|\s{2,}/).filter(part => part.trim());
-        
-        if (parts.length >= 6) {
-            const teacher = {
-                nombre: parts[0]?.trim() || '',
-                correo: parts[1]?.trim() || '',
-                estudios: parts[2]?.trim() || '',
-                cursos: parts[3]?.trim() || '',
-                experienciaTotal: parts[4]?.trim() || '',
-                experienciaUTS: parts[5]?.trim() || '',
-                cvlac: parts[6]?.trim() || ''
-            };
+        // Si no funciona el regex complejo, usar método más simple
+        if (teachers.length === 0) {
+            // Buscar todos los correos @correo.uts.edu.co y extraer contexto alrededor
+            const emailPattern = /([a-zA-Z0-9._%+-]+@correo\.uts\.edu\.co)/g;
+            let emailMatch;
             
-            // Solo agregar si tiene nombre y correo válidos
-            if (teacher.nombre && teacher.correo && teacher.correo.includes('@')) {
-                teachers.push(teacher);
+            while ((emailMatch = emailPattern.exec(teachersText)) !== null) {
+                const correo = emailMatch[1];
+                const startIndex = emailMatch.index;
+                
+                // Buscar hacia atrás para encontrar el nombre (hasta 150 chars antes)
+                const beforeEmail = teachersText.substring(Math.max(0, startIndex - 150), startIndex);
+                
+                // Patrón más flexible para nombres (incluye acentos y caracteres especiales)
+                const namePattern = /([A-ZÁÉÍÓÚÑÜ][a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s.-]{2,50}[a-záéíóúñüA-ZÁÉÍÓÚÑÜ])\s*$/;
+                const nameExec = namePattern.exec(beforeEmail);
+                const nombre = nameExec ? nameExec[1].trim() : correo.split('@')[0];
+                
+                // Buscar hacia adelante para información adicional (hasta 500 chars después)
+                const afterEmail = teachersText.substring(startIndex + correo.length, startIndex + correo.length + 500);
+                
+                // Buscar CvLAC
+                const cvlacPattern = /(https:\/\/scienti\.minciencias\.gov\.co\/cvlac\/[^\s]+)/;
+                const cvlacExec = cvlacPattern.exec(afterEmail);
+                const cvlac = cvlacExec ? cvlacExec[1] : '';
+                
+                if (nombre && correo.includes('@correo.uts.edu.co')) {
+                    teachers.push({
+                        nombre: nombre,
+                        correo: correo,
+                        estudios: afterEmail.substring(0, 100).trim() + '...',
+                        cursos: '',
+                        experienciaTotal: '',
+                        experienciaUTS: '',
+                        cvlac: cvlac
+                    });
+                }
+            }
+        }
+    } else {
+        // Método original para texto con líneas separadas
+        const lines = teachersText.split('\n').filter(line => line.trim());
+        
+        for (const line of lines) {
+            // Saltar líneas que no parecen ser datos de docentes
+            if (line.includes('DOCENTE') || line.includes('Correo Institucional') || 
+                line.includes('---') || line.length < 10) {
+                continue;
+            }
+            
+            // Dividir por tabulaciones o múltiples espacios
+            const parts = line.split(/\t+|\s{2,}/).filter(part => part.trim());
+            
+            if (parts.length >= 6) {
+                const teacher = {
+                    nombre: parts[0]?.trim() || '',
+                    correo: parts[1]?.trim() || '',
+                    estudios: parts[2]?.trim() || '',
+                    cursos: parts[3]?.trim() || '',
+                    experienciaTotal: parts[4]?.trim() || '',
+                    experienciaUTS: parts[5]?.trim() || '',
+                    cvlac: parts[6]?.trim() || ''
+                };
+                
+                // Solo agregar si tiene nombre y correo válidos
+                if (teacher.nombre && teacher.correo && teacher.correo.includes('@')) {
+                    teachers.push(teacher);
+                }
             }
         }
     }
