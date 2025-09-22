@@ -60,6 +60,13 @@ router.post('/message', async (req, res) => {
     });
     const llmTime = Date.now() - llmStart;
     
+
+    
+    logger.info('AI', `Respuesta generada`, {
+      llmTimeMs: llmTime,
+      responseLength: responseText.length
+    });
+
     // Si es consulta de malla curricular, usar referencias especiales
     const isMallaQuery = /\b(malla|curricular|materia|asignatura|semestre|nivel|credito)/i.test(clean);
     if (isMallaQuery && responseText.includes('**MALLA_CURRICULAR_COMPONENT**')) {
@@ -70,11 +77,6 @@ router.post('/message', async (req, res) => {
         nombreRecurso: 'Coordinación Académica'
       }];
     }
-    
-    logger.info('AI', `Respuesta generada`, {
-      llmTimeMs: llmTime,
-      responseLength: responseText.length
-    });
 
     // 4) Guardar conversación en base de datos
     const dbStart = Date.now();
