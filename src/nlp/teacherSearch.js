@@ -133,6 +133,9 @@ function normalizeName(name) {
         .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
         .replace(/[^a-z\s]/g, '') // Solo letras y espacios
         .replace(/\s+/g, ' ') // Normalizar espacios
+        // Normalizar variaciones ortográficas comunes
+        .replace(/leidy/g, 'leydi') // Normalizar Leidy -> Leydi
+        .replace(/leydy/g, 'leydi') // Normalizar Leydy -> Leydi
         .trim();
 }
 
