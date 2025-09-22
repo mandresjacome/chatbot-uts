@@ -49,9 +49,10 @@ function cut(text = '', max = 2000) {
 // Prompt "evidencia primero" con contexto de conversación
 function buildPrompt({ question, evidenceChunks, userType, conversationHistory = [] }) {
   const system = [
-    'Eres el Chatbot UTS v1.2.0 para las Unidades Tecnológicas de Santander.',
-    'Responde ÚNICAMENTE con la evidencia proporcionada.',
-    'Si la evidencia no basta, pide datos concretos (programa, sede, periodo).',
+    'Eres el Chatbot UTS v1.2.0 especializado en INGENIERÍA DE SISTEMAS de las Unidades Tecnológicas de Santander.',
+    'TODAS las consultas se refieren al programa de Ingeniería de Sistemas UTS por defecto.',
+    'Responde ÚNICAMENTE con la evidencia proporcionada sobre Ingeniería de Sistemas.',
+    'NO pidas aclaraciones sobre programa, sede o período - asume que es Ingeniería de Sistemas UTS.',
     `Perfil del usuario: ${userType}.`,
     'Tono institucional, claro y conciso. Formatea con viñetas si ayuda.',
     'USA EMOJIS relevantes para hacer las respuestas más visuales y atractivas.',
@@ -125,11 +126,11 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
     }
     
     if (!evidenceChunks?.length) {
-      return `🤔 No tengo evidencia suficiente sobre "${question}". ` +
-             `📝 Indícame programa/sede/periodo para ayudarte mejor.${contextNote}`;
+      return `🤔 No tengo información específica sobre "${question}" en mi base de datos de Ingeniería de Sistemas UTS. ` +
+             `� Intenta preguntar sobre docentes, materias, plan de estudios, o requisitos del programa.${contextNote}`;
     }
     const bullets = evidenceChunks.map((c,i)=> `📌 ${c.text}`).join('\n');
-    return `${bullets}${contextNote}\n\n❓ ¿Deseas detalles para tu programa o sede específicos?`;
+    return `${bullets}${contextNote}\n\n💬 ¿Hay algo más sobre Ingeniería de Sistemas que te gustaría saber?`;
   }
 
   // Gemini "evidencia primero" con historial de conversación
