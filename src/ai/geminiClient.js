@@ -107,7 +107,7 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
     const teacherChunk = evidenceChunks.find(chunk => 
       chunk.text.includes('DOCENTE') || 
       chunk.text.includes('Correo Institucional') ||
-      chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@uts.edu.co')
+      (chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@correo.uts.edu.co'))
     );
     
     if (teacherChunk) {
