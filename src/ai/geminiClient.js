@@ -144,17 +144,33 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
   // Verificar si es una búsqueda de docente específico
   if (isTeacherSearchQuery(question)) {
     // Buscar información de docentes en los chunks de evidencia
-    const teacherChunk = evidenceChunks.find(chunk => 
+    let teacherChunk = evidenceChunks.find(chunk => 
       chunk.text.includes('DOCENTE') || 
       chunk.text.includes('Correo Institucional') ||
       (chunk.text.toLowerCase().includes('docente') && chunk.text.includes('@correo.uts.edu.co'))
     );
     
+    // Si no encontramos información de docentes en la evidencia, hacer una búsqueda específica
+    if (!teacherChunk) {
+      const { retrieveTopK } = await import('../nlp/retriever.js');
+      const teacherResults = retrieveTopK({ query: 'docentes', userType, k: 1 });
+      if (teacherResults.chunks.length > 0) {
+        teacherChunk = teacherResults.chunks[0];
+      }
+    }
+    
     if (teacherChunk) {
       // Extraer solo el nombre del docente de la pregunta
-      const teacherNameQuery = question
-        .toLowerCase()
-        .replace(/\b(profesor|docente|maestro|ingeniero|magister|doctor|informacion|sobre|del|de|la|el)\b/g, '')
+      let teacherNameQuery = question.toLowerCase();
+      
+      // Eliminar palabras de consulta al inicio y final, preservando nombres en el medio
+      teacherNameQuery = teacherNameQuery
+        .replace(/^(necesito\s+)?informaci[oó]n\s+sobre\s+/i, '') // "necesito información sobre"
+        .replace(/^(qui[eé]n\s+es|dime\s+sobre)\s+/i, '') // "quien es" o "dime sobre"
+        .replace(/^busco\s+(al?|la?)\s+/i, '') // "busco al/la"
+        .replace(/\b(profesor|profesora|docente|maestr[oa]|ingenier[oa]|magister|doctor|doctora)\s+/gi, '') // títulos
+        .replace(/\b(el|la|del?|al?)\s+/g, ' ') // artículos
+        .replace(/\s+/g, ' ') // normalizar espacios
         .trim();
       
       const matchingTeachers = findTeachersByName(teacherNameQuery, teacherChunk.text);

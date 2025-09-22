@@ -21,13 +21,25 @@ function parseTeachersFromText(teachersText) {
                 const correo = emailMatch[1];
                 const startIndex = emailMatch.index;
                 
-                // Buscar hacia atrás para encontrar el nombre (hasta 150 chars antes)
-                const beforeEmail = teachersText.substring(Math.max(0, startIndex - 150), startIndex);
+                // Buscar hacia atrás para encontrar el nombre (inmediatamente antes del correo)
+                const beforeEmail = teachersText.substring(Math.max(0, startIndex - 80), startIndex);
                 
-                // Patrón más flexible para nombres (incluye acentos y caracteres especiales)
-                const namePattern = /([A-ZÁÉÍÓÚÑÜ][a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s.-]{2,50}[a-záéíóúñüA-ZÁÉÍÓÚÑÜ])\s*$/;
+                // Patrón específico: Nombre está inmediatamente antes del correo después de un espacio
+                // Formato: ... [URL] Nombre Completo correo@uts.edu.co
+                const namePattern = /\s([A-ZÁÉÍÓÚÑÜ][a-záéíóúñü]+(?:\s+[a-záéíóúñüA-ZÁÉÍÓÚÑÜ][a-záéíóúñü]*){1,5})\s*$/;
                 const nameExec = namePattern.exec(beforeEmail);
-                const nombre = nameExec ? nameExec[1].trim() : correo.split('@')[0];
+                let nombre = nameExec ? nameExec[1].trim() : correo.split('@')[0];
+                
+                // Limpiar palabras de contexto al inicio del nombre
+                if (nombre.startsWith('Link del Cvlac ')) {
+                    nombre = nombre.replace('Link del Cvlac ', '');
+                }
+                if (nombre.startsWith('del Cvlac ')) {
+                    nombre = nombre.replace('del Cvlac ', '');
+                }
+                if (nombre.startsWith('Cvlac ')) {
+                    nombre = nombre.replace('Cvlac ', '');
+                }
                 
                 // Buscar hacia adelante para información adicional (hasta 500 chars después)
                 const afterEmail = teachersText.substring(startIndex + correo.length, startIndex + correo.length + 500);
@@ -181,7 +193,8 @@ function isTeacherSearchQuery(query) {
     
     // Palabras clave que indican búsqueda de docente
     const teacherKeywords = [
-        'profesor', 'docente', 'maestro', 'ingeniero', 'magister', 'doctor'
+        'profesor', 'profesora', 'docente', 'maestro', 'maestra', 'ingeniero', 'ingeniera', 
+        'magister', 'magistra', 'doctor', 'doctora', 'informacion sobre', 'información sobre'
     ];
     
     // Si contiene palabras clave de docente
