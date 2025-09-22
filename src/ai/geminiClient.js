@@ -111,7 +111,13 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
     );
     
     if (teacherChunk) {
-      const teacher = findTeacherByName(question, teacherChunk.text);
+      // Extraer solo el nombre del docente de la pregunta
+      const teacherNameQuery = question
+        .toLowerCase()
+        .replace(/\b(profesor|docente|maestro|ingeniero|magister|doctor|informacion|sobre|del|de|la|el)\b/g, '')
+        .trim();
+      
+      const teacher = findTeacherByName(teacherNameQuery, teacherChunk.text);
       if (teacher) {
         return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(teacher)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
       }
