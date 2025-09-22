@@ -104,51 +104,71 @@ function normalizeName(name) {
 }
 
 /**
- * Busca un docente específico por nombre
+ * Busca docentes que coincidan con un nombre (puede devolver múltiples resultados)
+ * @param {string} searchName - Nombre a buscar
+ * @param {string} teachersText - Texto con información de docentes
+ * @returns {Array} Array de docentes que coinciden
+ */
+function findTeachersByName(searchName, teachersText) {
+    const teachers = parseTeachersFromText(teachersText);
+    const normalizedSearch = normalizeName(searchName);
+    const searchParts = normalizedSearch.split(' ');
+    const results = [];
+    
+    for (const teacher of teachers) {
+        const normalizedTeacherName = normalizeName(teacher.nombre);
+        const teacherParts = normalizedTeacherName.split(' ');
+        
+        // Coincidencia exacta (máxima prioridad)
+        if (normalizedTeacherName === normalizedSearch) {
+            return [teacher]; // Devolver solo este resultado
+        }
+        
+        // Coincidencia completa (nombre y apellido)
+        if (searchParts.length >= 2) {
+            const allPartsMatch = searchParts.every(searchPart => 
+                teacherParts.some(teacherPart => 
+                    teacherPart.includes(searchPart) || searchPart.includes(teacherPart)
+                )
+            );
+            
+            if (allPartsMatch) {
+                results.push({ teacher, score: 100 }); // Puntuación alta
+            }
+        } else {
+            // Búsqueda por un solo nombre/apellido
+            const singlePart = searchParts[0];
+            
+            // Verificar si coincide con primer nombre
+            if (teacherParts[0] && teacherParts[0].includes(singlePart)) {
+                results.push({ teacher, score: 80 }); // Puntuación media-alta
+            }
+            // Verificar si coincide con algún apellido  
+            else if (teacherParts.slice(1).some(part => part.includes(singlePart))) {
+                results.push({ teacher, score: 70 }); // Puntuación media
+            }
+            // Coincidencia parcial en cualquier parte del nombre
+            else if (normalizedTeacherName.includes(singlePart)) {
+                results.push({ teacher, score: 60 }); // Puntuación baja
+            }
+        }
+    }
+    
+    // Ordenar por puntuación y devolver solo los docentes
+    return results
+        .sort((a, b) => b.score - a.score)
+        .map(result => result.teacher);
+}
+
+/**
+ * Busca un docente específico por nombre (mantiene compatibilidad)
  * @param {string} searchName - Nombre a buscar
  * @param {string} teachersText - Texto con información de docentes
  * @returns {Object|null} Información del docente encontrado o null
  */
 function findTeacherByName(searchName, teachersText) {
-    const teachers = parseTeachersFromText(teachersText);
-    const normalizedSearch = normalizeName(searchName);
-    
-    // Buscar coincidencia exacta primero
-    for (const teacher of teachers) {
-        const normalizedTeacherName = normalizeName(teacher.nombre);
-        
-        // Coincidencia exacta
-        if (normalizedTeacherName === normalizedSearch) {
-            return teacher;
-        }
-        
-        // Coincidencia parcial (nombre o apellido)
-        const searchParts = normalizedSearch.split(' ');
-        const teacherParts = normalizedTeacherName.split(' ');
-        
-        // Verificar si todas las partes del nombre buscado están en el nombre del docente
-        const allPartsMatch = searchParts.every(searchPart => 
-            teacherParts.some(teacherPart => 
-                teacherPart.includes(searchPart) || searchPart.includes(teacherPart)
-            )
-        );
-        
-        if (allPartsMatch && searchParts.length >= 2) {
-            return teacher;
-        }
-    }
-    
-    // Búsqueda más flexible (solo por primer nombre o apellido)
-    for (const teacher of teachers) {
-        const normalizedTeacherName = normalizeName(teacher.nombre);
-        
-        if (normalizedTeacherName.includes(normalizedSearch) || 
-            normalizedSearch.includes(normalizedTeacherName.split(' ')[0])) {
-            return teacher;
-        }
-    }
-    
-    return null;
+    const results = findTeachersByName(searchName, teachersText);
+    return results.length > 0 ? results[0] : null;
 }
 
 /**
@@ -169,10 +189,11 @@ function isTeacherSearchQuery(query) {
         normalizedQuery.includes(keyword)
     );
     
-    // Si parece ser solo un nombre (2-4 palabras, principalmente letras)
+    // Si parece ser solo un nombre (1-4 palabras, principalmente letras)
     const words = normalizedQuery.split(/\s+/);
-    const seemsLikeName = words.length >= 2 && words.length <= 4 && 
-        words.every(word => /^[a-záéíóúñü]+$/i.test(word));
+    const seemsLikeName = words.length >= 1 && words.length <= 4 && 
+        words.every(word => /^[a-záéíóúñü]+$/i.test(word)) &&
+        words.every(word => word.length >= 3); // Mínimo 3 letras por palabra
     
     return hasTeacherKeyword || seemsLikeName;
 }
@@ -211,9 +232,43 @@ function formatTeacherInfo(teacher) {
     return sections.join('\n\n');
 }
 
+/**
+ * Crea una respuesta inteligente cuando hay múltiples coincidencias para un nombre
+ * @param {string} searchName - Nombre buscado
+ * @param {Array} matchingTeachers - Docentes que coinciden
+ * @returns {string} Respuesta formateada
+ */
+function formatMultipleTeachersResponse(searchName, matchingTeachers) {
+    if (matchingTeachers.length === 0) {
+        return `No encontré ningún docente con el nombre "${searchName}". ¿Podrías verificar la ortografía o proporcionar más información?`;
+    }
+    
+    if (matchingTeachers.length === 1) {
+        return formatTeacherInfo(matchingTeachers[0]);
+    }
+    
+    // Múltiples coincidencias
+    const response = [`Encontré varios docentes con el nombre "${searchName}". ¿Te refieres a alguno de estos?`];
+    
+    matchingTeachers.slice(0, 5).forEach((teacher, index) => {
+        response.push(`${index + 1}. **${teacher.nombre}** - ${teacher.correo}`);
+    });
+    
+    if (matchingTeachers.length > 5) {
+        response.push(`... y ${matchingTeachers.length - 5} más.`);
+    }
+    
+    response.push('');
+    response.push('💡 **Tip:** Para obtener información específica, escribe el nombre completo del docente, por ejemplo: "Victor Ochoa" o "Leydi Polo".');
+    
+    return response.join('\n\n');
+}
+
 export {
     isTeacherSearchQuery,
     findTeacherByName,
+    findTeachersByName,
     formatTeacherInfo,
+    formatMultipleTeachersResponse,
     parseTeachersFromText
 };

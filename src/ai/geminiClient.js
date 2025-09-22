@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { isTeacherSearchQuery, findTeacherByName, formatTeacherInfo } from '../nlp/teacherSearch.js';
+import { isTeacherSearchQuery, findTeachersByName, formatTeacherInfo, formatMultipleTeachersResponse } from '../nlp/teacherSearch.js';
 
 // Función para detectar consultas de malla curricular
 function isMallaQuery(question) {
@@ -117,9 +117,17 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
         .replace(/\b(profesor|docente|maestro|ingeniero|magister|doctor|informacion|sobre|del|de|la|el)\b/g, '')
         .trim();
       
-      const teacher = findTeacherByName(teacherNameQuery, teacherChunk.text);
-      if (teacher) {
-        return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(teacher)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
+      const matchingTeachers = findTeachersByName(teacherNameQuery, teacherChunk.text);
+      
+      if (matchingTeachers.length === 1) {
+        // Una sola coincidencia - mostrar información completa
+        return `¡Información encontrada! 🎓\n\n${formatTeacherInfo(matchingTeachers[0])}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS\n\n¿Te gustaría conocer algo más específico sobre este docente o el programa?`;
+      } else if (matchingTeachers.length > 1) {
+        // Múltiples coincidencias - mostrar opciones
+        return `${formatMultipleTeachersResponse(teacherNameQuery, matchingTeachers)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS`;
+      } else if (teacherNameQuery.trim().length > 0) {
+        // No se encontraron coincidencias pero sí había un nombre
+        return `❌ No encontré ningún docente con el nombre "${teacherNameQuery}" en el programa de Ingeniería de Sistemas.\n\n💡 **Sugerencias:**\n- Verifica la ortografía del nombre\n- Intenta con el nombre completo (ej: "Victor Ochoa")\n- Pregunta por "lista de docentes" para ver todos los profesores disponibles\n\n¿Te gustaría que te ayude de otra manera?`;
       }
     }
   }
