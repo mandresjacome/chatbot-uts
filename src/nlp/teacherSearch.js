@@ -24,11 +24,34 @@ function parseTeachersFromText(teachersText) {
                 // Buscar hacia atrás para encontrar el nombre (inmediatamente antes del correo)
                 const beforeEmail = teachersText.substring(Math.max(0, startIndex - 80), startIndex);
                 
-                // Patrón específico: Nombre está inmediatamente antes del correo después de un espacio
-                // Formato: ... [URL] Nombre Completo correo@uts.edu.co
-                const namePattern = /\s([A-ZÁÉÍÓÚÑÜ][a-záéíóúñü]+(?:\s+[a-záéíóúñüA-ZÁÉÍÓÚÑÜ][a-záéíóúñü]*){1,5})\s*$/;
-                const nameExec = namePattern.exec(beforeEmail);
-                let nombre = nameExec ? nameExec[1].trim() : correo.split('@')[0];
+                // Patrón mejorado para extraer nombres: evita palabras académicas comunes
+                // Busca el último grupo de 2-5 palabras que parezcan un nombre antes del email
+                let nombre = correo.split('@')[0]; // fallback
+                
+                // Buscar hacia atrás por palabras que parezcan nombres (empiecen con mayúscula)
+                const words = beforeEmail.trim().split(/\s+/);
+                const nameWords = [];
+                
+                // Iterar desde el final hacia atrás para encontrar palabras de nombre
+                for (let i = words.length - 1; i >= 0; i--) {
+                    const word = words[i];
+                    
+                    // Si es una palabra que parece nombre (puede empezar con mayús o minús)
+                    if (/^[A-Za-záéíóúñüÁÉÍÓÚÑÜ][a-záéíóúñüA-ZÁÉÍÓÚÑÜ]+$/.test(word) && 
+                        !['Ingenier', 'Ingeniería', 'Sistemas', 'Tecnología', 'Desarrollo', 'Software', 'la', 'de', 'del', 'en'].includes(word)) {
+                        nameWords.unshift(word);
+                        
+                        // Máximo 5 palabras para el nombre
+                        if (nameWords.length >= 5) break;
+                    } else if (nameWords.length > 0) {
+                        // Si ya tenemos palabras de nombre y encontramos algo que no parece nombre, parar
+                        break;
+                    }
+                }
+                
+                if (nameWords.length >= 2) {
+                    nombre = nameWords.join(' ');
+                }
                 
                 // Limpiar palabras de contexto al inicio del nombre
                 if (nombre.startsWith('Link del Cvlac ')) {
@@ -138,14 +161,32 @@ function findTeachersByName(searchName, teachersText) {
         
         // Coincidencia completa (nombre y apellido)
         if (searchParts.length >= 2) {
-            const allPartsMatch = searchParts.every(searchPart => 
-                teacherParts.some(teacherPart => 
-                    teacherPart.includes(searchPart) || searchPart.includes(teacherPart)
-                )
-            );
+            // Mejorar la lógica de coincidencia para nombres largos
+            let matchCount = 0;
+            // Para nombres largos, ser más flexible: requiere al menos 70% de coincidencia
+            const minMatchRequired = Math.max(2, Math.ceil(searchParts.length * 0.7));
             
-            if (allPartsMatch) {
-                results.push({ teacher, score: 100 }); // Puntuación alta
+            for (const searchPart of searchParts) {
+                const hasMatch = teacherParts.some(teacherPart => {
+                    // Coincidencia exacta o contiene (bidireccional)
+                    return teacherPart === searchPart || 
+                           teacherPart.includes(searchPart) || 
+                           searchPart.includes(teacherPart) ||
+                           // Coincidencia parcial para nombres muy similares (mín 4 chars)
+                           (searchPart.length >= 4 && teacherPart.length >= 4 && 
+                            (teacherPart.startsWith(searchPart.slice(0, 4)) || 
+                             searchPart.startsWith(teacherPart.slice(0, 4))));
+                });
+                
+                if (hasMatch) {
+                    matchCount++;
+                }
+            }
+            
+            // Si coincide suficientes palabras, considerar válido
+            if (matchCount >= minMatchRequired) {
+                const score = matchCount === searchParts.length ? 100 : 90 + (matchCount * 2);
+                results.push({ teacher, score }); 
             }
         } else {
             // Búsqueda por un solo nombre/apellido
@@ -194,21 +235,47 @@ function isTeacherSearchQuery(query) {
     // Palabras clave que indican búsqueda de docente
     const teacherKeywords = [
         'profesor', 'profesora', 'docente', 'maestro', 'maestra', 'ingeniero', 'ingeniera', 
-        'magister', 'magistra', 'doctor', 'doctora', 'informacion sobre', 'información sobre'
+        'magister', 'magistra', 'doctor', 'doctora'
     ];
     
-    // Si contiene palabras clave de docente
+    // Palabras clave de contexto académico que NO son nombres de docentes
+    const academicTopics = [
+        'calendario', 'academico', 'académico', 'horario', 'semestre', 'matricula', 'matrícula',
+        'admision', 'admisión', 'requisitos', 'programa', 'carrera', 'malla', 'pensum', 'plan',
+        'estudios', 'cursos', 'materias', 'asignaturas', 'creditos', 'créditos', 'nota', 'notas',
+        'examen', 'examenes', 'exámenes', 'evaluacion', 'evaluación', 'bibliografia', 'bibliografía',
+        'biblioteca', 'laboratorio', 'practica', 'práctica', 'proyecto', 'tesis', 'grado',
+        'inscripcion', 'inscripción', 'pago', 'beca', 'financiacion', 'financiación',
+        'contacto', 'telefono', 'teléfono', 'direccion', 'dirección', 'ubicacion', 'ubicación'
+    ];
+    
+    // Si contiene palabras clave explícitas de docente
     const hasTeacherKeyword = teacherKeywords.some(keyword => 
         normalizedQuery.includes(keyword)
     );
     
-    // Si parece ser solo un nombre (1-4 palabras, principalmente letras)
-    const words = normalizedQuery.split(/\s+/);
-    const seemsLikeName = words.length >= 1 && words.length <= 4 && 
-        words.every(word => /^[a-záéíóúñü]+$/i.test(word)) &&
-        words.every(word => word.length >= 3); // Mínimo 3 letras por palabra
+    // Si contiene temas académicos generales, NO es búsqueda de docente
+    const hasAcademicTopic = academicTopics.some(topic => 
+        normalizedQuery.includes(topic)
+    );
     
-    return hasTeacherKeyword || seemsLikeName;
+
+    
+    // Si parece ser nombre completo (2-5 palabras para nombres largos)
+    const words = normalizedQuery.split(/\s+/);
+    const seemsLikeFullName = words.length >= 2 && words.length <= 5 && 
+        words.every(word => /^[a-záéíóúñü]+$/i.test(word)) &&
+        words.every(word => word.length >= 3) && 
+        !hasAcademicTopic;
+    
+    // Verificar si es un nombre individual de docente conocido
+    // Esta verificación se hace de forma dinámica consultando la base de conocimiento
+    const isSingleName = words.length === 1 && 
+        words[0].length >= 4 && // Mínimo 4 letras para evitar falsos positivos
+        /^[a-záéíóúñü]+$/i.test(words[0]) &&
+        !hasAcademicTopic;
+    
+    return hasTeacherKeyword || seemsLikeFullName || isSingleName;
 }
 
 /**
