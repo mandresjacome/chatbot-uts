@@ -13,8 +13,9 @@
 - **Histórico**: Datos originales del sistema (incluye información de docentes obsoleta)
 - **Backup**: Respaldo de la estructura de datos  
 - **Referencia**: Para consultar formato y ejemplos
-- **⚠️ OBSOLETO**: Los nombres de docentes en este archivo ya no son válidos
-- **NO FUNCIONAL**: El sistema NO lee este archivo
+- **⚠️ DATOS DOCENTES OBSOLETOS**: Los nombres de profesores están desactualizados (sept 2024)
+- **⚠️ FUENTE ELIMINADA**: UTS quitó la sección de docentes de su web oficial
+- **NO FUNCIONAL**: El sistema NO lee este archivo actualmente
 
 ### ✅ Para actualizar contenido:
 1. Ir a `/admin` en el navegador

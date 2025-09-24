@@ -2,36 +2,37 @@
 
 ## 🎯 Descripción
 
-Panel de administración modular para el Chatbot UTS que permite monitorear, verificar fuentes y mantener el sistema de forma sólida y trazable.
+Panel de administración integral para el Chatbot UTS especializado en **Ingeniería de Sistemas**. Permite monitorear, gestionar contenido y mantener el sistema actualizado con información oficial de UTS.
 
 ## 📊 Características Principales
 
-### 1. Métricas (Solo Lectura)
-- Conversaciones totales del sistema
-- Tasa de satisfacción basada en feedback
-- Resumen de feedback positivos/negativos
-- Últimas conversaciones registradas
-- Estado del modelo de IA
+### 1. Métricas en Tiempo Real
+- **Conversaciones totales** del sistema por período
+- **Tasa de satisfacción** basada en feedback de usuarios
+- **Estadísticas de uso** por tipo de consulta (malla, docentes, general)
+- **Últimas conversaciones** con contexto completo
+- **Estado del modelo IA** (Gemini/Mock) y rendimiento
 
-### 2. Feedback (Solo Lectura con Filtros)
-- Lista completa de feedback de usuarios
-- Filtros por tipo (positivo/negativo)
-- Filtros por período (hoy, semana, mes)
-- Estadísticas agregadas en tiempo real
+### 2. Gestión de Feedback
+- **Lista completa** de feedback de usuarios con contexto
+- **Filtros avanzados** por rating, período, tipo de consulta
+- **Análisis de sentimientos** automático
+- **Métricas de satisfacción** por funcionalidad
 
-### 3. Base de Conocimiento (Solo Lectura y Verificación)
-- **Objetivo**: Verificar que la KB proviene del sitio UTS
-- Búsqueda y filtrado de entradas
-- Verificación de fuentes UTS vs externas
-- Enlaces directos a recursos originales
-- Información de última actualización
-- Visualización de metadatos completos
+### 3. Base de Conocimiento (Lectura + Gestión)
+- **Fuente única**: Información extraída desde web oficial UTS
+- **Verificación de fuentes** UTS vs externas
+- **Gestión completa**: Agregar, editar, eliminar entradas
+- **Búsqueda y filtrado** avanzado por contenido
+- **Metadatos completos**: URLs, fechas, palabras clave
+- **Estado de sincronización** con scrapers
 
-### 4. Mantenimiento (Protegido con ADMIN_TOKEN)
-- **Ejecutar Scrapers**: Corre `npm run scrapers`
-- **Recargar Índice**: Endpoint `/api/admin/reload-kb`
-- **Backup Database**: Descarga rápida de la DB
-- **Estado del Sistema**: Verificación de servicios
+### 4. Mantenimiento del Sistema
+- **Ejecutar scrapers**: Actualización automática desde web UTS
+- **Regenerar sinónimos**: Sistema de NLP mejorado
+- **Backup de base de datos**: Exportación completa
+- **Reload de índices**: Actualización en caliente
+- **Logs del sistema**: Monitoreo de errores y rendimiento
 
 ## 🔐 Configuración de Seguridad
 
@@ -64,27 +65,39 @@ public/admin/
    └─ maintenance.js         # Lógica de mantenimiento
 ```
 
-## 🔌 Endpoints de API
+## 🔌 Endpoints de API - Estado Actual
 
-### Métricas (Sin autenticación)
-- `GET /api/admin/metrics` - Obtiene métricas del sistema
+### Métricas del Sistema
+- `GET /api/admin/metrics` - Métricas generales y estadísticas
+- `GET /api/admin/conversations` - Últimas conversaciones con filtros
 
-### Feedback (Sin autenticación)
-- `GET /api/feedback/list` - Lista todos los feedback
+### Gestión de Feedback
+- `GET /api/feedback/list` - Lista todos los feedback con filtros
+- `POST /api/feedback` - Crear nuevo feedback (desde chat)
 
-### Base de Conocimiento (Sin autenticación)
-- `GET /api/admin/knowledge` - Obtiene entradas de la KB
+### Base de Conocimiento
+- `GET /api/admin/knowledge` - Obtener entradas con paginación
+- `POST /api/admin/knowledge` - Crear nueva entrada
+- `PUT /api/admin/knowledge/:id` - Actualizar entrada existente
+- `DELETE /api/admin/knowledge/:id` - Eliminar entrada
 
-### Mantenimiento (Requiere ADMIN_TOKEN)
-- `POST /api/admin/auth` - Autenticación de token
-- `POST /api/admin/run-scrapers` - Ejecuta scrapers
-- `POST /api/admin/reload-kb` - Recarga base de conocimiento
-- `POST /api/admin/backup-db` - Descarga backup de DB
+### Malla Curricular (Especializado)
+- `GET /api/malla-curricular` - Información completa de la malla
+- `GET /api/malla-curricular/programa_completo` - Solo programa principal
+- `GET /api/malla-curricular/programa_completo/:nivel` - Nivel específico
+- `GET /api/malla-curricular/buscar/:materia` - Buscar materia específica
+
+### Mantenimiento y Scrapers
+- `POST /api/admin/run-scrapers` - Ejecutar todos los scrapers
+- `POST /api/admin/reload-kb` - Recargar base de conocimiento en memoria
+- `POST /api/admin/backup-db` - Generar backup de base de datos
+- `POST /api/admin/regenerate-synonyms` - Regenerar sinónimos automáticos
 
 ### Estado del Sistema
-- `GET /api/health` - Estado general
-- `GET /api/admin/db-status` - Estado de base de datos
-- `GET /api/admin/ai-status` - Estado del servicio de IA
+- `GET /api/health` - Health check general
+- `GET /api/admin/db-status` - Estado de conexión BD
+- `GET /api/admin/ai-status` - Estado de servicio Gemini AI
+- `GET /api/admin/scrapers-status` - Estado última ejecución scrapers
 
 ## 🎨 Sistema de Temas
 
@@ -93,94 +106,29 @@ El panel incluye un sistema de temas automático:
 - **Claro**: Tema claro forzado
 - **Oscuro**: Tema oscuro forzado
 
-## 🔍 Verificación de Fuentes UTS
+## ⚠️ Notas importantes del sistema actual
 
-### Objetivo Principal
-Comprobar que la información en la base de conocimiento proviene del sitio oficial UTS.
+### Información de Docentes
+- **Estado actual**: La sección de docentes **NO está disponible** en la web oficial UTS
+- **Comportamiento del bot**: Responde apropiadamente informando que no hay información específica
+- **Redirección**: Orienta a los usuarios hacia canales oficiales de contacto
+- **Datos históricos**: El archivo `knowledge.json` contiene información obsoleta de docentes
 
-### Indicadores Visuales
-- ✅ **Verde**: Fuente verificada del dominio UTS
-- ⚠️ **Amarillo**: Fuente externa o no verificada
-- ❌ **Rojo**: Sin fuente especificada
+### Fuentes de Información
+- **Primaria**: Scrapers automáticos desde https://www.uts.edu.co/sitio/ingenieria-de-sistemas/
+- **Malla curricular**: Datos integrados programáticamente desde `mallaCurricular.js`
+- **Sin datos manuales**: Todo proviene de fuentes oficiales verificables
+- **Cache web**: Sistema de cache para optimizar scrapers
 
-### Dominios UTS Verificados
-- `*.uts.edu.co`
-- `*.unitecnologica.edu.co`
-
-## 🚀 Uso del Panel
-
-### Para Sustentación del Proyecto
-1. **Demostrar Trazabilidad**: Mostrar que cada respuesta del bot tiene una fuente UTS verificable
-2. **Mostrar Métricas**: Estadísticas de uso y satisfacción real
-3. **Verificar Feedback**: Comentarios reales de usuarios
-4. **Proceso de Actualización**: Cómo se mantiene actualizada la información
-
-### Flujo de Trabajo
-1. Los scrapers extraen información del sitio UTS
-2. La información se almacena en `knowledge.json`
-3. El panel permite verificar que cada entrada tiene su fuente UTS
-4. Las métricas muestran el uso real del sistema
-
-## 💡 Razones del Diseño
-
-### Solo Lectura para KB
-- **Trazabilidad**: La fuente de verdad es el sitio UTS
-- **Integridad**: Evita desalineación manual vs sitio oficial
-- **Proceso Claro**: Scrapers → Ingest → Reload (pipeline definido)
-
-### Separación Modular
-- **Mantenibilidad**: Cada sección es independiente
-- **Escalabilidad**: Fácil agregar nuevas funcionalidades
-- **Responsabilidad**: Cada módulo tiene un propósito claro
-
-## 🛠️ Desarrollo
-
-### Agregar Nueva Funcionalidad
-1. Crear CSS en `css/nueva-seccion.css`
-2. Crear JS en `js/nueva-seccion.js`
-3. Agregar tab en `index.html`
-4. Implementar endpoint en backend si es necesario
-
-### Personalización de Temas
-Editar variables CSS en `css/base.css`:
-```css
-:root {
-  --primary: #2563eb;
-  --success: #059669;
-  /* etc... */
-}
-```
-
-## 📚 Dependencias
-
-### Frontend
-- CSS Grid y Flexbox nativo
-- JavaScript ES6+ nativo
-- Sin frameworks externos
-
-### Backend
-- Express.js para rutas
-- Autenticación por token simple
-- Integración con sistema de scrapers existente
-
-## 🔧 Solución de Problemas
-
-### Error de Autenticación
-1. Verificar que `ADMIN_TOKEN` esté configurado en `.env`
-2. Revisar que el token ingresado sea correcto
-3. Verificar permisos del servidor
-
-### Datos No Cargan
-1. Verificar que el servidor esté ejecutándose
-2. Revisar conexión de base de datos
-3. Verificar que exista `knowledge.json`
-
-### Scrapers No Ejecutan
-1. Verificar que `npm run scrapers` funcione manualmente
-2. Revisar permisos de ejecución
-3. Verificar timeout de 2 minutos
+### Proceso de Actualización
+1. **Scrapers** extraen información actualizada desde web oficial
+2. **Base de datos** se actualiza automáticamente
+3. **Panel admin** permite verificar y gestionar contenido  
+4. **Sistema de logging** registra todos los cambios y errores
+5. **Sinónimos automáticos** mejoran la búsqueda semántica
 
 ---
 
 **Desarrollado por Mario Andrés Jácome Mantilla**  
-**Unidades Tecnológicas de Santander - 2024**
+**Especializado para Ingeniería de Sistemas - UTS 2025**  
+**Repositorio**: https://github.com/mandresjacome/chatbot-uts

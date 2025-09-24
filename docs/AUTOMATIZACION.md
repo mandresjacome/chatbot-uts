@@ -1,25 +1,27 @@
-# 🤖 Sistema de Automatización UTS Chatbot
+# 🤖 Sistema de Automatización UTS Chatbot v1.2.0
 
-Este sistema permite la **actualización automática** del chatbot cuando se detectan cambios en las páginas web de la UTS.
+Sistema inteligente de actualización automática para el chatbot especializado en **Ingeniería de Sistemas UTS**. Mantiene sincronizada la información con la web oficial mediante detección de cambios y scrapers automáticos.
 
-## 🎯 ¿Qué hace?
+## 🎯 ¿Qué hace el sistema?
 
-### 1. **Detección Automática de Cambios**
-- Monitorea las páginas web de la UTS cada 2-6 horas
-- Compara el contenido actual con snapshots anteriores
-- Detecta nuevas secciones, modificaciones y eliminaciones
+### 1. **Detección Inteligente de Cambios**
+- 🔍 Monitorea https://www.uts.edu.co/sitio/ingenieria-de-sistemas/ cada 2-6 horas
+- 📊 Compara contenido actual con snapshots cached anteriores  
+- 🚨 Detecta modificaciones en secciones (presentación, malla, perfil, etc.)
+- ⚡ Activación automática solo cuando hay cambios reales
 
-### 2. **Actualización Inteligente**
-- **Solo se ejecuta** cuando hay cambios detectados
-- Ejecuta scrapers para obtener nuevo contenido
-- Mejora automáticamente las palabras clave
-- Regenera sinónimos específicos
-- Recarga el sistema de retriever
+### 2. **Actualización Automática de Contenido**
+- 🕷️ **Scrapers selectivos**: Solo ejecuta scrapers de secciones modificadas
+- 🔄 **Regeneración de sinónimos**: Mejora automática del NLP
+- 🏷️ **Optimización de palabras clave**: Keywords contextuales automáticas  
+- 🧠 **Reload inteligente**: Recarga base de conocimiento en memoria
+- 📝 **Logging detallado**: Registro completo de cambios y actualizaciones
 
-### 3. **Programación Automática**
-- **Windows**: Task Scheduler
-- **Linux/Mac**: Cron jobs
-- **Logs automáticos** para monitoreo
+### 3. **Programación Multi-Plataforma**
+- 🪟 **Windows**: Task Scheduler con scripts .bat
+- 🐧 **Linux/Mac**: Cron jobs con scripts .sh
+- ☁️ **Servicios cloud**: Compatible con GitHub Actions, Render cron
+- 📊 **Monitoreo**: Logs automáticos con rotación por fecha
 
 ## 🚀 Comandos Disponibles
 
