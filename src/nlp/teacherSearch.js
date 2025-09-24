@@ -348,7 +348,7 @@ function formatMultipleTeachersResponse(searchName, matchingTeachers) {
     }
     
     response.push('');
-    response.push('💡 **Tip:** Para obtener información específica, escribe el nombre completo del docente, por ejemplo: "Victor Ochoa" o "Leydi Polo".');
+    response.push('💡 **Tip:** Para obtener información específica, escribe el nombre completo del docente que buscas.');
     
     return response.join('\n\n');
 }

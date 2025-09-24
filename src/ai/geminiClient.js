@@ -159,7 +159,8 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
       }
     }
     
-    if (teacherChunk) {
+    // Si encontramos información de docentes específica, procesarla
+    if (teacherChunk && (teacherChunk.text.includes('@correo.uts.edu.co') || teacherChunk.text.includes('DOCENTE'))) {
       // Extraer solo el nombre del docente de la pregunta
       let teacherNameQuery = question.toLowerCase();
       
@@ -183,8 +184,11 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
         return `${formatMultipleTeachersResponse(teacherNameQuery, matchingTeachers)}\n\n📍 **Programa:** Ingeniería de Sistemas - UTS`;
       } else if (teacherNameQuery.trim().length > 0) {
         // No se encontraron coincidencias pero sí había un nombre
-        return `❌ No encontré ningún docente con el nombre "${teacherNameQuery}" en el programa de Ingeniería de Sistemas.\n\n💡 **Sugerencias:**\n- Verifica la ortografía del nombre\n- Intenta con el nombre completo (ej: "Victor Ochoa")\n- Pregunta por "lista de docentes" para ver todos los profesores disponibles\n\n¿Te gustaría que te ayude de otra manera?`;
+        return `❌ No encontré información del docente "${teacherNameQuery}" en los datos disponibles del programa de Ingeniería de Sistemas.\n\n💡 **Te puedo ayudar con:**\n- 📋 Información general del programa\n- 🎓 Malla curricular y materias\n- 📞 Contacto de coordinación académica\n- 🏛️ Requisitos de admisión\n\n¿Hay algo más sobre el programa que te gustaría conocer?`;
       }
+    } else {
+      // No hay información específica de docentes disponible
+      return `📚 **Información de Docentes - Programa de Ingeniería de Sistemas UTS**\n\nActualmente no tengo información detallada de docentes específicos disponible en el sistema.\n\n💡 **Para información de docentes puedes:**\n- 📞 **Contactar coordinación:** Calle de los Estudiantes #9-82, Edificio C (Tekné), piso 2\n- 🌐 **Visitar:** https://www.uts.edu.co/sitio/ingenieria-de-sistemas/\n- 📧 **Email:** Coordinación académica del programa\n\n**Mientras tanto, puedo ayudarte con:**\n- 📋 Plan de estudios y materias\n- 🎯 Perfil profesional del programa\n- 📍 Requisitos de admisión\n- 🏛️ Información general de la carrera\n\n¿Te gustaría información sobre alguno de estos temas?`;
     }
   }
 
