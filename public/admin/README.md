@@ -19,13 +19,14 @@ Panel de administración integral para el Chatbot UTS especializado en **Ingenie
 - **Análisis de sentimientos** automático
 - **Métricas de satisfacción** por funcionalidad
 
-### 3. Base de Conocimiento (Lectura + Gestión)
-- **Fuente única**: Información extraída desde web oficial UTS
+### 3. Base de Conocimiento (Solo Lectura - Actualización Automática)
+- **Fuente única**: Información extraída automáticamente desde web oficial UTS
 - **Verificación de fuentes** UTS vs externas
-- **Gestión completa**: Agregar, editar, eliminar entradas
+- **Visualización completa**: Ver, buscar, filtrar entradas existentes
 - **Búsqueda y filtrado** avanzado por contenido
 - **Metadatos completos**: URLs, fechas, palabras clave
 - **Estado de sincronización** con scrapers
+- **Sin edición manual**: Se actualiza automáticamente via scrapers
 
 ### 4. Mantenimiento del Sistema
 - **Ejecutar scrapers**: Actualización automática desde web UTS
@@ -75,11 +76,11 @@ public/admin/
 - `GET /api/feedback/list` - Lista todos los feedback con filtros
 - `POST /api/feedback` - Crear nuevo feedback (desde chat)
 
-### Base de Conocimiento
-- `GET /api/admin/knowledge` - Obtener entradas con paginación
-- `POST /api/admin/knowledge` - Crear nueva entrada
-- `PUT /api/admin/knowledge/:id` - Actualizar entrada existente
-- `DELETE /api/admin/knowledge/:id` - Eliminar entrada
+### Base de Conocimiento (Solo Lectura)
+- `GET /api/admin/knowledge` - Obtener entradas con paginación y filtros
+- `GET /api/admin/knowledge/:id` - Obtener entrada específica
+- **Nota**: No hay endpoints de creación, edición o eliminación manual
+- **Actualización**: Solo via scrapers automáticos
 
 ### Malla Curricular (Especializado)
 - `GET /api/malla-curricular` - Información completa de la malla
