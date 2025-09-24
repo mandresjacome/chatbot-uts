@@ -1,8 +1,8 @@
 (function(){
   const CHAT_URL = '/chat';
   const BTN_SIZE = 56;
-  const WIDTH = 380;
-  const HEIGHT = 560;
+  const WIDTH = 480;
+  const HEIGHT = 650;
 
   // Temas para cada tipo de usuario
   const USER_THEMES = {
