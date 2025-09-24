@@ -1,6 +1,15 @@
 (function(){
   const CHAT_URL = '/chat';
 
+  // Inyectar CSS del widget si no existe
+  if (!document.querySelector('link[href*="widget.css"]') && !document.getElementById('widget-styles')) {
+    const link = document.createElement('link');
+    link.id = 'widget-styles';
+    link.rel = 'stylesheet';
+    link.href = '/chat/css/components/widget.css';
+    document.head.appendChild(link);
+  }
+
   // Temas para cada tipo de usuario
   const USER_THEMES = {
     estudiante: {
