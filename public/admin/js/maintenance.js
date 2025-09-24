@@ -49,6 +49,13 @@ class MaintenanceManager {
     this.bindButton('improveKeywordsBtn', () => this.improveKeywords());
     this.bindButton('generateSynonymsBtn', () => this.generateSynonyms());
     
+    // Sugerencias Inteligentes
+    this.bindButton('refreshAllSuggestionsBtn', () => this.refreshSuggestions());
+    this.bindButton('refreshEstudianteBtn', () => this.refreshSuggestions('estudiante'));
+    this.bindButton('refreshDocenteBtn', () => this.refreshSuggestions('docente'));
+    this.bindButton('refreshAspiranteBtn', () => this.refreshSuggestions('aspirante'));
+    this.bindButton('refreshVisitanteBtn', () => this.refreshSuggestions('visitante'));
+    
     // Scrapers Manuales
     this.bindButton('runAllScrapersBtn', () => this.runScrapers('all'));
     this.bindButton('runAspirantesBtn', () => this.runScrapers('aspirantes'));
@@ -809,6 +816,64 @@ class MaintenanceManager {
     } catch (error) {
       console.error('Logs error:', error);
       this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
+    }
+  }
+
+  async refreshSuggestions(userType = null) {
+    const taskId = userType ? `refresh-suggestions-${userType}` : 'refresh-all-suggestions';
+    const taskName = userType ? 
+      `Actualizar sugerencias para ${userType}` : 
+      'Actualizar todas las sugerencias';
+
+    this.addActiveTask(taskId, taskName);
+    this.appendTaskOutput(taskId, `🔄 Iniciando actualización de sugerencias...\n`);
+
+    try {
+      const endpoint = userType ? 
+        `/api/chat/suggestions/refresh?userType=${encodeURIComponent(userType)}` : 
+        '/api/chat/suggestions/refresh';
+
+      this.appendTaskOutput(taskId, `📡 Conectando al servidor...\n`);
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.appendTaskOutput(taskId, `✅ Sugerencias actualizadas exitosamente\n`);
+        if (result.generated) {
+          this.appendTaskOutput(taskId, `📊 Se generaron ${result.generated} sugerencias nuevas\n`);
+        }
+        if (result.cached) {
+          this.appendTaskOutput(taskId, `💾 Sugerencias guardadas en caché\n`);
+        }
+        
+        this.showAlert(
+          userType ? 
+            `Sugerencias para ${userType} actualizadas correctamente` : 
+            'Todas las sugerencias actualizadas correctamente', 
+          'success'
+        );
+      } else {
+        this.appendTaskOutput(taskId, `❌ Error actualizando sugerencias: ${result.error}\n`);
+        this.showAlert('Error al actualizar las sugerencias', 'error');
+      }
+
+    } catch (error) {
+      console.error('Suggestions refresh error:', error);
+      this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
+      this.showAlert('Error de conexión al actualizar sugerencias', 'error');
+    } finally {
+      this.completeTask(taskId);
     }
   }
 

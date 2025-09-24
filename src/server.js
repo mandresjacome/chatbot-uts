@@ -15,6 +15,8 @@ import feedbackRouter from './routes/feedback.js';
 import adminRouter from './routes/admin.js';
 // Importar el router de malla curricular
 import mallaRouter from './routes/malla.js';
+// Importar el router de sugerencias
+import suggestionsRouter from './routes/suggestions.js';
 // Importar middleware de autenticación admin
 import { adminAuth } from './middlewares/adminAuth.js';
 // Importar función para inicializar el esquema de base de datos
@@ -212,6 +214,9 @@ app.use('/api/chat', chatRouter);
 
 // 👉 Conectar las rutas del feedback bajo el prefijo '/api/feedback'
 app.use('/api/feedback', feedbackRouter);
+
+// 👉 Conectar las rutas de sugerencias bajo el prefijo '/api/suggestions'
+app.use('/api/suggestions', suggestionsRouter);
 
 // 👉 Conectar las rutas de malla curricular bajo el prefijo '/api'
 app.use('/api', mallaRouter);

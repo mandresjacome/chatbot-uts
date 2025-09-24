@@ -421,3 +421,33 @@ async function createMallaComponent(parentElement) {
 
 btn.addEventListener('click', send);
 ta.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+
+// Integrar componente de sugerencias después de que el chat se inicialice
+document.addEventListener('DOMContentLoaded', () => {
+  // Crear y insertar el contenedor de sugerencias después del chat
+  const suggestionsContainer = document.createElement('div');
+  suggestionsContainer.id = 'suggestions-component';
+  
+  // Insertar las sugerencias entre el chat y la barra de entrada
+  const footer = document.querySelector('.bar');
+  if (footer && footer.parentNode) {
+    footer.parentNode.insertBefore(suggestionsContainer, footer);
+  }
+  
+  // El componente de sugerencias se inicializará automáticamente
+  console.log('✅ Contenedor de sugerencias agregado al DOM');
+});
+
+// Función para enviar sugerencia desde el componente de sugerencias
+window.sendSuggestion = function(suggestionText) {
+  if (suggestionText && suggestionText.trim()) {
+    // Establecer el texto en el textarea
+    ta.value = suggestionText.trim();
+    
+    // Ajustar la altura del textarea
+    autoGrow(ta);
+    
+    // Enviar automáticamente
+    send();
+  }
+};

@@ -50,6 +50,17 @@ export const Conversations = {
       [n]
     );
   },
+
+  async getByUserType(userType, limit = 10) {
+    return queryAll(
+      `SELECT pregunta as user_message, respuesta, created_at, session_id
+       FROM conversations
+       WHERE tipo_usuario = ${isPg ? '$1' : '?'}
+       ORDER BY id DESC
+       LIMIT ${isPg ? '$2' : '?'}`,
+      [userType, limit]
+    );
+  },
 };
 
 export const Feedback = {

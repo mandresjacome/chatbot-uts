@@ -1,0 +1,465 @@
+/* Componente de Sugerencias Flotantes - Versión Simplificada */
+
+.suggestions-container {
+  position: fixed;
+  top: 80px;
+  right: 20px; /* Volvemos al lado derecho */
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e1e5e9;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.suggestions-container.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Estado colapsado - como botón flotante debajo del botón de tema */
+.suggestions-container.collapsed {
+  top: calc(50% + 60px) !important; /* Debajo del botón de tema */
+  right: -22px !important; /* Volvemos al lado derecho - parcialmente oculto */
+  left: auto !important; /* Forzar que no use left */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg, #ffffff);
+  border: 1px solid var(--border, #e1e5e9);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1); /* Sombra para el lado derecho */
+  opacity: 0.9;
+  overflow: hidden;
+}
+
+.suggestions-container.collapsed:hover {
+  right: 16px !important; /* Se desliza hacia adentro desde la derecha */
+  left: auto !important; /* Forzar que no use left */
+  opacity: 1;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.15); /* Sombra para el lado derecho */
+  transform: translateY(0) scale(1.05);
+}
+
+/* Header */
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #007bff;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.4s ease;
+}
+
+.suggestions-header:hover {
+  background: #0056b3;
+}
+
+/* Header en estado colapsado - solo mostrar icono centrado */
+.suggestions-container.collapsed .suggestions-header {
+  padding: 10px;
+  border-radius: 50%;
+  background: var(--bg, #007bff);
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  position: relative;
+}
+
+.suggestions-container.collapsed .suggestions-title {
+  display: none;
+}
+
+.suggestions-container.collapsed .suggestions-toggle {
+  display: none;
+}
+
+.suggestions-container.collapsed .suggestions-header::before {
+  content: '💡';
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.suggestions-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.suggestions-icon {
+  font-size: 16px;
+}
+
+.suggestions-toggle {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.suggestions-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.suggestions-toggle svg {
+  transition: transform 0.3s ease;
+}
+
+.suggestions-toggle.collapsed svg {
+  transform: rotate(180deg);
+}
+
+/* Content */
+.suggestions-content {
+  padding: 16px;
+  max-height: 320px;
+  overflow-y: auto;
+  transition: all 0.4s ease;
+}
+
+.suggestions-content.collapsed {
+  max-height: 0;
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* En estado colapsado, ocultar completamente el contenido */
+.suggestions-container.collapsed .suggestions-content {
+  display: none;
+}
+
+/* Tooltip para estado colapsado */
+.suggestions-container.collapsed::after {
+  content: 'Sugerencias';
+  position: absolute;
+  right: 55px; /* Volvemos al lado derecho */
+  top: 50%;
+  transform: translateY(-50%) translateX(10px); /* Volvemos a la dirección original */
+  background: var(--text, #333);
+  color: var(--bg, white);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.suggestions-container.collapsed:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Loading */
+.suggestions-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #666;
+  font-size: 14px;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.suggestions-loading.hidden {
+  display: none;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e1e5e9;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* List */
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestion-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.suggestion-btn:hover {
+  background: #e3f2fd;
+  border-color: #007bff;
+  transform: translateY(-1px);
+}
+
+.suggestion-text {
+  flex: 1;
+  color: #333;
+  font-weight: 500;
+}
+
+.suggestion-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #28a745;
+  color: white;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.suggestion-badge.fallback {
+  background: #ffc107;
+  color: #333;
+}
+
+/* Empty state */
+.suggestions-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.suggestions-empty.hidden {
+  display: none;
+}
+
+.empty-icon {
+  font-size: 32px;
+  opacity: 0.6;
+}
+
+/* Error state */
+.suggestions-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  color: #dc3545;
+  font-size: 14px;
+  text-align: center;
+}
+
+.suggestions-error.hidden {
+  display: none;
+}
+
+.error-icon {
+  font-size: 24px;
+}
+
+.suggestions-retry {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.suggestions-retry:hover {
+  background: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .suggestions-container {
+    top: 70px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+  
+  .suggestions-content {
+    max-height: 280px;
+  }
+}
+
+/* TEMAS POR TIPO DE USUARIO - Botón colapsado */
+
+/* Estudiante - Azul académico */
+:root[data-user="estudiante"] .suggestions-container {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%) !important;
+  border: 1px solid #64B5F6 !important;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2) !important;
+}
+
+:root[data-user="estudiante"] .suggestions-header {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%) !important;
+}
+
+:root[data-user="estudiante"] .suggestions-header:hover {
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%) !important;
+}
+
+:root[data-user="estudiante"] .suggestion-btn:hover {
+  background: #E3F2FD !important;
+  border-color: #2196F3 !important;
+}
+
+:root[data-user="estudiante"] .suggestion-badge {
+  background: #2196F3 !important;
+}
+
+:root[data-user="estudiante"] .suggestions-container.collapsed {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%) !important;
+  border: 1px solid #64B5F6 !important;
+  box-shadow: -2px 0 8px rgba(33, 150, 243, 0.3) !important;
+}
+
+:root[data-user="estudiante"] .suggestions-container.collapsed:hover {
+  box-shadow: -4px 0 16px rgba(33, 150, 243, 0.4) !important;
+  transform: translateY(0) scale(1.1);
+}
+
+:root[data-user="estudiante"] .suggestions-container.collapsed .suggestions-header::before {
+  filter: none;
+}
+
+/* Docente - Dorado académico */
+:root[data-user="docente"] .suggestions-container {
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%) !important;
+  border: 1px solid #FFB74D !important;
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.2) !important;
+}
+
+:root[data-user="docente"] .suggestions-header {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
+}
+
+:root[data-user="docente"] .suggestions-header:hover {
+  background: linear-gradient(135deg, #F57C00 0%, #EF6C00 100%) !important;
+}
+
+:root[data-user="docente"] .suggestion-btn:hover {
+  background: #FFF8E1 !important;
+  border-color: #FF9800 !important;
+}
+
+:root[data-user="docente"] .suggestion-badge {
+  background: #FF9800 !important;
+}
+
+:root[data-user="docente"] .suggestions-container.collapsed {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
+  border: 1px solid #FFB74D !important;
+  box-shadow: -2px 0 8px rgba(255, 152, 0, 0.3) !important;
+}
+
+:root[data-user="docente"] .suggestions-container.collapsed:hover {
+  box-shadow: -4px 0 16px rgba(255, 152, 0, 0.4) !important;
+  transform: translateY(0) scale(1.1);
+}
+
+/* Aspirante - Verde esperanza */
+:root[data-user="aspirante"] .suggestions-container {
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%) !important;
+  border: 1px solid #81C784 !important;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2) !important;
+}
+
+:root[data-user="aspirante"] .suggestions-header {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%) !important;
+}
+
+:root[data-user="aspirante"] .suggestions-header:hover {
+  background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%) !important;
+}
+
+:root[data-user="aspirante"] .suggestion-btn:hover {
+  background: #E8F5E8 !important;
+  border-color: #4CAF50 !important;
+}
+
+:root[data-user="aspirante"] .suggestion-badge {
+  background: #4CAF50 !important;
+}
+
+:root[data-user="aspirante"] .suggestions-container.collapsed {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%) !important;
+  border: 1px solid #81C784 !important;
+  box-shadow: -2px 0 8px rgba(76, 175, 80, 0.3) !important;
+}
+
+:root[data-user="aspirante"] .suggestions-container.collapsed:hover {
+  box-shadow: -4px 0 16px rgba(76, 175, 80, 0.4) !important;
+  transform: translateY(0) scale(1.1);
+}
+
+/* Visitante - Púrpura elegante */
+:root[data-user="visitante"] .suggestions-container {
+  background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%) !important;
+  border: 1px solid #BA68C8 !important;
+  box-shadow: 0 4px 16px rgba(156, 39, 176, 0.2) !important;
+}
+
+:root[data-user="visitante"] .suggestions-header {
+  background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%) !important;
+}
+
+:root[data-user="visitante"] .suggestions-header:hover {
+  background: linear-gradient(135deg, #7B1FA2 0%, #6A1B9A 100%) !important;
+}
+
+:root[data-user="visitante"] .suggestion-btn:hover {
+  background: #F3E5F5 !important;
+  border-color: #9C27B0 !important;
+}
+
+:root[data-user="visitante"] .suggestion-badge {
+  background: #9C27B0 !important;
+}
+
+:root[data-user="visitante"] .suggestions-container.collapsed {
+  background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%) !important;
+  border: 1px solid #BA68C8 !important;
+  box-shadow: -2px 0 8px rgba(156, 39, 176, 0.3) !important;
+}
+
+:root[data-user="visitante"] .suggestions-container.collapsed:hover {
+  box-shadow: -4px 0 16px rgba(156, 39, 176, 0.4) !important;
+  transform: translateY(0) scale(1.1);
+}

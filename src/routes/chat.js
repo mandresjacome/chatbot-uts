@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { retrieveTopK } from '../nlp/retriever.js';
 import { answerLLM } from '../ai/geminiClient.js';
+import SuggestionsGenerator from '../ai/suggestionsGenerator.js';
 import { Conversations } from '../db/repositories.js';
 import { ensureSessionId } from '../utils/id.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();
+
+// Instancia del generador de sugerencias
+const suggestionsGenerator = new SuggestionsGenerator();
 
 router.post('/message', async (req, res) => {
   const startTime = Date.now();
@@ -129,6 +133,154 @@ router.post('/message', async (req, res) => {
       totalTimeMs: totalTime
     });
     return res.status(500).json({ success: false, error: 'Error interno' });
+  }
+});
+
+// Nuevo endpoint para generar sugerencias inteligentes
+router.get('/suggestions/:userType', async (req, res) => {
+  const startTime = Date.now();
+  
+  try {
+    const { userType } = req.params;
+    
+    // Validar tipo de usuario
+    const validTypes = ['estudiante', 'docente', 'aspirante', 'visitante'];
+    if (!validTypes.includes(userType)) {
+      logger.warn('SUGGESTIONS', 'Tipo de usuario inválido', { userType });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Tipo de usuario inválido',
+        validTypes 
+      });
+    }
+
+    logger.info('SUGGESTIONS', 'Generando sugerencias', { userType });
+
+    // Generar sugerencias con Gemini
+    const suggestions = await suggestionsGenerator.generateSuggestions(userType, {
+      timestamp: new Date().toISOString(),
+      hour: new Date().getHours()
+    });
+
+    const totalTime = Date.now() - startTime;
+    
+    logger.info('SUGGESTIONS', 'Sugerencias generadas exitosamente', {
+      userType,
+      count: suggestions.length,
+      totalTimeMs: totalTime
+    });
+
+    res.json({
+      success: true,
+      suggestions,
+      userType,
+      meta: {
+        generatedAt: new Date().toISOString(),
+        count: suggestions.length,
+        totalTimeMs: totalTime,
+        cached: false // TODO: implementar detección de cache
+      }
+    });
+
+  } catch (error) {
+    const totalTime = Date.now() - startTime;
+    logger.error('SUGGESTIONS', 'Error generando sugerencias', {
+      ...error,
+      userType: req.params.userType,
+      totalTimeMs: totalTime
+    });
+    
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error generando sugerencias',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Endpoint para refrescar sugerencias (para panel admin)
+router.post('/suggestions/refresh', async (req, res) => {
+  const startTime = Date.now();
+  
+  try {
+    const { userType, force = true } = req.body;
+    
+    logger.info('SUGGESTIONS_REFRESH', 'Refrescando sugerencias', { userType, force });
+
+    let result;
+    
+    if (userType) {
+      // Refrescar tipo específico
+      const validTypes = ['estudiante', 'docente', 'aspirante', 'visitante'];
+      if (!validTypes.includes(userType)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Tipo de usuario inválido',
+          validTypes 
+        });
+      }
+      
+      result = await suggestionsGenerator.forceRefreshSuggestions(userType);
+    } else {
+      // Refrescar todos los tipos
+      result = await suggestionsGenerator.forceRefreshSuggestions();
+    }
+
+    const totalTime = Date.now() - startTime;
+    
+    logger.info('SUGGESTIONS_REFRESH', 'Sugerencias refrescadas exitosamente', {
+      userType: userType || 'todos',
+      totalTimeMs: totalTime
+    });
+
+    res.json({
+      success: true,
+      message: userType 
+        ? `Sugerencias refrescadas para ${userType}`
+        : 'Todas las sugerencias refrescadas',
+      userType: userType || 'todos',
+      meta: {
+        refreshedAt: new Date().toISOString(),
+        totalTimeMs: totalTime,
+        cacheCleared: true
+      }
+    });
+
+  } catch (error) {
+    const totalTime = Date.now() - startTime;
+    logger.error('SUGGESTIONS_REFRESH', 'Error refrescando sugerencias', {
+      ...error,
+      userType: req.body?.userType,
+      totalTimeMs: totalTime
+    });
+    
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error refrescando sugerencias',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Endpoint para invalidar cache después del scraper
+router.post('/suggestions/invalidate-cache', async (req, res) => {
+  try {
+    logger.info('SUGGESTIONS_CACHE', 'Invalidando cache por cambios en BD');
+    
+    suggestionsGenerator.invalidateCacheOnDatabaseChange();
+    
+    res.json({
+      success: true,
+      message: 'Cache de sugerencias invalidado',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    logger.error('SUGGESTIONS_CACHE', 'Error invalidando cache', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error invalidando cache' 
+    });
   }
 });
 

@@ -70,8 +70,39 @@ async function runAllScrapers() {
   if (failed === 0) {
     console.log('\n🎉 ¡Todos los scrapers ejecutados exitosamente!');
     console.log('📚 La base de conocimiento ha sido actualizada completamente.');
+    
+    // Invalidar cache de sugerencias automáticamente
+    await invalidateSuggestionsCache();
   } else {
     console.log(`\n⚠️ ${failed} scraper(s) fallaron. Revisa los errores arriba.`);
+  }
+}
+
+// Función para invalidar cache de sugerencias
+async function invalidateSuggestionsCache() {
+  try {
+    console.log('\n🔄 Invalidando cache de sugerencias...');
+    
+    const fetch = require('node-fetch').default || require('node-fetch');
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3001';
+    
+    const response = await fetch(`${serverUrl}/chat/suggestions/invalidate-cache`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      console.log('✅ Cache de sugerencias invalidado correctamente');
+      console.log('🚀 Las sugerencias se regenerarán con la nueva información');
+    } else {
+      console.log('⚠️ No se pudo invalidar el cache (servidor puede estar apagado)');
+    }
+    
+  } catch (error) {
+    console.log('⚠️ No se pudo conectar al servidor para invalidar cache:', error.message);
+    console.log('💡 La secretaria puede refrescar manualmente desde el panel admin');
   }
 }
 
