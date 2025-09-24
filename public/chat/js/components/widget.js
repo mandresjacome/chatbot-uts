@@ -1,8 +1,5 @@
 (function(){
   const CHAT_URL = '/chat';
-  const BTN_SIZE = 56;
-  const WIDTH = 480;
-  const HEIGHT = 650;
 
   // Temas para cada tipo de usuario
   const USER_THEMES = {
@@ -40,20 +37,7 @@
 
   const btn = document.createElement('button');
   btn.setAttribute('aria-label', 'Abrir AvaUTS - Asistente Virtual Académico UTS');
-  Object.assign(btn.style, {
-    position:'fixed', right:'16px', bottom:'16px', zIndex: 99999,
-    width: BTN_SIZE + 'px', height: BTN_SIZE + 'px',
-    border:'none', borderRadius:'999px', cursor:'pointer',
-    background:'linear-gradient(135deg, #C9D72F 0%, #0b4a75 100%)', 
-    color:'white', fontWeight:'800', 
-    boxShadow:'0 10px 30px rgba(0,0,0,.35)',
-    transition: 'all 0.3s ease',
-    fontSize: '14px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0'
-  });
+  btn.className = 'chat-widget-button';
   
   // Crear el GIF para el botón
   const btnIcon = document.createElement('img');
@@ -66,47 +50,20 @@
     objectFit: 'cover'
   });
   btn.appendChild(btnIcon);
-  
-  // Agregar efecto hover
-  btn.onmouseenter = () => {
-    btn.style.transform = 'scale(1.1)';
-    btn.style.boxShadow = '0 15px 35px rgba(0,0,0,.45)';
-  };
-  btn.onmouseleave = () => {
-    btn.style.transform = 'scale(1)';
-    btn.style.boxShadow = '0 10px 30px rgba(0,0,0,.35)';
-  };
   document.body.appendChild(btn);
 
   let open = false, shell = null, iframe = null, title = null;
   let currentUserType = null;
   let isMinimized = false; // Estado de minimizado
 
-  function borderColor(){ 
-    const theme = USER_THEMES[currentUserType] || USER_THEMES.default;
-    return theme.border;
-  }
-
   function openChat(){
     if (open) return;
     shell = document.createElement('div');
-    Object.assign(shell.style, {
-      position:'fixed', right:'16px', bottom:(16 + BTN_SIZE + 8) + 'px',
-      width: WIDTH + 'px', height: HEIGHT + 'px',
-      border:`2px solid ${borderColor()}`, borderRadius:'16px',
-      boxShadow:'0 25px 60px rgba(0,0,0,.55)', overflow:'hidden',
-      zIndex: 99998, background:'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
-    });
+    shell.className = 'chat-widget-shell';
 
     // Barra superior con Cerrar + Nueva
     const top = document.createElement('div');
-    Object.assign(top.style, {
-      height:'56px', display:'flex', alignItems:'center', justifyContent:'space-between',
-      padding:'0 16px', 
-      background: 'linear-gradient(135deg, #C9D72F 0%, #0b4a75 100%)',
-      color: '#ffffff', fontSize:'14px', fontWeight: '600',
-      borderBottom:`2px solid ${borderColor()}`
-    });
+    top.className = 'chat-widget-header';
 
     title = document.createElement('div');
     title.style.display = 'flex';
@@ -218,12 +175,7 @@
 
     iframe = document.createElement('iframe');
     iframe.src = CHAT_URL;
-    Object.assign(iframe.style, { 
-      width:'100%', 
-      height:`calc(100% - 56px)`, 
-      border:'0',
-      borderRadius: '0 0 14px 14px'
-    });
+    iframe.className = 'chat-widget-iframe';
 
     shell.appendChild(top);
     shell.appendChild(iframe);
@@ -308,39 +260,36 @@
   }
 
   function updateWidgetTheme(userType) {
-    if (!open || !title) return;
+    if (!open || !shell) return;
     
-    currentUserType = userType; // Guardar el tipo de usuario actual
+    currentUserType = userType;
     const theme = USER_THEMES[userType] || USER_THEMES.default;
-    const top = title.parentElement;
     
-    // Actualizar el gradiente del header
-    top.style.background = theme.gradient;
-    top.style.borderBottom = `2px solid ${theme.border}`;
-    top.style.color = '#ffffff'; // Siempre texto blanco
+    // Remover clases de tema previas
+    shell.className = shell.className.replace(/chat-widget-shell--\w+/g, '');
+    
+    // Agregar nueva clase de tema
+    if (userType && userType !== 'default') {
+      shell.classList.add(`chat-widget-shell--${userType}`);
+    }
+    
+    // Actualizar el header también
+    const top = shell.querySelector('.chat-widget-header');
+    if (top) {
+      top.className = top.className.replace(/chat-widget-header--\w+/g, '');
+      if (userType && userType !== 'default') {
+        top.classList.add(`chat-widget-header--${userType}`);
+      }
+    }
     
     // Actualizar el texto del título
-    const textSpan = title.querySelector('span');
+    const textSpan = title?.querySelector('span');
     if (textSpan) {
       if (theme.label) {
         textSpan.textContent = `AvaUTS - ${theme.label}`;
       } else {
         textSpan.textContent = 'AvaUTS';
       }
-      textSpan.style.color = '#ffffff'; // Siempre texto blanco
-    }
-    
-    // Botones mantienen su estilo original con texto blanco
-    const buttons = top.querySelectorAll('button');
-    buttons.forEach(button => {
-      button.style.background = 'rgba(255,255,255,0.2)';
-      button.style.color = 'white';
-      button.style.borderColor = 'rgba(255,255,255,0.3)';
-    });
-    
-    // Actualizar el borde del shell
-    if (shell) {
-      shell.style.border = `2px solid ${theme.border}`;
     }
   }
 

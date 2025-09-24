@@ -1,0 +1,159 @@
+/* ===== WIDGET DEL CHATBOT ===== */
+
+.chat-widget-shell {
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  width: 480px;
+  height: 650px;
+  border: 2px solid var(--primary-color, #2C3E50);
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  z-index: 99998;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  transition: all 0.3s ease;
+}
+
+.chat-widget-header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #C9D72F 0%, #0b4a75 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color, #2C3E50);
+}
+
+.chat-widget-iframe {
+  width: 100%;
+  height: calc(100% - 56px);
+  border: 0;
+  border-radius: 0 0 14px 14px;
+}
+
+/* ===== BOTÓN FLOTANTE ===== */
+.chat-widget-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  z-index: 99999;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #C9D72F 0%, #0b4a75 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-widget-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== RESPONSIVIDAD ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .chat-widget-shell {
+    width: 420px;
+    height: 600px;
+    right: 12px;
+    bottom: 76px;
+    border-radius: 14px;
+  }
+  
+  .chat-widget-button {
+    right: 12px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .chat-widget-shell {
+    width: calc(100vw - 20px);
+    height: calc(100vh - 120px);
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    border-radius: 12px;
+    max-width: 360px;
+    max-height: 500px;
+  }
+  
+  .chat-widget-button {
+    right: 20px;
+    bottom: 20px;
+    width: 52px;
+    height: 52px;
+  }
+  
+  .chat-widget-header {
+    padding: 0 12px;
+    height: 52px;
+  }
+  
+  .chat-widget-iframe {
+    height: calc(100% - 52px);
+    border-radius: 0 0 10px 10px;
+  }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 360px) {
+  .chat-widget-shell {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 100px);
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    max-width: none;
+  }
+}
+
+/* ===== TEMAS POR TIPO DE USUARIO ===== */
+.chat-widget-shell--estudiante {
+  border-color: #1976D2;
+}
+
+.chat-widget-shell--aspirante {
+  border-color: #388E3C;
+}
+
+.chat-widget-shell--docente {
+  border-color: #F57C00;
+}
+
+.chat-widget-shell--visitante {
+  border-color: #7B1FA2;
+}
+
+/* Headers temáticos */
+.chat-widget-header--estudiante {
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 50%, #0D47A1 100%);
+  border-bottom-color: #1976D2;
+}
+
+.chat-widget-header--aspirante {
+  background: linear-gradient(135deg, #388E3C 0%, #2E7D32 50%, #1B5E20 100%);
+  border-bottom-color: #388E3C;
+}
+
+.chat-widget-header--docente {
+  background: linear-gradient(135deg, #F57C00 0%, #EF6C00 50%, #E65100 100%);
+  border-bottom-color: #F57C00;
+}
+
+.chat-widget-header--visitante {
+  background: linear-gradient(135deg, #7B1FA2 0%, #6A1B9A 50%, #4A148C 100%);
+  border-bottom-color: #7B1FA2;
+}
