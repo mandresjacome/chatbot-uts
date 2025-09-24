@@ -234,7 +234,7 @@ function isTeacherSearchQuery(query) {
     
     // Palabras clave que indican búsqueda de docente
     const teacherKeywords = [
-        'profesor', 'profesora', 'docente', 'maestro', 'maestra', 'ingeniero', 'ingeniera', 
+        'profesor', 'profesora', 'docente', 'maestro', 'maestra', 
         'magister', 'magistra', 'doctor', 'doctora'
     ];
     
@@ -246,10 +246,14 @@ function isTeacherSearchQuery(query) {
         'examen', 'examenes', 'exámenes', 'evaluacion', 'evaluación', 'bibliografia', 'bibliografía',
         'biblioteca', 'laboratorio', 'practica', 'práctica', 'proyecto', 'tesis', 'grado',
         'inscripcion', 'inscripción', 'pago', 'beca', 'financiacion', 'financiación',
-        'contacto', 'telefono', 'teléfono', 'direccion', 'dirección', 'ubicacion', 'ubicación'
+        'contacto', 'telefono', 'teléfono', 'direccion', 'dirección', 'ubicacion', 'ubicación',
+        // Nuevos términos para evitar confusión con temas académicos
+        'perfil', 'profesional', 'competencias', 'habilidades', 'campos', 'accion', 'acción',
+        'campo laboral', 'trabajo', 'empleos', 'mercado laboral', 'funciones', 'rol',
+        'objetivos', 'mision', 'misión', 'vision', 'visión', 'historia', 'presentacion', 'presentación'
     ];
     
-    // Si contiene palabras clave explícitas de docente
+    // Si contiene palabras clave explícitas de docente (pero no "ingeniero" genérico)
     const hasTeacherKeyword = teacherKeywords.some(keyword => 
         normalizedQuery.includes(keyword)
     );
@@ -259,23 +263,28 @@ function isTeacherSearchQuery(query) {
         normalizedQuery.includes(topic)
     );
     
-
+    // Si tiene tema académico, definitivamente NO es búsqueda de docente
+    if (hasAcademicTopic) {
+        return false;
+    }
+    
+    // Solo si contiene palabra clave ESPECÍFICA de docente
+    if (hasTeacherKeyword) {
+        return true;
+    }
     
     // Si parece ser nombre completo (2-5 palabras para nombres largos)
     const words = normalizedQuery.split(/\s+/);
     const seemsLikeFullName = words.length >= 2 && words.length <= 5 && 
         words.every(word => /^[a-záéíóúñü]+$/i.test(word)) &&
-        words.every(word => word.length >= 3) && 
-        !hasAcademicTopic;
+        words.every(word => word.length >= 3);
     
     // Verificar si es un nombre individual de docente conocido
-    // Esta verificación se hace de forma dinámica consultando la base de conocimiento
     const isSingleName = words.length === 1 && 
         words[0].length >= 4 && // Mínimo 4 letras para evitar falsos positivos
-        /^[a-záéíóúñü]+$/i.test(words[0]) &&
-        !hasAcademicTopic;
+        /^[a-záéíóúñü]+$/i.test(words[0]);
     
-    return hasTeacherKeyword || seemsLikeFullName || isSingleName;
+    return seemsLikeFullName || isSingleName;
 }
 
 /**
