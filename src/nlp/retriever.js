@@ -120,7 +120,7 @@ async function loadKBFromDatabase() {
     // Configurar Fuse.js para búsqueda difusa inteligente
     fuse = new Fuse(KB, {
       includeScore: true,
-      threshold: 0.4,         // Más tolerante a errores de escritura
+      threshold: 0.4,         // Balance hacia encontrar más información de la BD
       ignoreLocation: true,
       minMatchCharLength: 2,
       keys: [
@@ -190,7 +190,16 @@ export function retrieveTopK({ query, userType = 'todos', k = 3 }) {
   const fechas = doc.match('#Date').text();
 
   // Realizar búsqueda difusa y procesar resultados
-  const results = fuse.search(clean)
+  const allResults = fuse.search(clean);
+  console.log('🔍 DEBUG - Consulta:', clean);
+  console.log('🔍 DEBUG - Primeros 5 resultados:', allResults.slice(0, 5).map(r => ({
+    score: r.score,
+    titulo: r.item.pregunta?.substring(0, 80),
+    palabrasClave: r.item.palabras_clave?.substring(0, 60)
+  })));
+
+  const results = allResults
+    .filter(r => r.score <= 0.95) // Mucho más permisivo - solo descartar matches muy pobres
     .map(r => ({ ...r.item, _score: r.score }))
     .filter(it => it.tipo_usuario === userType || it.tipo_usuario === 'todos')
     .slice(0, k)
@@ -202,6 +211,8 @@ export function retrieveTopK({ query, userType = 'todos', k = 3 }) {
       url: it.recurso_url || null,
       nombreRecurso: it.nombre_recurso || null
     }));
+
+  console.log('🔍 DEBUG - Resultados después de filtros:', results.length);
 
   return { chunks: results, meta: { fechasDetectadas: fechas || null } };
 }
