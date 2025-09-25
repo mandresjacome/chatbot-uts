@@ -70,8 +70,15 @@ function cut(text = '', max = 2000) {
 // Prompt "evidencia primero" con contexto de conversación
 function buildPrompt({ question, evidenceChunks, userType, conversationHistory = [] }) {
   const system = [
-    'Eres el Chatbot UTS v1.2.0 especializado en INGENIERÍA DE SISTEMAS de las Unidades Tecnológicas de Santander.',
+    'Eres AvaUTS v1.2.0, el asistente virtual desarrollado específicamente para la Coordinación de Ingeniería de Sistemas de las Unidades Tecnológicas de Santander.',
+    'Tu base de conocimiento se centra en información de la página de Ingeniería de Sistemas y Tecnología en Desarrollo de Sistemas Informáticos de UTS.',
     'TODAS las consultas se refieren al programa de Ingeniería de Sistemas UTS por defecto.',
+    'Cuando NO tengas información específica o detallada sobre un tema (como modalidades de grado, costos, fechas específicas), NO proporciones enlaces externos.',
+    'En su lugar, da una respuesta breve y general indicando que tienes información limitada sobre ese tema.',
+    'NUNCA incluyas enlaces https:// en tus respuestas cuando la información sea limitada.',
+    'Si la información disponible es insuficiente, simplemente reconócelo y mantén la respuesta corta.',
+    'Cuando no tengas información específica, explica claramente que AvaUTS fue desarrollado para la coordinación de sistemas y tu alcance se limita a estos programas específicos.',
+    'Para información fuera de tu alcance, invita al usuario a usar la búsqueda web inteligente que puede consultar todo el sitio de UTS.',
     'Responde ÚNICAMENTE con la evidencia proporcionada sobre Ingeniería de Sistemas.',
     'NO pidas aclaraciones sobre programa, sede o período - asume que es Ingeniería de Sistemas UTS.',
     `Perfil del usuario: ${userType}.`,
@@ -200,8 +207,16 @@ export async function answerLLM({ question, evidenceChunks, userType, conversati
     }
     
     if (!evidenceChunks?.length) {
-      return `🤔 No tengo información específica sobre "${question}" en mi base de datos de Ingeniería de Sistemas UTS. ` +
-             `🔍 Intenta preguntar sobre docentes, materias, plan de estudios, o requisitos del programa.${contextNote}`;
+      return `� **AvaUTS - Asistente Especializado**\n\n` +
+             `Soy AvaUTS, desarrollado específicamente para la Coordinación de Ingeniería de Sistemas de las UTS. ` +
+             `Mi base de conocimiento se centra en información de los programas de Ingeniería de Sistemas y Tecnología en Desarrollo de Sistemas Informáticos.\n\n` +
+             `📋 No tengo información específica sobre "${question}" en mi base de datos especializada.\n\n` +
+             `💡 **Puedo ayudarte con:**\n` +
+             `🎓 Plan de estudios de Ingeniería de Sistemas\n` +
+             `� Materias y prerrequisitos\n` +
+             `👨‍🏫 Información académica del programa\n` +
+             `📞 Contacto de coordinación\n\n` +
+             `🌐 Para información de otros programas o servicios institucionales, te recomiendo consultar el sitio web completo de UTS.${contextNote}`;
     }
     const bullets = evidenceChunks.map((c,i)=> `📌 ${c.text}`).join('\n');
     return `${bullets}${contextNote}\n\n💬 ¿Hay algo más sobre Ingeniería de Sistemas que te gustaría saber?`;

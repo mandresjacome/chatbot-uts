@@ -1,5 +1,6 @@
 // chat.js
 import { getUserType, resetUserType, showModal } from '../components/modal-user.js';
+import advancedSearchUI from '../components/advanced-search.js';
 
 const $ = s => document.querySelector(s);
 const chat = $('#chat');
@@ -163,6 +164,30 @@ function bubble(text, me=false, extras={}){
     
     actions.append(up,dn); wrap.appendChild(actions);
   }
+  
+  // Botón de búsqueda web si es necesario
+  if (extras.webSearchButton) {
+    const webSearchDiv = document.createElement('div');
+    webSearchDiv.className = 'web-search-action';
+    webSearchDiv.innerHTML = `
+      <div class="web-search-info">
+        <span class="web-search-text">💡 ¿Buscamos en toda la web de UTS?</span>
+      </div>
+      <button class="web-search-btn" data-query="${extras.webSearchButton.originalQuery}">
+        🔍 Buscar en el sitio web de UTS
+      </button>
+    `;
+    
+    // Agregar evento al botón
+    const searchBtn = webSearchDiv.querySelector('.web-search-btn');
+    searchBtn.onclick = () => {
+      const query = searchBtn.getAttribute('data-query');
+      performWebSearch(query, wrap);
+    };
+    
+    wrap.appendChild(webSearchDiv);
+  }
+  
   chat.appendChild(wrap); chat.scrollTop=chat.scrollHeight;
 }
 function typing(on=true){
@@ -246,13 +271,106 @@ async function sendFeedback(conversationId, useful){
   } catch {}
 }
 
+/**
+ * Determina si mostrar botón de búsqueda web - VERSIÓN SIMPLIFICADA
+ * @param {Object} data - Respuesta completa del backend
+ * @returns {boolean}
+ */
+function shouldShowWebSearchButton(data) {
+  // Si no encontró evidencia en la base de datos local, mostrar botón
+  return data.evidenceCount === 0;
+}
+
+/* ====== Funciones de búsqueda web ====== */
+
+/**
+ * Ejecuta búsqueda web cuando el usuario hace clic en el botón
+ * @param {string} query - Consulta original
+ * @param {HTMLElement} messageWrap - Contenedor del mensaje
+ */
+async function performWebSearch(query, messageWrap) {
+  try {
+    console.log('[WebSearch] Usuario solicitó búsqueda web para:', query);
+    
+    // Deshabilitar el botón para evitar múltiples clics
+    const searchBtn = messageWrap.querySelector('.web-search-btn');
+    if (searchBtn) {
+      searchBtn.disabled = true;
+      searchBtn.textContent = '🔄 Buscando...';
+    }
+    
+    // Mostrar indicador de búsqueda
+    advancedSearchUI.showSearchIndicator(messageWrap, query);
+    advancedSearchUI.updateSearchStatus('searching');
+    
+    // Realizar búsqueda híbrida
+    const res = await fetch('/api/web-search/web-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        question: query, 
+        userType: currentUserType,
+        useWebSearch: true 
+      })
+    });
+    
+    const data = await res.json();
+    
+    // Ocultar indicador
+    advancedSearchUI.hideSearchIndicator();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Error en búsqueda web');
+    }
+    
+    const result = data || {};
+    console.log('[WebSearch] Respuesta híbrida recibida:', result);
+    
+    // Crear nueva burbuja con resultado híbrido
+    bubble(result.response || 'No se encontró información específica.', false, {
+      feedback: true,
+      conversationId: result.meta?.conversationId || sessionId
+    });
+    
+    // Agregar indicadores de fuentes al último mensaje
+    const lastMessage = chat.lastElementChild;
+    if (lastMessage && result.sources && result.sources.length > 0) {
+      advancedSearchUI.addResponseSources(
+        lastMessage, 
+        result.sources, 
+        result.confidence
+      );
+    }
+    
+  } catch (error) {
+    console.error('[WebSearch] Error en búsqueda:', error);
+    
+    // Limpiar interfaz
+    advancedSearchUI.hideSearchIndicator();
+    
+    // Restaurar botón
+    const searchBtn = messageWrap.querySelector('.web-search-btn');
+    if (searchBtn) {
+      searchBtn.disabled = false;
+      searchBtn.textContent = '🔍 Buscar en el sitio web de UTS';
+    }
+    
+    // Mostrar mensaje de error
+    bubble('❌ No se pudo realizar la búsqueda web en este momento. Por favor intenta de nuevo.', false, {
+      ref: 'Error de búsqueda web'
+    });
+  }
+}
+
 async function send(){
   const text = ta.value.trim();
   if (!text || !currentUserType) return;
   bubble(text, true);
   ta.value=''; autoGrow(ta);
   typing(true);
+  
   try{
+    // Siempre usar búsqueda tradicional primero
     const res = await fetch('/api/chat/message',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ message:text, userType: currentUserType, sessionId })
@@ -263,11 +381,15 @@ async function send(){
     const fecha = data.meta?.fechasDetectadas ? ` · Fechas: ${data.meta.fechasDetectadas}` : '';
     const modelRef = `Modelo: ${data.meta?.model || 'n/a'}${fecha}`;
     
+    // Verificar si la respuesta necesita botón de búsqueda web
+    const needsWebSearch = shouldShowWebSearchButton(data);
+    
     bubble(data.response, false, { 
       references: data.references || [], 
       ref: modelRef, 
       feedback: true, 
-      conversationId: data.conversationId 
+      conversationId: data.conversationId,
+      webSearchButton: needsWebSearch ? { originalQuery: text } : null
     });
   }catch(e){
     typing(false);

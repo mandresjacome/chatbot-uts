@@ -17,6 +17,8 @@ import adminRouter from './routes/admin.js';
 import mallaRouter from './routes/malla.js';
 // Importar el router de sugerencias
 import suggestionsRouter from './routes/suggestions.js';
+// Importar el router de búsqueda web
+import webSearchRouter from './routes/webSearch.js';
 // Importar middleware de autenticación admin
 import { adminAuth } from './middlewares/adminAuth.js';
 // Importar función para inicializar el esquema de base de datos
@@ -220,6 +222,9 @@ app.use('/api/suggestions', suggestionsRouter);
 
 // 👉 Conectar las rutas de malla curricular bajo el prefijo '/api'
 app.use('/api', mallaRouter);
+
+// 👉 Conectar las rutas de búsqueda web bajo el prefijo '/api/web-search'
+app.use('/api/web-search', webSearchRouter);
 
 // 👉 Conectar las rutas de admin PROTEGIDAS bajo el prefijo '/api/admin' 
 // Solo las operaciones de mantenimiento que requieren autenticación
