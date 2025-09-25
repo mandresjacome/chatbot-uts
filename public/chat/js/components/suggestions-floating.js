@@ -145,22 +145,22 @@ class FloatingSuggestions {
 
     this.showLoading();
 
-    // Llamar al endpoint de Gemini para generar sugerencias
-    this.fetchGeminiSuggestions()
+    // Usar sugerencias estáticas rápidas
+    this.fetchStaticSuggestions()
       .then(suggestions => {
         this.displaySuggestions(suggestions);
       })
       .catch(error => {
-        console.error('Error cargando sugerencias de Gemini:', error);
-        // Fallback a sugerencias estáticas
+        console.error('Error cargando sugerencias estáticas:', error);
+        // Fallback a sugerencias locales
         const fallbackSuggestions = this.getSuggestionsForType(this.currentType);
         this.displaySuggestions(fallbackSuggestions);
       });
   }
 
-  async fetchGeminiSuggestions() {
+  async fetchStaticSuggestions() {
     try {
-      console.log('Solicitando sugerencias a Gemini para:', this.currentType);
+      console.log('Solicitando sugerencias estáticas para:', this.currentType);
       
       const response = await fetch(`/api/chat/suggestions/${encodeURIComponent(this.currentType)}`, {
         method: 'GET',
@@ -176,14 +176,14 @@ class FloatingSuggestions {
       const data = await response.json();
       
       if (data.success && data.suggestions) {
-        console.log(`Recibidas ${data.suggestions.length} sugerencias de Gemini`);
+        console.log(`Recibidas ${data.suggestions.length} sugerencias estáticas`);
         return data.suggestions;
       } else {
         throw new Error('Respuesta inválida del servidor');
       }
       
     } catch (error) {
-      console.error('Error en fetchGeminiSuggestions:', error);
+      console.error('Error en fetchStaticSuggestions:', error);
       throw error;
     }
   }
