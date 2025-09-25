@@ -194,4 +194,33 @@ router.get('/suggestions/:userType', async (req, res) => {
   }
 });
 
+// Endpoint para obtener sugerencias estáticas (para panel admin)
+router.get('/suggestions/static', async (req, res) => {
+  try {
+    const suggestions = getStaticSuggestions();
+    
+    res.json({
+      success: true,
+      data: {
+        estudiante: suggestions.estudiante || [],
+        docente: suggestions.docente || [],
+        aspirante: suggestions.aspirante || [],  
+        todos: suggestions.todos || []
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        system: 'static',
+        performance: '0ms (instantáneas)'
+      }
+    });
+  } catch (error) {
+    console.error('[CHAT] Error getting static suggestions:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor',
+      details: error.message
+    });
+  }
+});
+
 export default router;

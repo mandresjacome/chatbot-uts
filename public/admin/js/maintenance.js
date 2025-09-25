@@ -49,12 +49,12 @@ class MaintenanceManager {
     this.bindButton('improveKeywordsBtn', () => this.improveKeywords());
     this.bindButton('generateSynonymsBtn', () => this.generateSynonyms());
     
-    // Sugerencias Inteligentes
-    this.bindButton('refreshAllSuggestionsBtn', () => this.refreshSuggestions());
-    this.bindButton('refreshEstudianteBtn', () => this.refreshSuggestions('estudiante'));
-    this.bindButton('refreshDocenteBtn', () => this.refreshSuggestions('docente'));
-    this.bindButton('refreshAspiranteBtn', () => this.refreshSuggestions('aspirante'));
-    this.bindButton('refreshVisitanteBtn', () => this.refreshSuggestions('visitante'));
+    // Sugerencias Estáticas
+    this.bindButton('viewAllSuggestionsBtn', () => this.viewSuggestions('all'));
+    this.bindButton('viewEstudianteBtn', () => this.viewSuggestions('estudiante'));
+    this.bindButton('viewDocenteBtn', () => this.viewSuggestions('docente'));
+    this.bindButton('viewAspiranteBtn', () => this.viewSuggestions('aspirante'));
+    this.bindButton('editSuggestionsBtn', () => this.showEditSuggestionsInfo());
     
     // Scrapers Manuales
     this.bindButton('runAllScrapersBtn', () => this.runScrapers('all'));
@@ -327,6 +327,7 @@ class MaintenanceManager {
       'optimization': ['improveKeywordsBtn', 'generateSynonymsBtn'],
       'teacher-sync': ['syncTeachersBtn'],
       'teacher-check': ['checkTeachersBtn'],
+      'suggestions': ['viewAllSuggestionsBtn', 'viewEstudianteBtn', 'viewDocenteBtn', 'viewAspiranteBtn', 'editSuggestionsBtn'],
       'scrapers': ['runAllScrapersBtn', 'runAspirantesBtn', 'runDocentesBtn', 'runEstudiantesBtn', 'runTecnologiaBtn'],
       'systemOps': ['reloadKbBtn', 'backupDbBtn'],
       'config': ['setupAutomationBtn', 'viewLogsBtn']
@@ -337,6 +338,7 @@ class MaintenanceManager {
       'optimization': 'optimizationStatus',
       'teacher-sync': 'teacherSyncStatus',
       'teacher-check': 'teacherSyncStatus',
+      'suggestions': 'suggestionsStatus',
       'scrapers': 'scrapersStatus',
       'systemOps': 'systemOpsStatus',
       'config': 'configStatus'
@@ -381,6 +383,7 @@ class MaintenanceManager {
     const outputMappings = {
       'automation': 'automationOutput',
       'optimization': 'optimizationOutput',
+      'suggestions': 'suggestionsOutput', 
       'scrapers': 'scrapersOutput',
       'systemOps': 'systemOpsOutput',
       'config': 'configOutput'
@@ -398,7 +401,8 @@ class MaintenanceManager {
   appendTaskOutput(taskId, content) {
     const outputMappings = {
       'automation': 'automationOutput',
-      'optimization': 'optimizationOutput', 
+      'optimization': 'optimizationOutput',
+      'suggestions': 'suggestionsOutput',
       'scrapers': 'scrapersOutput',
       'systemOps': 'systemOpsOutput',
       'config': 'configOutput'
@@ -819,24 +823,19 @@ class MaintenanceManager {
     }
   }
 
-  async refreshSuggestions(userType = null) {
-    const taskId = userType ? `refresh-suggestions-${userType}` : 'refresh-all-suggestions';
-    const taskName = userType ? 
-      `Actualizar sugerencias para ${userType}` : 
-      'Actualizar todas las sugerencias';
+  async viewSuggestions(userType = 'all') {
+    const taskId = 'suggestions';
+    const taskName = userType === 'all' ? 
+      'Ver todas las sugerencias estáticas' : 
+      `Ver sugerencias para ${userType}`;
 
-    this.addActiveTask(taskId, taskName);
-    this.appendTaskOutput(taskId, `🔄 Iniciando actualización de sugerencias...\n`);
+    this.setTaskStatus('suggestions', 'running');
+    this.showTaskOutput('suggestions', `�️ Cargando sugerencias estáticas (${userType})...\n`);
 
     try {
-      const endpoint = userType ? 
-        `/api/chat/suggestions/refresh?userType=${encodeURIComponent(userType)}` : 
-        '/api/chat/suggestions/refresh';
-
-      this.appendTaskOutput(taskId, `📡 Conectando al servidor...\n`);
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
+      // Obtener sugerencias del sistema estático
+      const response = await fetch('/api/chat/suggestions/static', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -849,32 +848,68 @@ class MaintenanceManager {
       const result = await response.json();
 
       if (result.success) {
-        this.appendTaskOutput(taskId, `✅ Sugerencias actualizadas exitosamente\n`);
-        if (result.generated) {
-          this.appendTaskOutput(taskId, `📊 Se generaron ${result.generated} sugerencias nuevas\n`);
-        }
-        if (result.cached) {
-          this.appendTaskOutput(taskId, `💾 Sugerencias guardadas en caché\n`);
+        const suggestions = result.data;
+        this.appendTaskOutput('suggestions', `✅ Sugerencias cargadas exitosamente\n\n`);
+        
+        if (userType === 'all') {
+          // Mostrar todas las categorías
+          Object.keys(suggestions).forEach(category => {
+            this.appendTaskOutput('suggestions', `� ${category.toUpperCase()}:\n`);
+            suggestions[category].forEach((suggestion, index) => {
+              this.appendTaskOutput('suggestions', `   ${index + 1}. ${suggestion.text}\n`);
+            });
+            this.appendTaskOutput('suggestions', '\n');
+          });
+        } else {
+          // Mostrar categoría específica
+          if (suggestions[userType]) {
+            this.appendTaskOutput('suggestions', `� SUGERENCIAS PARA ${userType.toUpperCase()}:\n\n`);
+            suggestions[userType].forEach((suggestion, index) => {
+              this.appendTaskOutput('suggestions', `${index + 1}. ${suggestion.text}\n`);
+            });
+          } else {
+            this.appendTaskOutput('suggestions', `⚠️ No se encontraron sugerencias para ${userType}\n`);
+          }
         }
         
-        this.showAlert(
-          userType ? 
-            `Sugerencias para ${userType} actualizadas correctamente` : 
-            'Todas las sugerencias actualizadas correctamente', 
-          'success'
-        );
+        this.setTaskStatus('suggestions', 'success');
+        this.showAlert(`Sugerencias para ${userType} mostradas correctamente`, 'success');
       } else {
-        this.appendTaskOutput(taskId, `❌ Error actualizando sugerencias: ${result.error}\n`);
-        this.showAlert('Error al actualizar las sugerencias', 'error');
+        this.appendTaskOutput('suggestions', `❌ Error obteniendo sugerencias: ${result.error}\n`);
+        this.setTaskStatus('suggestions', 'error');
       }
 
     } catch (error) {
-      console.error('Suggestions refresh error:', error);
-      this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
-      this.showAlert('Error de conexión al actualizar sugerencias', 'error');
-    } finally {
-      this.completeTask(taskId);
+      console.error('View suggestions error:', error);
+      this.appendTaskOutput('suggestions', `❌ Error de conexión: ${error.message}\n`);
+      this.setTaskStatus('suggestions', 'error');
     }
+  }
+
+  showEditSuggestionsInfo() {
+    const taskId = 'suggestions';
+    this.showTaskOutput('suggestions', '✏️ EDITAR SUGERENCIAS ESTÁTICAS\n\n');
+    this.appendTaskOutput('suggestions', '📁 Archivo de configuración:\n');
+    this.appendTaskOutput('suggestions', '   src/nlp/staticSuggestions.js\n\n');
+    
+    this.appendTaskOutput('suggestions', '🔧 Para modificar las sugerencias:\n');
+    this.appendTaskOutput('suggestions', '   1. Editar el archivo staticSuggestions.js\n');
+    this.appendTaskOutput('suggestions', '   2. Modificar las categorías según necesites\n');
+    this.appendTaskOutput('suggestions', '   3. Reiniciar el servidor para aplicar cambios\n\n');
+    
+    this.appendTaskOutput('suggestions', '📋 Estructura actual:\n');
+    this.appendTaskOutput('suggestions', '   • estudiante: Consultas académicas\n');
+    this.appendTaskOutput('suggestions', '   • docente: Recursos educativos\n');
+    this.appendTaskOutput('suggestions', '   • aspirante: Información de admisión\n');
+    this.appendTaskOutput('suggestions', '   • todos: Consultas generales\n\n');
+    
+    this.appendTaskOutput('suggestions', '⚡ Ventajas del sistema actual:\n');
+    this.appendTaskOutput('suggestions', '   ✅ Respuesta instantánea (0ms)\n');
+    this.appendTaskOutput('suggestions', '   ✅ Sin dependencias externas\n');
+    this.appendTaskOutput('suggestions', '   ✅ Sin costos de API\n');
+    this.appendTaskOutput('suggestions', '   ✅ 100% confiable\n');
+    
+    this.showAlert('Información de edición mostrada', 'info');
   }
 
   showAlert(message, type = 'info') {
