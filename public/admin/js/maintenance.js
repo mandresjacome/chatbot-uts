@@ -54,7 +54,9 @@ class MaintenanceManager {
     this.bindButton('viewEstudianteBtn', () => this.viewSuggestions('estudiante'));
     this.bindButton('viewDocenteBtn', () => this.viewSuggestions('docente'));
     this.bindButton('viewAspiranteBtn', () => this.viewSuggestions('aspirante'));
+    this.bindButton('viewTodosBtn', () => this.viewSuggestions('todos'));
     this.bindButton('editSuggestionsBtn', () => this.showEditSuggestionsInfo());
+    this.bindButton('regenerateSuggestionsBtn', () => this.regenerateSuggestionsFromDB());
     
     // Scrapers Manuales
     this.bindButton('runAllScrapersBtn', () => this.runScrapers('all'));
@@ -834,7 +836,7 @@ class MaintenanceManager {
 
     try {
       // Obtener sugerencias del sistema estático
-      const response = await fetch('/api/chat/suggestions/static', {
+      const response = await fetch('/api/chat/suggestions/admin/static', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -910,6 +912,56 @@ class MaintenanceManager {
     this.appendTaskOutput('suggestions', '   ✅ 100% confiable\n');
     
     this.showAlert('Información de edición mostrada', 'info');
+  }
+
+  async regenerateSuggestionsFromDB() {
+    const taskId = 'suggestions';
+    this.setTaskStatus(taskId, 'running');
+    this.showTaskOutput(taskId, '🔄 Regenerando sugerencias desde la base de datos...\n\n');
+
+    try {
+      // Llamar al endpoint para regenerar sugerencias
+      const response = await fetch('/api/admin/suggestions/regenerate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.appendTaskOutput(taskId, '✅ Análisis de base de datos completado\n');
+        this.appendTaskOutput(taskId, `📊 Consultas analizadas: ${result.stats.totalQueries}\n`);
+        this.appendTaskOutput(taskId, `🎯 Sugerencias generadas: ${result.stats.totalSuggestions}\n\n`);
+        
+        // Mostrar estadísticas por categoría
+        Object.entries(result.stats.byCategory).forEach(([category, count]) => {
+          this.appendTaskOutput(taskId, `   • ${category}: ${count} sugerencias\n`);
+        });
+        
+        this.appendTaskOutput(taskId, `\n💾 Archivo actualizado: ${result.filePath}\n`);
+        this.appendTaskOutput(taskId, '🔄 Reinicia el servidor para aplicar los cambios\n');
+        
+        this.setTaskStatus(taskId, 'success');
+        this.showAlert('Sugerencias regeneradas exitosamente desde la base de datos', 'success');
+      } else {
+        this.appendTaskOutput(taskId, `❌ Error: ${result.error}\n`);
+        this.setTaskStatus(taskId, 'error');
+        this.showAlert(`Error: ${result.error}`, 'error');
+      }
+
+    } catch (error) {
+      console.error('Regenerate suggestions error:', error);
+      this.appendTaskOutput(taskId, `❌ Error de conexión: ${error.message}\n`);
+      this.setTaskStatus(taskId, 'error');
+      this.showAlert('Error al regenerar sugerencias', 'error');
+    }
   }
 
   showAlert(message, type = 'info') {

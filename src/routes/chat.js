@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { retrieveTopK } from '../nlp/retriever.js';
 import { answerLLM } from '../ai/geminiClient.js';
-import { getStaticSuggestions } from '../nlp/staticSuggestions.js';
+import { getStaticSuggestions, getAllSuggestions } from '../nlp/staticSuggestions.js';
 import { Conversations } from '../db/repositories.js';
 import { ensureSessionId } from '../utils/id.js';
 import { logger } from '../utils/logger.js';
@@ -195,22 +195,23 @@ router.get('/suggestions/:userType', async (req, res) => {
 });
 
 // Endpoint para obtener sugerencias estáticas (para panel admin)
-router.get('/suggestions/static', async (req, res) => {
+router.get('/suggestions/admin/static', async (req, res) => {
   try {
-    const suggestions = getStaticSuggestions();
+    const allSuggestions = {
+      estudiante: getAllSuggestions('estudiante'),
+      docente: getAllSuggestions('docente'), 
+      aspirante: getAllSuggestions('aspirante'),
+      todos: getAllSuggestions('todos')
+    };
     
     res.json({
       success: true,
-      data: {
-        estudiante: suggestions.estudiante || [],
-        docente: suggestions.docente || [],
-        aspirante: suggestions.aspirante || [],  
-        todos: suggestions.todos || []
-      },
+      data: allSuggestions,
       meta: {
         timestamp: new Date().toISOString(),
         system: 'static',
-        performance: '0ms (instantáneas)'
+        performance: '0ms (instantáneas)',
+        total: Object.values(allSuggestions).reduce((acc, arr) => acc + arr.length, 0)
       }
     });
   } catch (error) {
@@ -218,7 +219,7 @@ router.get('/suggestions/static', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Error interno del servidor',
-      details: error.message
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

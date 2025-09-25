@@ -370,4 +370,175 @@ router.get('/logs', async (_req, res) => {
   }
 });
 
+// Regenerar sugerencias analizando la base de datos SQLite
+router.post('/suggestions/regenerate', async (req, res) => {
+  try {
+    console.log('[admin] Regenerando sugerencias desde contenido de BD...');
+    
+    const { db } = await import('../db/database.js');
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    // Obtener todo el contenido activo de la base de conocimiento
+    const knowledge = await new Promise((resolve, reject) => {
+      db.all(`
+        SELECT 
+          id,
+          pregunta,
+          respuesta_texto,
+          tipo_usuario,
+          palabras_clave,
+          nombre_recurso
+        FROM knowledge_base 
+        WHERE activo = 1
+        ORDER BY tipo_usuario, id
+      `, (err, rows) => {
+        if (err) reject(new Error(err));
+        else resolve(rows || []);
+      });
+    });
+
+    if (knowledge.length === 0) {
+      return res.json({
+        success: false,
+        error: 'No se encontró contenido activo en la base de conocimiento'
+      });
+    }
+
+    // Analizar el contenido y generar sugerencias
+    const suggestions = {
+      estudiante: [],
+      docente: [],
+      aspirante: [],
+      todos: []
+    };
+
+    // Procesar cada entrada de conocimiento
+    knowledge.forEach(entry => {
+      let userType = entry.tipo_usuario;
+      
+      // Si es 'todos', agregar a todas las categorías incluyendo 'todos'
+      const targetTypes = userType === 'todos' ? 
+        ['estudiante', 'docente', 'aspirante', 'todos'] : 
+        [userType];
+      
+      targetTypes.forEach(type => {
+        if (!suggestions[type]) return;
+        
+        // Generar sugerencia basada en la pregunta o contenido
+        let suggestionText = entry.pregunta;
+        
+        // Si la pregunta es muy técnica, generar una más natural
+        if (suggestionText.includes('Información sobre')) {
+          const topic = suggestionText.replace('Información sobre ', '').replace(' para ' + entry.tipo_usuario + ' UTS', '');
+          suggestionText = `¿Información sobre ${topic}?`;
+        }
+        
+        // Limpiar texto
+        suggestionText = suggestionText.replace(/UTS\.\.\./g, 'UTS').replace(/\.\.\./g, '').trim();
+        if (!suggestionText.endsWith('?')) {
+          suggestionText += '?';
+        }
+        
+        // Determinar categoría basada en palabras clave
+        const keywords = (entry.palabras_clave || '').toLowerCase();
+        let category = 'general';
+        
+        if (keywords.includes('calendario') || keywords.includes('horario') || keywords.includes('materia')) {
+          category = 'academico';
+        } else if (keywords.includes('admision') || keywords.includes('inscripcion') || keywords.includes('requisitos')) {
+          category = 'admisiones';
+        } else if (keywords.includes('docente') || keywords.includes('profesor') || keywords.includes('coordinacion')) {
+          category = 'contacto';
+        } else if (keywords.includes('tramite') || keywords.includes('documento')) {
+          category = 'tramites';
+        } else if (keywords.includes('plataforma') || keywords.includes('servicio')) {
+          category = 'servicios';
+        }
+        
+        // Crear sugerencia
+        const suggestion = {
+          text: suggestionText,
+          type: 'knowledge',
+          category: category,
+          source_id: entry.id
+        };
+
+        // Evitar duplicados y limitar a 15 por tipo
+        const exists = suggestions[type].some(s => 
+          s.text.toLowerCase().trim() === suggestion.text.toLowerCase().trim()
+        );
+
+        if (!exists && suggestions[type].length < 15) {
+          suggestions[type].push(suggestion);
+        }
+      });
+    });
+
+    // Generar contenido del archivo
+    const fileContent = `// Sugerencias estáticas generadas desde la base de conocimiento SQLite
+// Generado el: ${new Date().toISOString()}
+// Basado en ${knowledge.length} entradas activas de knowledge_base
+
+export const STATIC_SUGGESTIONS = ${JSON.stringify(suggestions, null, 2)};
+
+/**
+ * Obtiene sugerencias aleatorias para un tipo de usuario
+ * @param {string} userType - Tipo de usuario (estudiante, docente, aspirante)
+ * @param {number} count - Número de sugerencias a retornar (default: 4)
+ * @returns {Array<string>} Array de sugerencias aleatorias
+ */
+export function getStaticSuggestions(userType = 'estudiante', count = 4) {
+  const suggestions = STATIC_SUGGESTIONS[userType] || STATIC_SUGGESTIONS.estudiante;
+  
+  // Seleccionar aleatoriamente sin repetir
+  const shuffled = [...suggestions].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, suggestions.length));
+}
+
+/**
+ * Obtiene todas las sugerencias disponibles para un tipo de usuario
+ * @param {string} userType - Tipo de usuario
+ * @returns {Array<string>} Todas las sugerencias del tipo
+ */
+export function getAllSuggestions(userType = 'estudiante') {
+  return STATIC_SUGGESTIONS[userType] || STATIC_SUGGESTIONS.estudiante;
+}
+`;
+
+    // Escribir archivo
+    const filePath = path.join(process.cwd(), 'src', 'nlp', 'staticSuggestions.js');
+    fs.writeFileSync(filePath, fileContent);
+
+    // Estadísticas
+    const stats = {
+      totalKnowledgeEntries: knowledge.length,
+      totalSuggestions: Object.values(suggestions).reduce((acc, arr) => acc + arr.length, 0),
+      byCategory: Object.fromEntries(
+        Object.entries(suggestions).map(([key, arr]) => [key, arr.length])
+      ),
+      knowledgeByType: knowledge.reduce((acc, entry) => {
+        acc[entry.tipo_usuario] = (acc[entry.tipo_usuario] || 0) + 1;
+        return acc;
+      }, {})
+    };
+
+    console.log('[admin] Sugerencias regeneradas desde knowledge_base:', stats);
+
+    res.json({
+      success: true,
+      message: 'Sugerencias regeneradas exitosamente desde la base de conocimiento',
+      stats,
+      filePath: 'src/nlp/staticSuggestions.js'
+    });
+
+  } catch (error) {
+    console.error('[admin/suggestions/regenerate] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error regenerando sugerencias: ${error.message}`
+    });
+  }
+});
+
 export default router;

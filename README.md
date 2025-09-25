@@ -1,13 +1,23 @@
-# Chatbot UTS v1.2.0 🤖
+# Chatbot UTS v1.3.0 🤖
 
 Chatbot inteligente para el **programa de Ingeniería de Sistemas** de las Unidades Tecnológicas de Santander (UTS). Sistema desarrollado con Node.js, Express, SQLite y integración con Google Gemini AI que proporciona información actualizada directamente desde la web oficial.
 
-## 🚀 Características
+## 🚀 Características Pr## 📊 Roadmap
+
+- [x] **v1.3.0**: ✅ Sistema de sugerencias estáticas optimizado
+- [x] **v1.3.0**: ✅ Búsqueda web complementaria controlada por usuario  
+- [x] **v1.3.0**: ✅ Filtros de relevancia optimizados en retrieval
+- [ ] **v1.4.0**: Integración con calendario académico
+- [ ] **v1.5.0**: Soporte para múltiples programas académicos
+- [ ] **v1.6.0**: Bot de Telegram/WhatsApp
+- [ ] **v2.0.0**: Interfaz de voz con speech-to-textles
 
 - **Chat inteligente especializado** en Ingeniería de Sistemas UTS
 - **Información actualizada** mediante scrapers automáticos de la web oficial
+- **Sistema de sugerencias estáticas optimizado** - instantáneas sin dependencias externas
 - **Malla curricular interactiva** con navegación por semestres
-- **Búsqueda avanzada** con procesamiento de lenguaje natural
+- **Búsqueda web complementaria** controlada por usuario cuando BD no tiene información
+- **Filtros de relevancia optimizados** para mejor detección de contenido existente
 - **Integración con Gemini AI** para respuestas contextuales
 - **Sistema de scrapers** que mantiene la información sincronizada
 - **Panel de administración** con métricas y gestión de contenido
@@ -36,12 +46,14 @@ chatbot-uts/
 │   │   ├── admin.js           # Panel de administración
 │   │   └── malla.js           # API de malla curricular
 │   ├── nlp/
-│   │   ├── retriever.js       # Motor de búsqueda + malla curricular
+│   │   ├── retriever.js       # Motor de búsqueda optimizado + malla curricular
+│   │   ├── staticSuggestions.js # Sistema de sugerencias estáticas instantáneas
 │   │   ├── teacherSearch.js   # Sistema de búsqueda de docentes
 │   │   ├── kbLoader.js        # Cargador de base de conocimiento
 │   │   └── synonyms.js        # Sinónimos generados automáticamente
 │   ├── ai/
-│   │   └── geminiClient.js    # Cliente Gemini AI + lógica de respuestas
+│   │   ├── geminiClient.js    # Cliente Gemini AI + lógica de respuestas
+│   │   └── webSearcher.js     # Motor de búsqueda web complementaria
 │   ├── db/
 │   │   ├── index.js           # Conexión BD (SQLite/PostgreSQL)
 │   │   ├── database.js        # Esquema y configuración
@@ -72,7 +84,9 @@ chatbot-uts/
 │   ├── chat/                  # Interfaz de chat público
 │   │   ├── index.html         # Chat principal
 │   │   ├── css/               # Estilos del chat
-│   │   └── js/                # Lógica del chat
+│   │   └── js/                # Lógica del chat (sistema simplificado)
+│   │       ├── components/    # Componentes de búsqueda web avanzada
+│   │       └── modules/       # Módulos optimizados (chat.js renovado)
 │   └── admin/                 # Panel de administración web
 │       ├── index.html         # Dashboard principal
 │       ├── admin.css          # Estilos del admin
@@ -265,17 +279,29 @@ Accede a `/admin` para gestionar:
 
 ## 🎯 Funcionalidades especializadas
 
+### Sistema de sugerencias estáticas optimizado
+- **Sugerencias instantáneas** sin dependencia de APIs externas
+- **4 categorías de usuarios**: estudiante, docente, aspirante, todos
+- **Respuestas inmediatas** que reemplazaron el sistema Gemini lento
+- **Contexto específico** según el perfil del usuario
+
+### Búsqueda web complementaria inteligente
+- **Detección automática** cuando BD no tiene información (evidenceCount === 0)
+- **Control del usuario** - botón aparece solo cuando es necesario
+- **Búsqueda externa** en fuentes confiables cuando BD local no es suficiente
+- **Sistema simplificado** que eliminó complejidad innecesaria
+
+### Motor de búsqueda optimizado
+- **Filtros de relevancia mejorados** - Fuse.js con threshold 0.4 y score ≤0.95
+- **Detección precisa** de información existente en base de datos
+- **Balance perfecto** entre relevancia y cobertura de resultados
+- **Debug logging** para monitoreo del comportamiento de búsqueda
+
 ### Malla curricular interactiva
 - Navegación por niveles y semestres
 - Búsqueda de materias específicas
 - Información de prerrequisitos y créditos
 - Componente visual integrado
-
-### Sistema de búsqueda inteligente
-- Detección automática de intención de búsqueda
-- Procesamiento de sinónimos
-- Búsqueda semántica con Fuse.js
-- Respuestas contextuales con Gemini AI
 
 ### Manejo de docentes
 - Detección inteligente de búsquedas de profesores
@@ -340,6 +366,7 @@ Unidades Tecnológicas de Santander
 <div align="center">
   <p>🎓 Hecho con ❤️ para la comunidad de Ingeniería de Sistemas UTS</p>
   <p>
-    <strong>Chatbot UTS v1.2.0</strong> - Información siempre actualizada desde fuentes oficiales
+    <strong>Chatbot UTS v1.3.0</strong> - Información siempre actualizada con sugerencias instantáneas
   </p>
+  <p>✨ <em>Última actualización: Sistema híbrido optimizado con búsqueda web complementaria</em></p>
 </div>
