@@ -28,6 +28,39 @@
       "enabled": false,
       "email": "",
       "webhook": ""
+    },
+    "last_modified": "2025-09-25T22:34:57.858Z",
+    "tasks": {
+      "monitor_website": {
+        "enabled": true,
+        "description": "Revisar sitio UTS cada 6 horas",
+        "schedule": "0 */6 * * *",
+        "priority": "high"
+      },
+      "update_content": {
+        "enabled": true,
+        "description": "Actualizar contenido cuando hay cambios",
+        "trigger": "on_changes_detected",
+        "priority": "high"
+      },
+      "sync_teachers": {
+        "enabled": true,
+        "description": "Sincronizar docentes diariamente",
+        "schedule": "0 2 * * *",
+        "priority": "medium"
+      },
+      "improve_keywords": {
+        "enabled": true,
+        "description": "Mejorar palabras clave semanalmente",
+        "schedule": "0 3 * * 1",
+        "priority": "low"
+      }
+    },
+    "user_friendly": {
+      "status": "La automatización está ACTIVA",
+      "what_it_does": "El sistema se mantiene actualizado automáticamente",
+      "next_check": "Próxima revisión en 6 horas máximo",
+      "safe_to_leave": "Sí, puede dejar el sistema funcionando solo"
     }
   },
   "logging": {
