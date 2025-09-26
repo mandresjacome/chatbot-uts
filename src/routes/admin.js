@@ -375,28 +375,23 @@ router.post('/suggestions/regenerate', async (req, res) => {
   try {
     console.log('[admin] Regenerando sugerencias desde contenido de BD...');
     
-    const { db } = await import('../db/database.js');
+    const { queryAll } = await import('../db/index.js');
     const fs = await import('fs');
     const path = await import('path');
     
     // Obtener todo el contenido activo de la base de conocimiento
-    const knowledge = await new Promise((resolve, reject) => {
-      db.all(`
-        SELECT 
-          id,
-          pregunta,
-          respuesta_texto,
-          tipo_usuario,
-          palabras_clave,
-          nombre_recurso
-        FROM knowledge_base 
-        WHERE activo = 1
-        ORDER BY tipo_usuario, id
-      `, (err, rows) => {
-        if (err) reject(new Error(err));
-        else resolve(rows || []);
-      });
-    });
+    const knowledge = await queryAll(`
+      SELECT 
+        id,
+        pregunta,
+        respuesta_texto,
+        tipo_usuario,
+        palabras_clave,
+        nombre_recurso
+      FROM knowledge_base 
+      WHERE activo = 1
+      ORDER BY tipo_usuario, id
+    `);
 
     if (knowledge.length === 0) {
       return res.json({
@@ -537,6 +532,267 @@ export function getAllSuggestions(userType = 'estudiante') {
     res.status(500).json({
       success: false,
       error: `Error regenerando sugerencias: ${error.message}`
+    });
+  }
+});
+
+// Control de automatización
+router.post('/automation/toggle', async (req, res) => {
+  try {
+    const { enable, mode = 'smart' } = req.body;
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    console.log(`[admin] ${enable ? 'Activando' : 'Desactivando'} automatización...`);
+    
+    // Leer configuración actual
+    const configPath = path.resolve('./config/automation.json');
+    let config;
+    
+    try {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configData);
+    } catch (error) {
+      // Si no existe, crear configuración por defecto
+      config = {
+        automation: {
+          enabled: false,
+          mode: 'smart',
+          schedules: {
+            change_detection: "*/6 * * * *",
+            full_update: "0 2 * * *", 
+            smart_update: "0 */2 * * *"
+          },
+          monitoring: {
+            urls: [
+              "https://www.uts.edu.co/sitio/programas-academicos/tecnologia-en-desarrollo-de-sistemas-informaticos/",
+              "https://www.uts.edu.co/sitio/programas-academicos/ingenieria-de-sistemas/",
+              "https://www.uts.edu.co/sitio/aspirantes/",
+              "https://www.uts.edu.co/sitio/docentes/",
+              "https://www.uts.edu.co/sitio/estudiantes/"
+            ],
+            timeout: 30000,
+            retries: 3
+          },
+          updates: {
+            auto_keywords: true,
+            auto_synonyms: true,
+            auto_reload: true,
+            skip_on_error: false
+          },
+          notifications: {
+            enabled: false,
+            email: "",
+            webhook: ""
+          }
+        },
+        logging: {
+          level: "info",
+          max_file_size: "10MB",
+          max_files: 5,
+          include_timestamps: true
+        },
+        performance: {
+          max_parallel_scrapers: 3,
+          scraper_timeout: 60000,
+          database_timeout: 10000
+        }
+      };
+    }
+    
+    // Actualizar estado
+    const previousState = config.automation.enabled;
+    config.automation.enabled = enable;
+    config.automation.mode = mode;
+    config.automation.last_modified = new Date().toISOString();
+    
+    // Configuración simplificada para secretaria
+    if (enable) {
+      // Automatización inteligente: solo lo esencial
+      config.automation.tasks = {
+        "monitor_website": {
+          "enabled": true,
+          "description": "Revisar sitio UTS cada 6 horas",
+          "schedule": "0 */6 * * *",
+          "priority": "high"
+        },
+        "update_content": {
+          "enabled": true, 
+          "description": "Actualizar contenido cuando hay cambios",
+          "trigger": "on_changes_detected",
+          "priority": "high"
+        },
+        "sync_teachers": {
+          "enabled": true,
+          "description": "Sincronizar docentes diariamente",
+          "schedule": "0 2 * * *",
+          "priority": "medium"
+        },
+        "improve_keywords": {
+          "enabled": true,
+          "description": "Mejorar palabras clave semanalmente", 
+          "schedule": "0 3 * * 1",
+          "priority": "low"
+        }
+      };
+      config.automation.user_friendly = {
+        "status": "La automatización está ACTIVA",
+        "what_it_does": "El sistema se mantiene actualizado automáticamente",
+        "next_check": "Próxima revisión en 6 horas máximo",
+        "safe_to_leave": "Sí, puede dejar el sistema funcionando solo"
+      };
+    } else {
+      config.automation.tasks = {};
+      config.automation.user_friendly = {
+        "status": "La automatización está DESACTIVADA", 
+        "what_it_does": "Debe actualizar manualmente cuando sea necesario",
+        "manual_steps": "Use los botones del panel para actualizar",
+        "recommendation": "Active la automatización para mayor comodidad"
+      };
+    }
+    
+    // Guardar configuración
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    
+    const status = enable ? 'activada' : 'desactivada';
+    const action = enable ? 'ACTIVACIÓN' : 'DESACTIVACIÓN';
+    
+    console.log(`[admin] Automatización ${status} exitosamente`);
+    
+    // Respuesta con información amigable para secretaria
+    const response = {
+      success: true,
+      message: enable ? 
+        "✅ Automatización ACTIVADA - El sistema se actualizará solo" :
+        "⏸️ Automatización DESACTIVADA - Debe actualizar manualmente",
+      previous_state: previousState,
+      current_state: enable,
+      mode: mode,
+      timestamp: new Date().toISOString(),
+      
+      // Información amigable para la secretaria
+      user_friendly: config.automation.user_friendly,
+      
+      // Detalles técnicos (colapsables en la interfaz)
+      technical_details: {
+        action: enable ? 'ACTIVACIÓN' : 'DESACTIVACIÓN',
+        config_file: 'config/automation.json',
+        tasks: enable ? Object.keys(config.automation.tasks || {}).length : 0
+      }
+    };
+    
+    // Si se activó, incluir tareas programadas de forma simple
+    if (enable && config.automation.tasks) {
+      response.active_tasks = Object.entries(config.automation.tasks).map(([key, task]) => ({
+        name: task.description,
+        frequency: task.schedule || task.trigger || 'Cuando sea necesario',
+        priority: task.priority
+      }));
+    }
+    
+    res.json(response);
+    
+  } catch (error) {
+    console.error('[admin/automation/toggle] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error controlando automatización: ${error.message}`
+    });
+  }
+});
+
+// Obtener estado actual de automatización
+router.get('/automation/status', async (req, res) => {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    const configPath = path.resolve('./config/automation.json');
+    
+    let config;
+    try {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configData);
+    } catch (error) {
+      // Si no existe el archivo, retornar estado por defecto
+      return res.json({
+        success: true,
+        automation: {
+          enabled: false,
+          mode: 'smart',
+          status: 'DESACTIVADA',
+          message: 'Archivo de configuración no encontrado - estado por defecto'
+        }
+      });
+    }
+    
+    const automation = config.automation;
+    const status = automation.enabled ? 'ACTIVADA' : 'DESACTIVADA';
+    
+    res.json({
+      success: true,
+      automation: {
+        enabled: automation.enabled,
+        mode: automation.mode,
+        status: status,
+        last_modified: automation.last_modified || 'No disponible',
+        schedules: automation.schedules,
+        monitoring: {
+          urls_count: automation.monitoring?.urls?.length || 0,
+          timeout: automation.monitoring?.timeout || 30000
+        },
+        updates: automation.updates
+      },
+      config_file: 'config/automation.json'
+    });
+    
+  } catch (error) {
+    console.error('[admin/automation/status] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error obteniendo estado de automatización: ${error.message}`
+    });
+  }
+});
+
+// Obtener entradas de base de conocimiento
+router.get('/knowledge', async (req, res) => {
+  try {
+    const { queryAll } = await import('../db/database.js');
+    const { q = '', page = 1, size = 100 } = req.query;
+    
+    let query = 'SELECT * FROM knowledge_base';
+    let params = [];
+    
+    // Si hay búsqueda, agregar filtro
+    if (q.trim()) {
+      query += ' WHERE pregunta LIKE ? OR respuesta LIKE ? OR keywords LIKE ?';
+      const searchTerm = `%${q.trim()}%`;
+      params = [searchTerm, searchTerm, searchTerm];
+    }
+    
+    query += ' ORDER BY id DESC';
+    
+    // Agregar paginación
+    const offset = (parseInt(page) - 1) * parseInt(size);
+    query += ` LIMIT ${parseInt(size)} OFFSET ${offset}`;
+    
+    const knowledgeData = await queryAll(query, params);
+    
+    res.json({
+      success: true,
+      data: knowledgeData,
+      pagination: {
+        page: parseInt(page),
+        size: parseInt(size),
+        total: knowledgeData.length
+      }
+    });
+  } catch (error) {
+    console.error('[admin/knowledge] error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Error obteniendo base de conocimiento: ${error.message}`
     });
   }
 });

@@ -41,7 +41,7 @@ export const Conversations = {
 
   async last(n = 10) {
     return queryAll(
-      `SELECT id, session_id as user_id, pregunta as question, 
+      `SELECT id, tipo_usuario as user_id, pregunta as question, 
               substr(respuesta,1,120) AS response_text, 
               tipo_usuario, created_at
        FROM conversations
@@ -106,9 +106,7 @@ export const Feedback = {
         f.created_at,
         c.pregunta as question,
         c.respuesta as response,
-        c.session_id as user_id,
-        CASE WHEN f.useful ${isPg ? 'IS TRUE' : '= 1'} THEN 'positive' ELSE 'negative' END as sentiment,
-        CASE WHEN f.useful ${isPg ? 'IS TRUE' : '= 1'} THEN 5 ELSE 1 END as rating
+        c.tipo_usuario as user_id
       FROM feedback f
       LEFT JOIN conversations c ON f.conversation_id = c.id
       ORDER BY f.created_at DESC
