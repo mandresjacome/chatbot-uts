@@ -140,6 +140,31 @@ app.get('/api/admin/knowledge', async (req, res) => {
   }
 });
 
+// Conteo total de registros KB para el panel de monitoreo
+app.get('/api/admin/kb-count', async (req, res) => {
+  try {
+    const { queryAll } = await import('./db/index.js');
+    const isDatabaseUrl = !!process.env.DATABASE_URL;
+    
+    const result = await queryAll(
+      `SELECT COUNT(*) as total FROM knowledge_base WHERE activo = ${isDatabaseUrl ? '$1' : '?'}`,
+      isDatabaseUrl ? [1] : [1]
+    );
+    
+    const total = result[0]?.total || 0;
+    
+    res.json({
+      success: true,
+      count: total,
+      status: total > 0 ? 'active' : 'empty',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[admin/kb-count] error:', err);
+    res.status(500).json({ success: false, error: 'Error contando KB' });
+  }
+});
+
 // Autenticación de admin (debe ser pública para permitir login)
 app.post('/api/admin/auth', (req, res) => {
   try {
