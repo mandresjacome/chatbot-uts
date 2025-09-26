@@ -1,21 +1,24 @@
-# 🤖 Sistema de Automatización UTS Chatbot v1.2.0
+# 🤖 Sistema de Automatización UTS Chatbot v1.3.0 ✨ OPTIMIZADO
 
-Sistema inteligente de actualización automática para el chatbot especializado en **Ingeniería de Sistemas UTS**. Mantiene sincronizada la información con la web oficial mediante detección de cambios y scrapers automáticos.
+Sistema inteligente de actualización automática para el chatbot especializado en **Ingeniería de Sistemas UTS**. Mantiene sincronizada la información con la web oficial mediante detección de cambios y scrapers automáticos. **v1.3.0 incluye optimizaciones críticas para el sistema híbrido**.
 
-## 🎯 ¿Qué hace el sistema?
+## 🎯 ¿Qué hace el sistema? - MEJORADO v1.3.0
 
-### 1. **Detección Inteligente de Cambios**
+### 1. **Detección Inteligente de Cambios** ✅ OPTIMIZADO
 - 🔍 Monitorea https://www.uts.edu.co/sitio/ingenieria-de-sistemas/ cada 2-6 horas
 - 📊 Compara contenido actual con snapshots cached anteriores  
 - 🚨 Detecta modificaciones en secciones (presentación, malla, perfil, etc.)
 - ⚡ Activación automática solo cuando hay cambios reales
+- ✨ **NUEVO v1.3.0**: Compatible con sugerencias estáticas y sistema híbrido
 
-### 2. **Actualización Automática de Contenido**
+### 2. **Actualización Automática de Contenido** ✨ RENOVADO v1.3.0
 - 🕷️ **Scrapers selectivos**: Solo ejecuta scrapers de secciones modificadas
-- 🔄 **Regeneración de sinónimos**: Mejora automática del NLP
-- 🏷️ **Optimización de palabras clave**: Keywords contextuales automáticas  
-- 🧠 **Reload inteligente**: Recarga base de conocimiento en memoria
-- 📝 **Logging detallado**: Registro completo de cambios y actualizaciones
+- 🔄 **Regeneración de sinónimos**: Mejora automática del NLP con filtros optimizados
+- 🏷️ **Optimización de palabras clave**: Keywords contextuales con threshold 0.4
+- 🧠 **Reload inteligente**: Recarga base de conocimiento con filtros mejorados
+- 📝 **Logging detallado**: Registro completo compatible con sistema híbrido
+- ✨ **NUEVO**: Actualización de sugerencias estáticas automática
+- ✨ **MEJORADO**: Optimización para búsqueda híbrida BD local + web
 
 ### 3. **Programación Multi-Plataforma**
 - 🪟 **Windows**: Task Scheduler con scripts .bat

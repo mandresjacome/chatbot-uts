@@ -269,13 +269,32 @@ Ver [RENDER_DEPLOY.md](RENDER_DEPLOY.md) para instrucciones detalladas de despli
 
 ## 📊 Panel de administración
 
-Accede a `/admin` para gestionar:
+Accede a `/admin` para gestionar el sistema con una **interfaz moderna y completamente renovada**:
 
-- 📈 **Métricas en tiempo real**: Conversaciones, satisfacción, errores
-- 💬 **Últimas conversaciones**: Historial con filtros y búsqueda
-- 📚 **Base de conocimiento**: Agregar, editar y eliminar contenido
-- ⚙️ **Configuración**: Parámetros del sistema
-- 🔧 **Estado del sistema**: Health checks y logs
+### 🎛️ **Secciones principales**
+- 💬 **Feedback**: Vista organizada de satisfacción de usuarios con estadísticas en tarjetas horizontales
+- � **Base de Conocimiento**: Gestión completa con estadísticas por tipo de usuario y controles de búsqueda optimizados
+- ⚙️ **Mantenimiento**: Sistema de autenticación seguro con funciones organizadas en tabs expandibles
+
+### ✨ **Características del panel**
+- **📊 Dashboard moderno** con tarjetas estadísticas organizadas horizontalmente
+- **🔍 Controles de búsqueda optimizados** - input y botones en línea para mejor UX
+- **📈 Métricas categorizadas** por tipos de usuario (Estudiantes, Docentes, Aspirantes, Todos/Visitantes)
+- **🔐 Autenticación segura** con token de administrador (por defecto: `admin123`)
+- **⚙️ Mantenimiento avanzado** con 6 categorías organizadas:
+  - 🤖 **Automatización** - Control de tareas automáticas
+  - 👥 **Docentes** - Sincronización de información de profesores
+  - 🔍 **Búsqueda** - Gestión de índices y relevancia
+  - 💡 **Sugerencias** - Control del sistema de sugerencias
+  - 🌐 **Scrapers** - Gestión de extracción de datos web
+  - ⚙️ **Operaciones** - Funciones de sistema y base de datos
+
+### 🎨 **Mejoras de diseño v1.3.0**
+- **Layout responsivo** que se adapta a cualquier dispositivo
+- **Estadísticas en cuadrícula** para mejor visualización de métricas
+- **Interfaz expandible** para funciones avanzadas sin saturar la vista
+- **Animaciones suaves** y transiciones para mejor experiencia de usuario
+- **Organización por pestañas** en funciones específicas de mantenimiento
 
 ## 🎯 Funcionalidades especializadas
 

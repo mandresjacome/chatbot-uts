@@ -1,40 +1,45 @@
-# 🕷️ Scrapers del Chatbot UTS v1.2.0
+# 🕷️ Scrapers del Chatbot UTS v1.3.0 ✨ OPTIMIZADO
 
-Sistema de extracción automática de información desde el sitio web oficial de UTS para mantener actualizada la base de conocimiento del chatbot.
+Sistema de extracción automática de información desde el sitio web oficial de UTS para mantener actualizada la base de conocimiento del chatbot. **v1.3.0 incluye optimizaciones para el sistema híbrido y sugerencias estáticas**.
 
-## 📋 Scrapers disponibles
+## 📋 Scrapers disponibles - Estado v1.3.0
 
-### **`scraper_fixed.cjs`** - 🎯 PRINCIPAL
+### **`scraper_fixed.cjs`** - 🎯 PRINCIPAL ✅ ACTIVO
 **Fuente**: https://www.uts.edu.co/sitio/ingenieria-de-sistemas/  
 **Propósito**: Extrae información completa del programa de Ingeniería de Sistemas  
+**Estado v1.3.0**: ✅ **OPTIMIZADO** - Compatible con filtros mejorados y sistema híbrido
 **Datos extraídos**:
-- ✅ Presentación del programa
-- ✅ Perfil profesional y competencias
-- ✅ Campos de acción laboral
-- ✅ Plan de estudios general
-- ✅ Resultados de aprendizaje
-- ✅ Información de contacto
-- ❌ Docentes específicos (sección no disponible en web)
+- ✅ Presentación del programa (optimizado para búsqueda semántica)
+- ✅ Perfil profesional y competencias (keywords mejoradas)
+- ✅ Campos de acción laboral (filtros relevancia optimizados)
+- ✅ Plan de estudios general (mejor indexación)
+- ✅ Resultados de aprendizaje (sinónimos automáticos)
+- ✅ Información de contacto (actualizada)
+- ❌ Docentes específicos (sección no disponible en web UTS)
 
-### **`scraper_aspirantes.cjs`** - 🎓 ASPIRANTES
+### **`scraper_aspirantes.cjs`** - 🎓 ASPIRANTES ✅ ACTIVO
 **Fuente**: https://www.uts.edu.co/sitio/aspirantes/  
 **Propósito**: Información especializada para futuros estudiantes  
+**Estado v1.3.0**: ✅ **MEJORADO** - Datos optimizados para sugerencias estáticas
 **Usuario objetivo**: `aspirante`
 
-### **`scraper_docentes.cjs`** - 👨‍🏫 DOCENTES
+### **`scraper_docentes.cjs`** - 👨‍🏫 DOCENTES ⚠️ FUNCIONAL PERO SIN DATOS
 **Fuente**: https://www.uts.edu.co/sitio/docentes/  
 **Propósito**: Recursos y servicios para profesores  
+**Estado v1.3.0**: ⚠️ **CONSERVADO** - Funciona pero UTS eliminó datos específicos
 **Usuario objetivo**: `docente`  
-**Nota**: NO extrae información de docentes específicos
+**Nota**: NO extrae información de docentes específicos (fuente oficial eliminada)
 
-### **`scraper_estudiantes.cjs`** - 📚 ESTUDIANTES
+### **`scraper_estudiantes.cjs`** - 📚 ESTUDIANTES ✅ ACTIVO  
 **Fuente**: https://www.uts.edu.co/sitio/estudiantes/  
 **Propósito**: Servicios y trámites para estudiantes actuales  
+**Estado v1.3.0**: ✅ **OPTIMIZADO** - Compatible con búsqueda híbrida
 **Usuario objetivo**: `estudiante`
 
-### **`scraper_tecnologia.cjs`** - 🔧 TECNOLOGÍA
+### **`scraper_tecnologia.cjs`** - 🔧 TECNOLOGÍA ✅ ACTIVO
 **Fuente**: Información del programa de Tecnología en Desarrollo de Sistemas  
 **Propósito**: Datos del programa articulado (nivel tecnológico)  
+**Estado v1.3.0**: ✅ **MEJORADO** - Datos integrados con sistema híbrido
 **Usuario objetivo**: `todos`
 
 ## 🚀 Cómo ejecutar

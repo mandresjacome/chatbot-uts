@@ -101,7 +101,21 @@ chatbot-uts/
 │   │   ├── 📁 images/             # Imágenes estáticas
 │   │   └── 📁 logos/              # Logos y marcas
 │   │       └── logoUTS.webp
-│   ├── 📁 admin/                  # Panel de administración
+│   ├── 📁 admin/                  # ✨ PANEL ADMINISTRATIVO RENOVADO v1.3.0
+│   │   ├── index.html             # Interfaz principal con navegación por tabs
+│   │   ├── admin.css              # Estilos base del panel
+│   │   ├── admin.js               # Lógica principal y navegación
+│   │   ├── README.md              # ✅ Documentación específica del admin
+│   │   ├── 📁 css/                # 🎨 ESTILOS MODULARES RENOVADOS
+│   │   │   ├── base.css           # Estilos base y variables CSS
+│   │   │   ├── feedback.css       # ✨ RENOVADO: Estilos con estadísticas horizontales
+│   │   │   ├── knowledge.css      # ✨ RENOVADO: Grid de 5 estadísticas + controles horizontales
+│   │   │   ├── maintenance.css    # ✨ RENOVADO: Sistema de tabs expandibles + autenticación
+│   │   │   └── responsive.css     # Media queries para dispositivos móviles
+│   │   └── 📁 js/                 # 📜 JAVASCRIPT MODULAR RENOVADO
+│   │       ├── feedback.js        # Gestión de feedback con estadísticas horizontales
+│   │       ├── knowledge.js       # ✨ RENOVADO: 5 categorías de estadísticas KB
+│   │       └── maintenance.js     # ✨ RENOVADO: Autenticación + 6 funciones expandibles
 │   ├── 📁 chat/                   # 💬 INTERFAZ PRINCIPAL DE CHAT RENOVADA
 │   │   ├── 📁 css/                # 🎨 ESTILOS ORGANIZADOS
 │   │   │   ├── 📁 components/     # Estilos de componentes específicos
@@ -171,7 +185,12 @@ chatbot-uts/
 - **Web Scraping**: Extrae información actualizada de UTS (excepto docentes)
 - **Chat con IA**: Gemini integrado con respuestas contextuales
 - **Malla Curricular**: Navegación completa con prerrequisitos
-- **Panel Admin**: Gestión completa del sistema
+- **Panel Admin**: ✨ **COMPLETAMENTE RENOVADO v1.3.0** - Interfaz moderna con:
+  - **Autenticación Segura**: Token admin123 con validación del servidor
+  - **Sección Feedback**: Estadísticas horizontales organizadas por importancia
+  - **Sección Knowledge Base**: 5 categorías de estadísticas + controles horizontales
+  - **Sección Mantenimiento**: 6 funciones expandibles con navegación por tabs
+  - **Diseño Profesional**: CSS Grid moderno, responsive, UX optimizada
 - **Base de Conocimiento**: Actualización automática con sinónimos
 - **Logging**: Sistema robusto de trazabilidad
 

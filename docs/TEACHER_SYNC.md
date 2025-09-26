@@ -1,10 +1,12 @@
-# ⚠️ Sistema de Sincronización de Docentes - OBSOLETO
+# ⚠️ Sistema de Sincronización de Docentes - OBSOLETO v1.3.0
 
-## 📋 Estado Actual
+## 📋 Estado Actual - Actualizado v1.3.0
 
 **🚨 IMPORTANTE**: Este sistema está **OBSOLETO** desde septiembre 2024.
 
 **Razón**: La página web oficial de UTS **eliminó la sección de docentes específicos** del programa de Ingeniería de Sistemas.
+
+**✨ NUEVO en v1.3.0**: El sistema ahora maneja inteligentemente las consultas de docentes con respuestas útiles y redirecciones apropiadas.
 
 ## 🔄 ¿Qué hacía antes?
 
