@@ -97,10 +97,17 @@ class MetricsManager {
         modelElement.textContent = 'Gemini Pro';
       }
     }
+
+    // Estado del sistema
+    const statusElement = document.getElementById('statusMetrics');
+    if (statusElement) {
+      statusElement.textContent = 'OK';
+      statusElement.style.color = '#059669';
+    }
   }
 
   updateConversationsTable(conversations) {
-    const tableBody = document.getElementById('recentConversationsTable');
+    const tableBody = document.getElementById('lastConversations');
     if (!tableBody) return;
 
     if (!conversations || conversations.length === 0) {
@@ -119,11 +126,14 @@ class MetricsManager {
 
       const responsePreview = this.truncateText(conv.response_text || 'Sin respuesta', 100);
       const questionPreview = this.truncateText(conv.question || 'Sin pregunta', 80);
+      
+      // Mostrar tipo de usuario de forma amigable
+      const userTypeDisplay = this.formatUserType(conv.user_id);
 
       return `
         <tr>
           <td class="metric-id">#${conv.id}</td>
-          <td>${this.escapeHtml(conv.user_id || 'Anónimo')}</td>
+          <td>${userTypeDisplay}</td>
           <td title="${this.escapeHtml(conv.question || '')}">${this.escapeHtml(questionPreview)}</td>
           <td title="${this.escapeHtml(conv.response_text || '')}">${this.escapeHtml(responsePreview)}</td>
           <td>${date}</td>
@@ -198,8 +208,15 @@ class MetricsManager {
       }
     });
 
+    // Estado del sistema en error
+    const statusElement = document.getElementById('statusMetrics');
+    if (statusElement) {
+      statusElement.textContent = 'ERROR';
+      statusElement.style.color = '#dc2626';
+    }
+
     // Mostrar en la tabla
-    const tableBody = document.getElementById('recentConversationsTable');
+    const tableBody = document.getElementById('lastConversations');
     if (tableBody) {
       tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${this.escapeHtml(message)}</td></tr>`;
     }
@@ -208,6 +225,17 @@ class MetricsManager {
   truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) return text;
     return text.substr(0, maxLength) + '...';
+  }
+
+  formatUserType(userType) {
+    const types = {
+      'estudiante': '🎓 Estudiante',
+      'docente': '👨‍🏫 Docente',
+      'aspirante': '🌟 Aspirante',
+      'visitante': '👥 Visitante',
+      'todos': '👥 Visitante'  // todos = visitante
+    };
+    return types[userType?.toLowerCase()] || '❓ Desconocido';
   }
 
   escapeHtml(text) {
@@ -231,10 +259,15 @@ window.initMetrics = function() {
   window.metricsManager.init();
 };
 
-// Auto-inicializar si estamos en la página de métricas
-document.addEventListener('DOMContentLoaded', () => {
-  const metricsSection = document.getElementById('metrics-section');
-  if (metricsSection && metricsSection.classList.contains('active')) {
-    window.initMetrics();
+// Función para cargar métricas desde otros módulos
+window.loadMetrics = function() {
+  if (window.metricsManager) {
+    window.metricsManager.loadMetrics();
   }
+};
+
+// Auto-inicializar
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicializar siempre para que esté disponible cuando se cambie de pestaña
+  window.initMetrics();
 });

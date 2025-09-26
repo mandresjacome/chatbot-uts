@@ -1,10 +1,62 @@
-# Panel de Administración - Chatbot UTS v1.2.0
+# Panel de Administración - Chatbot UTS v1.3.0 🎨✨
 
 ## 🎯 Descripción
 
-Panel de administración integral para el Chatbot UTS especializado en **Ingeniería de Sistemas**. Permite monitorear, gestionar contenido y mantener el sistema actualizado con información oficial de UTS.
+Panel de administración **completamente renovado** para el Chatbot UTS v1.3.0. Interfaz moderna con diseño responsivo, funcionalidades organizadas y experiencia de usuario optimizada para gestionar el sistema de manera eficiente.
 
-## 📊 Características Principales
+## 🎨 **NUEVO en v1.3.0: Interfaz Completamente Renovada**
+
+### ✨ **Mejoras Visuales Principales**
+- **🎛️ Dashboard moderno** con tarjetas estadísticas organizadas horizontalmente
+- **📊 Layout en cuadrícula** para mejor aprovechamiento del espacio
+- **🎮 Controles optimizados** - botones y campos en línea horizontal
+- **📱 Completamente responsivo** - funciona perfecto en móvil, tablet y desktop
+- **⚡ Animaciones suaves** y transiciones para mejor experiencia
+- **🎯 Navegación intuitiva** con secciones claramente organizadas
+
+## 📊 Características Principales Mejoradas
+
+### 1. 💬 **Sección Feedback (Renovada)**
+- **Estadísticas horizontales** en tarjetas visuales profesionales:
+  - 📊 **Total Votos** - Contador general de feedback recibido  
+  - 👍 **Respuestas Útiles** - Feedback positivo de usuarios
+  - 👎 **Respuestas No Útiles** - Feedback para mejora continua
+- **Diseño en cuadrícula** responsive que se adapta a cualquier pantalla
+- **Filtros avanzados** por rating, período, tipo de consulta
+- **Análisis visual** mejorado para identificar tendencias
+
+### 2. 📚 **Base de Conocimiento (Completamente Rediseñada)**
+- **5 estadísticas categorizadas** en tarjetas organizadas:
+  - 📝 **Total Entradas** - Contador general de la base de conocimiento
+  - 🎓 **Estudiantes** - Contenido específico para estudiantes  
+  - 👨‍🏫 **Docentes** - Información dirigida a docentes
+  - 🌟 **Aspirantes** - Contenido para futuros estudiantes
+  - 👥 **Todos/Visitantes** - Información general del programa
+- **Controles de búsqueda en línea**: Input + 3 botones horizontales
+  - 🔍 **Buscar** - Búsqueda en tiempo real
+  - 🗑️ **Limpiar** - Reset de filtros
+  - 🔄 **Actualizar** - Refresh de datos
+- **Interfaz optimizada** con CSS Grid para distribución perfecta
+- **Tabla moderna** con paginación y filtros avanzados
+
+### 3. ⚙️ **Mantenimiento (Revolucionado)**
+- **🔐 Autenticación segura funcional** con token `admin123`
+- **📊 Estado del Sistema en tarjetas**:
+  - 🖥️ **Servidor** - Estado de Node.js y Express
+  - 🗄️ **Base de datos** - Conexión SQLite/PostgreSQL  
+  - 🤖 **IA (Gemini)** - Estado del servicio de inteligencia artificial
+  - 📚 **Registros KB** - Conteo de entradas en base de conocimiento
+  - ⏱️ **Última actualización** - Timestamp de última sincronización
+
+- **� Funciones Específicas Expandibles** organizadas en 6 tabs:
+  - 🤖 **Automatización** - Control de tareas automáticas, detección de cambios
+  - 👥 **Docentes** - Sincronización y verificación de información de profesores  
+  - 🔍 **Búsqueda** - Gestión de índices y optimización de relevancia
+  - 💡 **Sugerencias** - Control del sistema de sugerencias estáticas
+  - 🌐 **Scrapers** - Gestión de extracción de datos web desde UTS
+  - ⚙️ **Operaciones** - Funciones de sistema, backup y mantenimiento BD
+
+## 🏗️ Arquitectura Modular Optimizada
 
 ### 1. Métricas en Tiempo Real
 - **Conversaciones totales** del sistema por período

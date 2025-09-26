@@ -189,30 +189,47 @@
 /* Sistema de información */
 .system-info {
   margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .info-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border-light);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--bg-secondary);
+  text-align: center;
+  transition: var(--transition);
 }
 
-.info-item:last-child {
-  border-bottom: none;
+.info-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .info-label {
   font-size: 0.875rem;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 .info-value {
-  font-size: 0.875rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text-primary);
-  font-weight: 600;
+}
+
+/* Estilos para formulario de autenticación existente mejorado */
+.auth-form {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 1rem;
 }
 
 .info-value.online {
@@ -418,6 +435,204 @@
   font-weight: 600;
 }
 
+/* Automation control buttons */
+.automation-buttons {
+  margin: 15px 0;
+  padding: 15px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.automation-buttons .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.automation-buttons .btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.automation-buttons .btn-success:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.automation-buttons .btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.automation-buttons .btn-warning:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.automation-buttons .btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.automation-buttons .btn-info:hover {
+  background-color: #138496;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+/* Automation status styles */
+.automation-status-active {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.automation-status-inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.automation-schedule {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  background-color: var(--bg-tertiary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* Auto maintenance description */
+.auto-maintenance-description {
+  margin: 15px 0;
+  background-color: var(--bg-secondary);
+  padding: 15px;
+  border-radius: var(--radius);
+  border-left: 4px solid #28a745;
+}
+
+.auto-maintenance-description p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.auto-maintenance-description ul {
+  margin: 10px 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.auto-maintenance-description li {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.maintenance-note {
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+  border-radius: 6px;
+  border: 1px solid #28a745;
+  font-size: 0.9rem;
+  color: #155724;
+}
+
+.maintenance-note strong {
+  color: #0d4419;
+}
+
+/* Advanced tabs section */
+.advanced-tabs-section {
+  margin-top: 40px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.tabs-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #0056b3 100%);
+  color: white;
+  padding: 20px;
+}
+
+.tabs-header h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.tab-button.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+  padding: 20px;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.tab-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.tab-icon {
+  font-size: 1rem;
+}
+
 .automation-indicator.active {
   background-color: rgb(34 197 94 / 0.1);
   color: var(--success);
@@ -591,5 +806,161 @@
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+/* ===== FUNCIONES ESPECÍFICAS ===== */
+
+/* Sección expandible */
+.specific-functions-section {
+  margin-top: 2rem;
+}
+
+.expand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 1rem;
+}
+
+.expand-header:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--primary);
+}
+
+.expand-content h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.expand-content p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.expand-toggle {
+  transition: var(--transition);
+}
+
+.expand-header.active .expand-toggle {
+  transform: rotate(180deg);
+}
+
+.expand-icon {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}
+
+/* Contenido expandible */
+.expandable-content {
+  display: none;
+  animation: slideDown 0.3s ease-out;
+}
+
+.expandable-content.active {
+  display: block;
+}
+
+/* Tabs de funciones */
+.functions-tabs {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.function-tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.function-tab-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 1rem;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.function-tab-btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.function-tab-btn.active {
+  background-color: var(--bg-secondary);
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+.function-tabs-content {
+  padding: 1.5rem;
+}
+
+.function-tab-content {
+  display: none;
+}
+
+.function-tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Tarjetas de función */
+.function-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.function-card h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.function-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Animaciones */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

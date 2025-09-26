@@ -50,51 +50,52 @@
             <div id="totalConversations" class="metric-value">—</div>
           </div>
         </div>
-        
+
         <div class="metric-card">
           <div class="metric-icon">😊</div>
           <div class="metric-content">
             <div class="metric-title">Satisfacción</div>
             <div id="satisfactionRate" class="metric-value">—%</div>
-            <div class="progress">
-              <div id="satisfactionBar" class="progress-bar" style="width:0%"></div>
+            <div class="progress-bar">
+              <div id="satisfactionBar" class="progress-fill" style="width: 0%"></div>
             </div>
           </div>
         </div>
-        
+
         <div class="metric-card">
           <div class="metric-icon">📝</div>
           <div class="metric-content">
-            <div class="metric-title">Feedback Recibidos</div>
+            <div class="metric-title">Feedback Recibido</div>
             <div id="feedbackTotal" class="metric-value">—</div>
-            <small id="feedbackDetails" class="metric-details">— positivos, — negativos</small>
+            <div id="feedbackPos" class="metric-subtitle">— positivos</div>
           </div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="metric-icon">🤖</div>
+          <div class="metric-icon">⚙️</div>
           <div class="metric-content">
-            <div class="metric-title">Modelo IA</div>
-            <div id="modelName" class="metric-value">—</div>
-            <small class="metric-details">Estado del servicio</small>
+            <div class="metric-title">Estado del Sistema</div>
+            <div id="statusMetrics" class="metric-value status-indicator">Verificando...</div>
           </div>
         </div>
       </div>
 
       <div class="recent-conversations">
-        <h3>Últimas Conversaciones</h3>
-        <div class="table-wrapper">
+        <div class="section-header">
+          <h3>💬 Conversaciones Recientes</h3>
+        </div>
+        <div class="table-container">
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Usuario</th>
                 <th>Pregunta</th>
-                <th>Respuesta (preview)</th>
+                <th>Respuesta</th>
                 <th>Fecha</th>
               </tr>
             </thead>
-            <tbody id="recentConversationsTable">
+            <tbody id="lastConversations">
               <tr><td colspan="5" class="loading">Cargando...</td></tr>
             </tbody>
           </table>
@@ -102,356 +103,376 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: FEEDBACK (solo lectura, con filtros) -->
+    <!-- SECCIÓN 2: FEEDBACK -->
     <section id="feedback-section" class="tab-content">
       <div class="section-header">
-        <h2>💬 Feedback de Usuarios</h2>
-        <div class="feedback-filters">
-          <select id="feedbackType" class="filter-select">
-            <option value="all">Todos</option>
-            <option value="positive">Positivos</option>
-            <option value="negative">Negativos</option>
-          </select>
-          <select id="feedbackPeriod" class="filter-select">
-            <option value="all">Todo el tiempo</option>
-            <option value="today">Hoy</option>
-            <option value="week">Esta semana</option>
-            <option value="month">Este mes</option>
-          </select>
-          <button id="applyFeedbackFilters" class="btn btn-outline">Filtrar</button>
-        </div>
+        <h2>💬 Gestión de Feedback</h2>
+        <p class="section-description">
+          Revisa los comentarios y calificaciones de los usuarios para mejorar el servicio del chatbot.
+        </p>
       </div>
-      
-      <div class="feedback-stats">
-        <div class="stat-item">
-          <span class="stat-label">Total:</span>
-          <span id="feedbackStatsTotal" class="stat-value">—</span>
+
+      <!-- ESTADÍSTICAS DE FEEDBACK -->
+      <div class="kb-stats">
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="feedbackStatsTotal">0</div>
+          <div class="kb-stat-label">📊 Total Votos</div>
         </div>
-        <div class="stat-item positive">
-          <span class="stat-label">Positivos:</span>
-          <span id="feedbackStatsPositive" class="stat-value">—</span>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="feedbackStatsPositive">0</div>
+          <div class="kb-stat-label">👍 Respuestas Útiles</div>
         </div>
-        <div class="stat-item negative">
-          <span class="stat-label">Negativos:</span>
-          <span id="feedbackStatsNegative" class="stat-value">—</span>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="feedbackStatsNegative">0</div>
+          <div class="kb-stat-label">👎 Respuestas No Útiles</div>
         </div>
       </div>
 
-      <div class="feedback-list">
-        <div id="feedbackContainer" class="feedback-items">
-          <div class="loading">Cargando feedback...</div>
+      <!-- FILTROS DE FEEDBACK -->
+      <div class="action-card">
+        <div class="action-header">
+          <h3>🔍 Filtros</h3>
         </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 3: BASE DE CONOCIMIENTO (solo lectura y verificación) -->
-    <section id="knowledge-section" class="tab-content">
-      <div class="section-header">
-        <h2>📚 Base de Conocimiento</h2>
-        <div class="kb-info">
-          <span class="info-text">🎯 Verificación de fuentes UTS</span>
-          <button id="refreshKnowledge" class="btn btn-outline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 3V9M3 9H9M3 9L6.5 5.5C8.28 3.72 10.86 2.5 13.5 2.5C18.19 2.5 22 6.31 22 11C22 15.69 18.19 19.5 13.5 19.5C10.25 19.5 7.5 17.86 6.06 15.31" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Actualizar
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="feedbackType">Tipo:</label>
+            <select id="feedbackType" class="filter-select">
+              <option value="all">Todos los votos</option>
+              <option value="positive">Solo útiles</option>
+              <option value="negative">Solo no útiles</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="feedbackPeriod">Período:</label>
+            <select id="feedbackPeriod" class="filter-select">
+              <option value="all">Todo el tiempo</option>
+              <option value="today">Hoy</option>
+              <option value="week">Última semana</option>
+              <option value="month">Último mes</option>
+            </select>
+          </div>
+          <button id="applyFeedbackFilters" class="btn btn-primary">
+            <span class="btn-icon">🔍</span>
+            Aplicar Filtros
           </button>
         </div>
       </div>
-      
-      <div class="kb-search">
-        <input type="text" id="kbSearchInput" placeholder="Buscar en la base de conocimiento..." class="search-input">
-        <button id="kbSearchBtn" class="btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Buscar
-        </button>
-        <button id="kbClearSearch" class="btn btn-outline">Limpiar</button>
-      </div>
 
-      <div class="kb-stats">
-        <div class="kb-stat">
-          <span class="kb-stat-label">Entradas totales:</span>
-          <span id="kbTotalEntries" class="kb-stat-value">—</span>
+      <!-- LISTA DE FEEDBACK -->
+      <div class="action-card">
+        <div class="action-header">
+          <h3>📝 Votaciones de Usuarios</h3>
         </div>
-        <div class="kb-stat">
-          <span class="kb-stat-label">Última actualización:</span>
-          <span id="kbLastUpdate" class="kb-stat-value">—</span>
+        <div id="feedbackContainer" class="feedback-list">
+          <div class="loading-state">
+            <div class="loading-icon">⏳</div>
+            <div>Cargando feedback...</div>
+          </div>
         </div>
-        <div class="kb-stat">
-          <span class="kb-stat-label">Fuentes verificadas:</span>
-          <span id="kbVerifiedSources" class="kb-stat-value">—</span>
-        </div>
-      </div>
-
-      <div class="kb-table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Pregunta/Tema</th>
-              <th>Tipo Usuario</th>
-              <th>Fuente UTS</th>
-              <th>Actualización</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="knowledgeTable">
-            <tr><td colspan="6" class="loading">Cargando base de conocimiento...</td></tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
-    <!-- SECCIÓN 4: MANTENIMIENTO (protegido con token) -->
+    <!-- SECCIÓN 3: BASE DE CONOCIMIENTO -->
+    <section id="knowledge-section" class="tab-content">
+      <div class="section-header">
+        <h2>📚 Base de Conocimiento</h2>
+        <p class="section-description">
+          Gestiona las preguntas y respuestas de la base de conocimiento del chatbot.
+        </p>
+      </div>
+
+      <!-- ESTADÍSTICAS DE KB -->
+      <div class="kb-stats">
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="kbStatsTotal">0</div>
+          <div class="kb-stat-label">📝 Total Entradas</div>
+        </div>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="kbStatsStudents">0</div>
+          <div class="kb-stat-label">🎓 Estudiantes</div>
+        </div>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="kbStatsTeachers">0</div>
+          <div class="kb-stat-label">👨‍🏫 Docentes</div>
+        </div>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="kbStatsAspirants">0</div>
+          <div class="kb-stat-label">🌟 Aspirantes</div>
+        </div>
+        <div class="kb-stat">
+          <div class="kb-stat-value" id="kbStatsGeneral">0</div>
+          <div class="kb-stat-label">👥 Todos/Visitantes</div>
+        </div>
+      </div>
+
+      <!-- CONTROLES DE KB -->
+      <div class="action-card">
+        <div class="action-header">
+          <h3>🔍 Buscar en Base de Conocimiento</h3>
+        </div>
+        <div class="kb-search-controls">
+          <div class="kb-search-row">
+            <input type="text" id="kbSearchInput" placeholder="Buscar preguntas, respuestas o palabras clave..." class="kb-search-input">
+            <button id="kbSearchBtn" class="btn btn-primary">
+              <span class="btn-icon">🔍</span>
+              Buscar
+            </button>
+            <button id="kbClearSearch" class="btn btn-secondary">
+              <span class="btn-icon">🗑️</span>
+              Limpiar
+            </button>
+            <button id="refreshKnowledge" class="btn btn-info">
+              <span class="btn-icon">🔄</span>
+              Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA DE CONOCIMIENTO -->
+      <div class="action-card">
+        <div class="action-header">
+          <h3>📋 Entradas de la Base de Conocimiento</h3>
+        </div>
+        <div class="kb-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Pregunta</th>
+                <th>Tipo Usuario</th>
+                <th>Fuente</th>
+                <th>Actualizado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="knowledgeTable">
+              <tr>
+                <td colspan="6" class="loading">
+                  <div class="loading-state">
+                    <div class="loading-icon">⏳</div>
+                    <div>Cargando base de conocimiento...</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: MANTENIMIENTO -->
     <section id="maintenance-section" class="tab-content">
       <div class="section-header">
         <h2>⚙️ Mantenimiento del Sistema</h2>
-        <div class="auth-status" id="authStatus">
-          <span class="status-indicator" id="authIndicator">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </span>
-          <span id="authText">No autenticado</span>
-        </div>
+        <p class="section-description">
+          Panel principal para el mantenimiento del chatbot AvaUTS. 
+          Las funciones principales están siempre visibles, las específicas se pueden expandir según sea necesario.
+        </p>
       </div>
 
-      <div class="auth-section" id="authSection">
-        <div class="auth-card">
-          <h3>🔐 Autenticación Requerida</h3>
-          <p>Ingresa el token de administrador para acceder a las funciones de mantenimiento:</p>
-          <div class="auth-input-group">
-            <input type="password" id="adminToken" placeholder="ADMIN_TOKEN" class="auth-input">
-            <button id="authenticateBtn" class="btn btn-primary">Autenticar</button>
-          </div>
-          <small class="auth-help">Solo el administrador del sistema puede ejecutar estas operaciones.</small>
+      <!-- AUTENTICACIÓN -->
+      <div id="authenticationCard" class="action-card">
+        <div class="action-header">
+          <h3>🔐 Autenticación de Administrador</h3>
+          <span class="action-status" id="authStatus">No autenticado</span>
         </div>
+        <p>Para usar las funciones de mantenimiento, primero debes autenticarte como administrador.</p>
+        <div class="auth-form">
+          <input type="password" id="adminToken" placeholder="Ingresa el token de administrador..." class="auth-input">
+          <button id="authenticateBtn" class="btn btn-primary">
+            <span class="btn-icon">🔑</span>
+            Autenticar
+          </button>
+        </div>
+        <div id="authOutput" class="action-output"></div>
       </div>
 
-      <div class="maintenance-actions" id="maintenanceActions" style="display: none;">
-        <div class="action-grid">
-          <!-- AUTOMATIZACIÓN -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>🤖 Sistema de Automatización</h3>
-              <span class="action-status" id="automationStatus">Listo</span>
-            </div>
-            <p>Control inteligente del sistema de automatización para mantenimiento continuo.</p>
-            <div class="action-buttons">
-              <button id="detectChangesBtn" class="btn btn-info">
-                <span class="btn-icon">🔍</span>
-                Detectar Cambios
-              </button>
-              <button id="autoUpdateBtn" class="btn btn-primary">
-                <span class="btn-icon">🔄</span>
-                Actualización Completa
-              </button>
-              <button id="quickUpdateBtn" class="btn btn-secondary">
-                <span class="btn-icon">⚡</span>
-                Actualización Rápida
-              </button>
-            </div>
-            <div id="automationOutput" class="action-output"></div>
+      <div id="maintenanceControls" class="maintenance-controls" style="display: none;">
+        <!-- ESTADO DEL SISTEMA -->
+        <div class="action-card">
+          <div class="action-header">
+            <h3>📊 Estado del Sistema</h3>
+            <span class="action-status" id="systemStatus">Verificando...</span>
           </div>
-
-          <!-- SINCRONIZACIÓN DE DOCENTES -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>👨‍🏫 Sincronización de Docentes</h3>
-              <span class="action-status" id="teacherSyncStatus">Listo</span>
+          <p>Información general sobre el estado del chatbot y sus componentes principales.</p>
+          <div class="system-info">
+            <div class="info-item">
+              <span class="info-label">Servidor:</span>
+              <span id="serverStatus" class="info-value">—</span>
             </div>
-            <p>Actualiza automáticamente las palabras clave con nombres de docentes para mejorar las búsquedas por nombre específico.</p>
-            <div class="action-buttons">
-              <button id="syncTeachersBtn" class="btn btn-primary">
-                <span class="btn-icon">🔄</span>
-                Sincronizar Docentes
-              </button>
-              <button id="checkTeachersBtn" class="btn btn-outline">
-                <span class="btn-icon">🔍</span>
-                Verificar Cambios
-              </button>
+            <div class="info-item">
+              <span class="info-label">Base de datos:</span>
+              <span id="dbStatus" class="info-value">—</span>
             </div>
-            <div id="teacherSyncOutput" class="action-output"></div>
+            <div class="info-item">
+              <span class="info-label">IA (Gemini):</span>
+              <span id="aiStatus" class="info-value">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Registros KB:</span>
+              <span id="kbRecordsStatus" class="info-value">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Última actualización:</span>
+              <span id="lastUpdateStatus" class="info-value">—</span>
+            </div>
           </div>
+          <button id="checkSystemBtn" class="btn btn-info">
+            <span class="btn-icon">🔍</span>
+            Verificar Estado
+          </button>
+        </div>
 
-          <!-- PALABRAS CLAVE Y SINÓNIMOS -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>🔤 Optimización de Búsqueda</h3>
-              <span class="action-status" id="optimizationStatus">Listo</span>
-            </div>
-            <p>Mejora automática de palabras clave y regeneración de sinónimos específicos.</p>
-            <div class="action-buttons">
-              <button id="improveKeywordsBtn" class="btn btn-warning">
-                <span class="btn-icon">🎯</span>
-                Mejorar Keywords
-              </button>
-              <button id="generateSynonymsBtn" class="btn btn-success">
-                <span class="btn-icon">📝</span>
-                Generar Sinónimos
-              </button>
-            </div>
-            <div id="optimizationOutput" class="action-output"></div>
+        <!-- MANTENIMIENTO AUTOMÁTICO -->
+        <div class="action-card">
+          <div class="action-header">
+            <h3>🤖 Mantenimiento Automático</h3>
+            <span class="action-status" id="configStatus">Disponible</span>
           </div>
-
-          <!-- SUGERENCIAS ESTÁTICAS -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>💡 Sugerencias Estáticas</h3>
-              <span class="action-status" id="suggestionsStatus">Listo</span>
+          <div class="auto-maintenance-description">
+            <p><strong>¿Qué hace este botón?</strong></p>
+            <ul>
+              <li>🔍 <strong>Revisa</strong> si hay cambios en el sitio web de UTS</li>
+              <li>🌐 <strong>Actualiza</strong> automáticamente la información del chatbot</li>
+              <li>👥 <strong>Sincroniza</strong> los datos de docentes</li>
+              <li>🎯 <strong>Mejora</strong> las palabras clave para mejores respuestas</li>
+            </ul>
+            <div class="maintenance-note">
+              <strong>💡 Para la secretaria:</strong> Presiona el botón verde y el sistema hará todo solo. 
+              Tardará unos minutos y te avisará cuando termine. ¡No necesitas saber nada técnico!
             </div>
-            <p>Gestiona las sugerencias estáticas instantáneas por categoría de usuario. Sistema optimizado sin dependencias externas.</p>
-            <div class="action-buttons">
-              <button id="viewAllSuggestionsBtn" class="btn btn-primary">
-                <span class="btn-icon">�️</span>
-                Ver Todas
-              </button>
-              <button id="viewEstudianteBtn" class="btn btn-outline">
-                <span class="btn-icon">🎓</span>
-                Estudiantes
-              </button>
-              <button id="viewDocenteBtn" class="btn btn-outline">
-                <span class="btn-icon">👨‍🏫</span>
-                Docentes
-              </button>
-              <button id="viewAspiranteBtn" class="btn btn-outline">
-                <span class="btn-icon">🌟</span>
-                Aspirantes
-              </button>
-              <button id="viewTodosBtn" class="btn btn-outline">
-                <span class="btn-icon">👥</span>
-                Todos
-              </button>
-              <button id="editSuggestionsBtn" class="btn btn-secondary">
-                <span class="btn-icon">ℹ️</span>
-                Información del Sistema
-              </button>
-              <button id="regenerateSuggestionsBtn" class="btn btn-warning">
-                <span class="btn-icon">🔄</span>
-                Regenerar desde BD
-              </button>
-            </div>
-            <div id="suggestionsOutput" class="action-output"></div>
           </div>
-
-          <!-- SCRAPERS TRADICIONALES -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>�️ Scrapers Manuales</h3>
-              <span class="action-status" id="scrapersStatus">Listo</span>
-            </div>
-            <p>Ejecuta scrapers individuales para páginas específicas de la UTS.</p>
-            <div class="action-buttons">
-              <button id="runAllScrapersBtn" class="btn btn-primary">
-                <span class="btn-icon">▶️</span>
-                Todos los Scrapers
-              </button>
-              <button id="runAspirantesBtn" class="btn btn-outline">
-                <span class="btn-icon">👥</span>
-                Aspirantes
-              </button>
-              <button id="runDocentesBtn" class="btn btn-outline">
-                <span class="btn-icon">👨‍🏫</span>
-                Docentes
-              </button>
-              <button id="runEstudiantesBtn" class="btn btn-outline">
-                <span class="btn-icon">🎓</span>
-                Estudiantes
-              </button>
-              <button id="runTecnologiaBtn" class="btn btn-outline">
-                <span class="btn-icon">�</span>
-                Tecnología
-              </button>
-            </div>
-            <div id="scrapersOutput" class="action-output"></div>
-          </div>
-
-          <!-- SISTEMA TRADICIONAL -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>� Operaciones del Sistema</h3>
-              <span class="action-status" id="systemOpsStatus">Listo</span>
-            </div>
-            <p>Operaciones básicas del sistema como recarga de índice y backups.</p>
-            <div class="action-buttons">
-              <button id="reloadKbBtn" class="btn btn-secondary">
-                <span class="btn-icon">🔄</span>
-                Recargar KB
-              </button>
-              <button id="backupDbBtn" class="btn btn-outline">
-                <span class="btn-icon">💾</span>
-                Crear Backup
-              </button>
-            </div>
-            <div id="systemOpsOutput" class="action-output"></div>
-          </div>
-
-          <!-- MONITOREO EN TIEMPO REAL -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>📊 Monitoreo del Sistema</h3>
-              <span class="action-status" id="monitoringStatus">Monitoreando</span>
-            </div>
-            <div class="system-info">
-              <div class="info-item">
-                <span class="info-label">Servidor:</span>
-                <span id="serverStatus" class="info-value">—</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Base de datos:</span>
-                <span id="dbStatus" class="info-value">—</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">IA (Gemini):</span>
-                <span id="aiStatus" class="info-value">—</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Registros KB:</span>
-                <span id="kbRecordsStatus" class="info-value">—</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Última actualización:</span>
-                <span id="lastUpdateStatus" class="info-value">—</span>
-              </div>
-            </div>
-            <button id="checkSystemBtn" class="btn btn-info">
-              <span class="btn-icon">🔍</span>
-              Verificar Estado
+          <div class="action-buttons">
+            <button id="autoMaintenanceBtn" class="btn btn-success">
+              <span class="btn-icon">🤖</span>
+              Mantenimiento Automático
+            </button>
+            <button id="viewLogsBtn" class="btn btn-outline">
+              <span class="btn-icon">📋</span>
+              Ver Logs
             </button>
           </div>
+          <div id="configOutput" class="action-output"></div>
+        </div>
 
-          <!-- CONFIGURACIÓN DE AUTOMATIZACIÓN -->
-          <div class="action-card">
-            <div class="action-header">
-              <h3>⚙️ Configuración Automática</h3>
-              <span class="action-status" id="configStatus">Disponible</span>
+        <!-- SECCIÓN EXPANDIBLE PARA FUNCIONES ESPECÍFICAS -->
+        <div class="specific-functions-section">
+          <div class="expand-header" id="expandSpecificFunctions">
+            <div class="expand-content">
+              <h3>🔧 Mantenimiento Específico</h3>
+              <p>¿Necesitas hacer algo específico? Haz clic aquí para ver más opciones</p>
             </div>
-            <p>Configurar tareas programadas para automatización del sistema.</p>
-            <div class="system-info">
-              <div class="info-item">
-                <span class="info-label">Estado de tareas:</span>
-                <span id="scheduledTasksStatus" class="info-value">—</span>
+            <div class="expand-toggle">
+              <span class="expand-icon">▼</span>
+            </div>
+          </div>
+
+          <div class="expandable-content" id="specificFunctionsContent">
+            <div class="functions-tabs">
+              <div class="function-tabs-nav">
+                <button class="function-tab-btn active" data-target="automation-functions">
+                  🤖 Automatización
+                </button>
+                <button class="function-tab-btn" data-target="teachers-functions">
+                  👥 Docentes  
+                </button>
+                <button class="function-tab-btn" data-target="search-functions">
+                  🔍 Búsqueda
+                </button>
+                <button class="function-tab-btn" data-target="suggestions-functions">
+                  💡 Sugerencias
+                </button>
+                <button class="function-tab-btn" data-target="scrapers-functions">
+                  🌐 Scrapers
+                </button>
+                <button class="function-tab-btn" data-target="operations-functions">
+                  ⚙️ Operaciones
+                </button>
               </div>
-              <div class="info-item">
-                <span class="info-label">Última detección:</span>
-                <span id="lastDetectionStatus" class="info-value">—</span>
+
+              <div class="function-tabs-content">
+                <!-- Automatización -->
+                <div id="automation-functions" class="function-tab-content active">
+                  <div class="function-card">
+                    <h4>🤖 Sistema de Automatización</h4>
+                    <p>Controlar tareas automáticas específicas</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-info" id="detectChangesBtn">🔍 Detectar Cambios</button>
+                      <button class="btn btn-primary" id="autoUpdateBtn">🔄 Auto Update</button>
+                    </div>
+                    <div id="automationOutput" class="action-output"></div>
+                  </div>
+                </div>
+
+                <!-- Docentes -->
+                <div id="teachers-functions" class="function-tab-content">
+                  <div class="function-card">
+                    <h4>👥 Sincronización de Docentes</h4>
+                    <p>Gestionar información específica de docentes</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-success" id="syncTeachersBtn">👥 Sincronizar Docentes</button>
+                      <button class="btn btn-info" id="checkTeachersBtn">🔍 Verificar Docentes</button>
+                    </div>
+                    <div id="teachersOutput" class="action-output"></div>
+                  </div>
+                </div>
+
+                <!-- Búsqueda -->
+                <div id="search-functions" class="function-tab-content">
+                  <div class="function-card">
+                    <h4>🔍 Optimización de Búsqueda</h4>
+                    <p>Mejorar la precisión de las búsquedas del chatbot</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-warning" id="improveKeywordsBtn">🎯 Mejorar Keywords</button>
+                      <button class="btn btn-info" id="generateSynonymsBtn">📝 Generar Sinónimos</button>
+                    </div>
+                    <div id="searchOutput" class="action-output"></div>
+                  </div>
+                </div>
+
+                <!-- Sugerencias -->
+                <div id="suggestions-functions" class="function-tab-content">
+                  <div class="function-card">
+                    <h4>💡 Sugerencias Estáticas</h4>
+                    <p>Ver y regenerar sugerencias del chatbot</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-info" id="viewSuggestionsEstudianteBtn">👨‍🎓 Estudiante</button>
+                      <button class="btn btn-info" id="viewSuggestionsDocenteBtn">👨‍🏫 Docente</button>
+                      <button class="btn btn-info" id="viewSuggestionsAspiranteBtn">🎯 Aspirante</button>
+                      <button class="btn btn-info" id="viewSuggestionsAllBtn">📋 Todas</button>
+                      <button class="btn btn-success" id="regenerateSuggestionsBtn">🔄 Regenerar</button>
+                    </div>
+                    <div id="suggestionsOutput" class="action-output"></div>
+                  </div>
+                </div>
+
+                <!-- Scrapers -->
+                <div id="scrapers-functions" class="function-tab-content">
+                  <div class="function-card">
+                    <h4>🌐 Scrapers Manuales</h4>
+                    <p>Obtener datos específicos manualmente</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-primary" id="runScrapersBtn">🌐 Ejecutar Scrapers</button>
+                    </div>
+                    <div id="scrapersOutput" class="action-output"></div>
+                  </div>
+                </div>
+
+                <!-- Operaciones -->
+                <div id="operations-functions" class="function-tab-content">
+                  <div class="function-card">
+                    <h4>⚙️ Operaciones del Sistema</h4>
+                    <p>Operaciones avanzadas de mantenimiento</p>
+                    <div class="action-buttons">
+                      <button class="btn btn-warning" id="reloadKbBtn">📚 Recargar KB</button>
+                      <button class="btn btn-danger" id="backupDbBtn">💾 Backup BD</button>
+                    </div>
+                    <div id="operationsOutput" class="action-output"></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="action-buttons">
-              <button id="setupAutomationBtn" class="btn btn-success">
-                <span class="btn-icon">⚙️</span>
-                Configurar Tareas
-              </button>
-              <button id="viewLogsBtn" class="btn btn-outline">
-                <span class="btn-icon">📋</span>
-                Ver Logs
-              </button>
-            </div>
-            <div id="configOutput" class="action-output"></div>
           </div>
         </div>
       </div>
@@ -490,38 +511,98 @@
     })();
 
     themeToggle.addEventListener('click', () => {
-      const current = htmlEl.getAttribute('data-theme') || 'auto';
-      const next = current === 'auto' ? 'dark' : current === 'dark' ? 'light' : 'auto';
+      const current = htmlEl.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
       applyTheme(next);
     });
 
-    // Sistema de navegación por tabs
-    function initTabs() {
-      const tabBtns = document.querySelectorAll('.tab-btn');
+    // Sistema de navegación de tabs principales
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabButtons = document.querySelectorAll('.tab-btn');
       const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetTab = this.dataset.tab;
+          
+          // Remover active de todos los botones y secciones
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Agregar active al botón clickeado y su sección
+          this.classList.add('active');
+          document.getElementById(targetTab + '-section').classList.add('active');
+          
+          // Inicializar el módulo correspondiente
+          switch(targetTab) {
+            case 'metrics':
+              if (window.initMetrics) window.initMetrics();
+              break;
+            case 'feedback':
+              if (window.initFeedback) window.initFeedback();
+              break;
+            case 'knowledge':
+              if (window.initKnowledge) window.initKnowledge();
+              break;
+            case 'maintenance':
+              if (window.initMaintenance) window.initMaintenance();
+              break;
+          }
+        });
+      });
 
-      tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetTab = btn.dataset.tab;
+      // Funcionalidad para secciones expandibles
+      initExpandableSections();
+      
+      // Inicializar métricas por defecto (sección activa)
+      if (window.initMetrics) {
+        window.initMetrics();
+      }
+    });
+
+    // FUNCIONALIDAD PARA SECCIONES EXPANDIBLES
+    function initExpandableSections() {
+      // Header expandible
+      const expandHeader = document.getElementById('expandSpecificFunctions');
+      const expandContent = document.getElementById('specificFunctionsContent');
+      
+      if (expandHeader && expandContent) {
+        expandHeader.addEventListener('click', function() {
+          const isExpanded = expandContent.classList.contains('expanded');
           
-          // Remover clases activas
-          tabBtns.forEach(b => b.classList.remove('active'));
-          tabContents.forEach(c => c.classList.remove('active'));
+          if (isExpanded) {
+            // Colapsar
+            expandContent.classList.remove('expanded');
+            expandHeader.classList.remove('expanded');
+          } else {
+            // Expandir
+            expandContent.classList.add('expanded');
+            expandHeader.classList.add('expanded');
+          }
+        });
+      }
+      
+      // Navegación de tabs de funciones
+      const tabButtons = document.querySelectorAll('.function-tab-btn');
+      const tabContents = document.querySelectorAll('.function-tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetId = this.getAttribute('data-target');
           
-          // Activar tab seleccionado
-          btn.classList.add('active');
-          document.getElementById(`${targetTab}-section`).classList.add('active');
+          // Remover active de todos los botones y contenidos
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
           
-          // Trigger de inicialización específica por sección
-          if (window[`init${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`]) {
-            window[`init${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`]();
+          // Agregar active al botón clickeado y su contenido
+          this.classList.add('active');
+          const targetContent = document.getElementById(targetId);
+          if (targetContent) {
+            targetContent.classList.add('active');
           }
         });
       });
     }
-
-    // Inicializar tabs cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', initTabs);
   </script>
 </body>
 </html>

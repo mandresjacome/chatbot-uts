@@ -305,3 +305,209 @@ body {
     font-size: 14px;
   }
 }
+
+/* ESTILOS PARA SECCIONES EXPANDIBLES */
+.specific-functions-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-top: 24px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.expand-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--surface), var(--card));
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.expand-header:hover {
+  background: var(--surface);
+  transform: translateY(-1px);
+}
+
+.expand-content h3 {
+  margin: 0 0 4px 0;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.expand-content p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.expand-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.expand-icon {
+  font-size: 16px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.expand-header.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.expandable-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.expandable-content.expanded {
+  max-height: 2000px;
+}
+
+.functions-tabs {
+  padding: 0;
+}
+
+.function-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 16px 20px 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.function-tab-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.function-tab-btn:hover {
+  background: var(--card);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.function-tab-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.function-tabs-content {
+  padding: 20px;
+}
+
+.function-tab-content {
+  display: none;
+}
+
+.function-tab-content.active {
+  display: block;
+}
+
+.function-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.function-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+.function-card h4 {
+  margin: 0 0 12px 0;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.function-card p {
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.function-card .action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.function-card .action-output {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  display: none;
+}
+
+.function-card .action-output:not(:empty) {
+  display: block;
+}
+
+/* Responsive para secciones expandibles */
+@media (max-width: 768px) {
+  .function-tabs-nav {
+    padding: 12px 16px 0 16px;
+  }
+  
+  .function-tab-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .function-tabs-content {
+    padding: 16px;
+  }
+  
+  .function-card {
+    padding: 16px;
+  }
+  
+  .expand-header {
+    padding: 16px;
+  }
+  
+  .expand-content h3 {
+    font-size: 16px;
+  }
+  
+  .expand-content p {
+    font-size: 13px;
+  }
+}

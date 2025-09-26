@@ -179,7 +179,7 @@ class KnowledgeManager {
           ${sourceStatus.link}
         </td>
         <td class="kb-last-update">${lastUpdate}</td>
-        <td class="kb-actions">
+        <td class="kb-entry-actions">
           <button class="kb-action-btn kb-view-btn" data-action="view" data-id="${item.id}">
             👁️ Ver
           </button>
@@ -333,19 +333,36 @@ class KnowledgeManager {
 
   updateStats() {
     const total = this.knowledgeData.length;
-    const verified = this.knowledgeData.filter(item => 
-      item.recurso_url && this.isUtsUrl(item.recurso_url)
+    
+    // Contar por tipo de usuario
+    const students = this.knowledgeData.filter(item => 
+      item.tipo_usuario === 'estudiante'
     ).length;
     
-    const lastUpdate = this.getLastUpdateDate();
+    const teachers = this.knowledgeData.filter(item => 
+      item.tipo_usuario === 'docente'
+    ).length;
+    
+    const aspirants = this.knowledgeData.filter(item => 
+      item.tipo_usuario === 'aspirante'
+    ).length;
+    
+    const general = this.knowledgeData.filter(item => 
+      item.tipo_usuario === 'todos' || item.tipo_usuario === 'visitante' || !item.tipo_usuario
+    ).length;
 
-    const totalElement = document.getElementById('kbTotalEntries');
-    const verifiedElement = document.getElementById('kbVerifiedSources');
-    const updateElement = document.getElementById('kbLastUpdate');
+    // Actualizar elementos de estadísticas
+    const totalElement = document.getElementById('kbStatsTotal');
+    const studentsElement = document.getElementById('kbStatsStudents');
+    const teachersElement = document.getElementById('kbStatsTeachers');
+    const aspirantsElement = document.getElementById('kbStatsAspirants');
+    const generalElement = document.getElementById('kbStatsGeneral');
 
     if (totalElement) totalElement.textContent = total;
-    if (verifiedElement) verifiedElement.textContent = verified;
-    if (updateElement) updateElement.textContent = lastUpdate;
+    if (studentsElement) studentsElement.textContent = students;
+    if (teachersElement) teachersElement.textContent = teachers;
+    if (aspirantsElement) aspirantsElement.textContent = aspirants;
+    if (generalElement) generalElement.textContent = general;
   }
 
   getLastUpdateDate() {
@@ -500,10 +517,8 @@ window.initKnowledge = function() {
   window.knowledgeManager.init();
 };
 
-// Auto-inicializar si estamos en la página de knowledge
+// Auto-inicializar
 document.addEventListener('DOMContentLoaded', () => {
-  const knowledgeSection = document.getElementById('knowledge-section');
-  if (knowledgeSection && knowledgeSection.classList.contains('active')) {
-    window.initKnowledge();
-  }
+  // Inicializar siempre para que esté disponible cuando se cambie de pestaña
+  window.initKnowledge();
 });

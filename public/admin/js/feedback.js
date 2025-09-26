@@ -67,7 +67,7 @@ class FeedbackManager {
     // Filtrar por tipo
     if (this.currentFilters.type !== 'all') {
       filteredData = filteredData.filter(item => {
-        const isPositive = item.rating >= 4 || item.sentiment === 'positive';
+        const isPositive = item.useful === 1 || item.useful === true;
         return this.currentFilters.type === 'positive' ? isPositive : !isPositive;
       });
     }
@@ -120,10 +120,10 @@ class FeedbackManager {
   }
 
   createFeedbackItem(item) {
-    const isPositive = item.rating >= 4 || item.sentiment === 'positive';
+    const isPositive = item.useful === 1 || item.useful === true;
     const typeClass = isPositive ? 'positive' : 'negative';
     const typeIcon = isPositive ? '👍' : '👎';
-    const typeText = isPositive ? 'Positivo' : 'Negativo';
+    const typeText = isPositive ? 'Útil' : 'No útil';
 
     const date = new Date(item.created_at).toLocaleString('es-ES', {
       day: '2-digit',
@@ -133,8 +133,13 @@ class FeedbackManager {
       minute: '2-digit'
     });
 
-    const questionPreview = this.truncateText(item.question || 'Pregunta no disponible', 150);
-    const responsePreview = this.truncateText(item.response || 'Respuesta no disponible', 200);
+    const questionPreview = this.truncateText(item.question || 'Pregunta no disponible', 200);
+    const responsePreview = this.truncateText(item.response || 'Respuesta no disponible', 300);
+
+    // Usar el formatUserType de metrics para consistencia
+    const userDisplay = window.metricsManager && window.metricsManager.formatUserType 
+      ? window.metricsManager.formatUserType(item.user_id)
+      : this.formatUserType(item.user_id);
 
     return `
       <div class="feedback-item">
@@ -152,10 +157,9 @@ class FeedbackManager {
           <div class="feedback-response">
             <strong>Respuesta:</strong> ${this.escapeHtml(responsePreview)}
           </div>
-          ${item.comment ? `
+          ${item.comment && item.comment.trim() ? `
             <div class="feedback-comment">
-              <strong>Comentario del usuario:</strong><br>
-              "${this.escapeHtml(item.comment)}"
+              <strong>Observación:</strong> "${this.escapeHtml(item.comment.trim())}"
             </div>
           ` : ''}
         </div>
@@ -163,10 +167,10 @@ class FeedbackManager {
         <div class="feedback-meta">
           <div class="feedback-user">
             <div class="feedback-user-icon">👤</div>
-            <span>${this.escapeHtml(item.user_id || 'Usuario anónimo')}</span>
+            <span>${userDisplay}</span>
           </div>
-          <div class="feedback-rating">
-            ${item.rating ? `⭐ ${item.rating}/5` : 'Sin calificación'}
+          <div class="feedback-vote">
+            ${isPositive ? '✅ Marcado como útil' : '❌ Marcado como no útil'}
           </div>
         </div>
       </div>
@@ -176,7 +180,7 @@ class FeedbackManager {
   updateStats(feedbackList) {
     const total = feedbackList.length;
     const positive = feedbackList.filter(item => {
-      return item.rating >= 4 || item.sentiment === 'positive';
+      return item.useful === 1 || item.useful === true;
     }).length;
     const negative = total - positive;
 
@@ -193,10 +197,10 @@ class FeedbackManager {
   getEmptyState() {
     return `
       <div class="feedback-empty">
-        <div class="feedback-empty-icon">💬</div>
-        <div class="feedback-empty-text">No hay feedback disponible</div>
+        <div class="feedback-empty-icon">�👎</div>
+        <div class="feedback-empty-text">No hay votos disponibles</div>
         <div class="feedback-empty-subtitle">
-          Los comentarios de los usuarios aparecerán aquí cuando estén disponibles.
+          Las votaciones de utilidad de los usuarios aparecerán aquí cuando estén disponibles.
         </div>
       </div>
     `;
@@ -226,6 +230,17 @@ class FeedbackManager {
     return text.substr(0, maxLength) + '...';
   }
 
+  formatUserType(userType) {
+    const types = {
+      'estudiante': '🎓 Estudiante',
+      'docente': '👨‍🏫 Docente', 
+      'aspirante': '🌟 Aspirante',
+      'visitante': '👥 Visitante',
+      'todos': '👥 Visitante' // todos equivale a visitante
+    };
+    return types[userType] || `👤 ${userType || 'Anónimo'}`;
+  }
+
   escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -245,10 +260,8 @@ window.initFeedback = function() {
   window.feedbackManager.init();
 };
 
-// Auto-inicializar si estamos en la página de feedback
+// Auto-inicializar
 document.addEventListener('DOMContentLoaded', () => {
-  const feedbackSection = document.getElementById('feedback-section');
-  if (feedbackSection && feedbackSection.classList.contains('active')) {
-    window.initFeedback();
-  }
+  // Inicializar siempre para que esté disponible cuando se cambie de pestaña
+  window.initFeedback();
 });

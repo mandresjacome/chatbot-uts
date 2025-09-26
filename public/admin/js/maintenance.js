@@ -12,28 +12,94 @@ class MaintenanceManager {
     if (this.initialized) return;
     
     this.bindEvents();
+    this.setupAdditionalEvents();
     this.checkSystemStatus();
     this.initialized = true;
   }
 
   bindEvents() {
+    console.log('MaintenanceManager: Binding events...');
+    
     const authenticateBtn = document.getElementById('authenticateBtn');
     const adminTokenInput = document.getElementById('adminToken');
 
+    console.log('AuthenticateBtn found:', !!authenticateBtn);
+    console.log('AdminTokenInput found:', !!adminTokenInput);
+
     if (authenticateBtn) {
-      authenticateBtn.addEventListener('click', () => {
+      authenticateBtn.addEventListener('click', (e) => {
+        console.log('Authenticate button clicked!');
+        e.preventDefault();
         this.authenticate();
       });
+    } else {
+      console.warn('MaintenanceManager: authenticateBtn not found');
     }
 
     if (adminTokenInput) {
       adminTokenInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
+          console.log('Enter pressed in token input');
+          e.preventDefault();
           this.authenticate();
         }
       });
+    } else {
+      console.warn('MaintenanceManager: adminTokenInput not found');
     }
 
+    // Funcionalidad para expandir funciones específicas
+    const expandBtn = document.getElementById('expandSpecificFunctions');
+    if (expandBtn) {
+      expandBtn.addEventListener('click', () => {
+        this.toggleSpecificFunctions();
+      });
+    }
+
+    // Funcionalidad para tabs de funciones
+    const functionTabBtns = document.querySelectorAll('.function-tab-btn');
+    functionTabBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.target.getAttribute('data-target');
+        this.switchFunctionTab(target);
+      });
+    });
+  }
+
+  toggleSpecificFunctions() {
+    const expandHeader = document.getElementById('expandSpecificFunctions');
+    const content = document.getElementById('specificFunctionsContent');
+    
+    if (expandHeader && content) {
+      expandHeader.classList.toggle('active');
+      content.classList.toggle('active');
+    }
+  }
+
+  switchFunctionTab(targetId) {
+    // Ocultar todas las tabs
+    const allContents = document.querySelectorAll('.function-tab-content');
+    allContents.forEach(content => {
+      content.classList.remove('active');
+    });
+
+    // Desactivar todos los botones
+    const allButtons = document.querySelectorAll('.function-tab-btn');
+    allButtons.forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    // Activar la tab seleccionada
+    const targetContent = document.getElementById(targetId);
+    const targetButton = document.querySelector(`[data-target="${targetId}"]`);
+    
+    if (targetContent && targetButton) {
+      targetContent.classList.add('active');
+      targetButton.classList.add('active');
+    }
+  }
+
+  setupAdditionalEvents() {
     // ===== NUEVOS BOTONES DE AUTOMATIZACIÓN =====
     
     // Sistema de Automatización
@@ -71,7 +137,7 @@ class MaintenanceManager {
     this.bindButton('checkSystemBtn', () => this.checkSystemStatus());
     
     // Configuración
-    this.bindButton('setupAutomationBtn', () => this.setupAutomation());
+    this.bindButton('autoMaintenanceBtn', () => this.runAutoMaintenance());
     this.bindButton('viewLogsBtn', () => this.viewLogs());
   }
 
@@ -83,17 +149,25 @@ class MaintenanceManager {
   }
 
   async authenticate() {
+    console.log('MaintenanceManager: authenticate() called');
+    
     const tokenInput = document.getElementById('adminToken');
     const authenticateBtn = document.getElementById('authenticateBtn');
     
-    if (!tokenInput || !authenticateBtn) return;
+    if (!tokenInput || !authenticateBtn) {
+      console.error('MaintenanceManager: Missing elements - tokenInput:', !!tokenInput, 'authenticateBtn:', !!authenticateBtn);
+      return;
+    }
 
     const token = tokenInput.value.trim();
+    console.log('MaintenanceManager: Token entered:', token ? 'Yes' : 'No');
+    
     if (!token) {
       this.showAuthError('Por favor ingresa el token de administrador');
       return;
     }
 
+    console.log('MaintenanceManager: Sending auth request...');
     authenticateBtn.disabled = true;
     authenticateBtn.textContent = 'Verificando...';
 
@@ -106,18 +180,22 @@ class MaintenanceManager {
         body: JSON.stringify({ token })
       });
 
+      console.log('MaintenanceManager: Auth response status:', response.status);
       const result = await response.json();
+      console.log('MaintenanceManager: Auth result:', result);
 
       if (result.success) {
         this.adminToken = token;
         this.authenticated = true;
         this.showMaintenanceActions();
         this.updateAuthStatus(true);
+        console.log('MaintenanceManager: Authentication successful');
       } else {
         this.showAuthError(result.error || 'Token inválido');
+        console.log('MaintenanceManager: Authentication failed:', result.error);
       }
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error('MaintenanceManager: Authentication error:', error);
       this.showAuthError('Error de conexión');
     } finally {
       authenticateBtn.disabled = false;
@@ -126,22 +204,41 @@ class MaintenanceManager {
   }
 
   showMaintenanceActions() {
-    const authSection = document.getElementById('authSection');
-    const maintenanceActions = document.getElementById('maintenanceActions');
+    console.log('MaintenanceManager: showMaintenanceActions() called');
+    
+    const authCard = document.getElementById('authenticationCard');
+    const maintenanceControls = document.getElementById('maintenanceControls');
 
-    if (authSection) authSection.style.display = 'none';
-    if (maintenanceActions) maintenanceActions.style.display = 'block';
+    console.log('AuthCard found:', !!authCard);
+    console.log('MaintenanceControls found:', !!maintenanceControls);
+
+    if (authCard) {
+      authCard.style.display = 'none';
+      console.log('MaintenanceManager: Auth card hidden');
+    }
+    if (maintenanceControls) {
+      maintenanceControls.style.display = 'block';
+      console.log('MaintenanceManager: Maintenance controls shown');
+    }
   }
 
   updateAuthStatus(authenticated) {
+    console.log('MaintenanceManager: updateAuthStatus() called with:', authenticated);
+    
     const authIndicator = document.getElementById('authIndicator');
     const authText = document.getElementById('authText');
     const authStatus = document.getElementById('authStatus');
 
+    console.log('Auth elements found - Indicator:', !!authIndicator, 'Text:', !!authText, 'Status:', !!authStatus);
+
     if (authenticated) {
       if (authIndicator) authIndicator.textContent = '🔓';
       if (authText) authText.textContent = 'Autenticado';
-      if (authStatus) authStatus.classList.add('authenticated');
+      if (authStatus) {
+        authStatus.classList.add('authenticated');
+        authStatus.textContent = 'Autenticado ✅';
+      }
+      console.log('MaintenanceManager: Auth status updated to authenticated');
     } else {
       if (authIndicator) authIndicator.textContent = '🔒';
       if (authText) authText.textContent = 'No autenticado';
@@ -272,17 +369,27 @@ class MaintenanceManager {
         this.updateSystemStatus(check.name, 'checking');
       }
 
+      // También actualizar KB Records y Last Update
+      this.updateKBStatus('checking');
+      this.updateLastUpdateStatus('checking');
+
       const results = await Promise.allSettled(
         checks.map(check => 
-          fetch(check.endpoint).then(r => ({ 
+          fetch(check.endpoint, {
+            headers: check.name !== 'servidor' ? {
+              'x-admin-token': this.adminToken,
+              'Content-Type': 'application/json'
+            } : {}
+          }).then(r => ({ 
             name: check.name, 
             ok: r.ok, 
-            status: r.status 
+            status: r.status,
+            data: r.ok ? r.json() : null
           }))
         )
       );
 
-      results.forEach((result, index) => {
+      results.forEach(async (result, index) => {
         const checkName = checks[index].name;
         if (result.status === 'fulfilled') {
           const status = result.value.ok ? 'online' : 'offline';
@@ -292,11 +399,36 @@ class MaintenanceManager {
         }
       });
 
+      // Obtener información adicional para KB Records
+      try {
+        const kbResponse = await fetch('/api/admin/kb-count', {
+          headers: {
+            'x-admin-token': this.adminToken,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (kbResponse.ok) {
+          const kbData = await kbResponse.json();
+          const recordCount = kbData.count || 0;
+          this.updateKBStatus(`${recordCount} registros`);
+        } else {
+          this.updateKBStatus('Error');
+        }
+      } catch (error) {
+        this.updateKBStatus('No disponible');
+      }
+
+      // Actualizar timestamp
+      this.updateLastUpdateStatus(new Date().toLocaleString('es-CO'));
+
     } catch (error) {
       console.error('System check error:', error);
       ['servidor', 'base de datos', 'ia'].forEach(name => {
         this.updateSystemStatus(name, 'offline');
       });
+      this.updateKBStatus('Error');
+      this.updateLastUpdateStatus('Error');
     }
   }
 
@@ -320,6 +452,38 @@ class MaintenanceManager {
 
     element.textContent = statusText[status] || '❓ Desconocido';
     element.className = `info-value ${status}`;
+  }
+
+  updateKBStatus(value) {
+    const element = document.getElementById('kbRecordsStatus');
+    if (!element) return;
+
+    if (value === 'checking') {
+      element.textContent = '🟡 Verificando...';
+      element.className = 'info-value checking';
+    } else if (value === 'Error') {
+      element.textContent = '🔴 Error';
+      element.className = 'info-value offline';
+    } else {
+      element.textContent = `📚 ${value}`;
+      element.className = 'info-value online';
+    }
+  }
+
+  updateLastUpdateStatus(value) {
+    const element = document.getElementById('lastUpdateStatus');
+    if (!element) return;
+
+    if (value === 'checking') {
+      element.textContent = '🟡 Verificando...';
+      element.className = 'info-value checking';
+    } else if (value === 'Error') {
+      element.textContent = '🔴 Error';
+      element.className = 'info-value offline';
+    } else {
+      element.textContent = `🕒 ${value}`;
+      element.className = 'info-value online';
+    }
   }
 
   setTaskStatus(taskId, status) {
@@ -768,27 +932,222 @@ class MaintenanceManager {
     if (!this.authenticated) return;
 
     const taskId = 'config';
-    this.showTaskOutput(taskId, '⚙️ Configuración de automatización:\n\n');
-    this.appendTaskOutput(taskId, '🖥️ WINDOWS:\n');
-    this.appendTaskOutput(taskId, '   1. Ejecutar como Administrador:\n');
-    this.appendTaskOutput(taskId, '      scripts\\setup-automation-windows.bat\n\n');
-    
-    this.appendTaskOutput(taskId, '🐧 LINUX/MAC:\n');
-    this.appendTaskOutput(taskId, '   1. Dar permisos: chmod +x scripts/setup-automation-unix.sh\n');
-    this.appendTaskOutput(taskId, '   2. Ejecutar: ./scripts/setup-automation-unix.sh\n\n');
-    
-    this.appendTaskOutput(taskId, '📋 TAREAS PROGRAMADAS:\n');
-    this.appendTaskOutput(taskId, '   • Verificación: cada 6 horas\n');
-    this.appendTaskOutput(taskId, '   • Actualización completa: diario 2:00 AM\n');
-    this.appendTaskOutput(taskId, '   • Actualización inteligente: cada 2 horas\n\n');
-    
-    this.appendTaskOutput(taskId, '💡 Comandos disponibles:\n');
-    this.appendTaskOutput(taskId, '   npm run detect-changes\n');
-    this.appendTaskOutput(taskId, '   npm run auto-update\n');
-    this.appendTaskOutput(taskId, '   npm run auto-update-quick\n');
-    this.appendTaskOutput(taskId, '   npm run auto-check-update\n');
-    
-    this.showAlert('Instrucciones de configuración mostradas', 'info');
+    try {
+      // Primero obtener el estado actual
+      this.showTaskOutput(taskId, '🔍 Verificando estado de automatización...\n');
+      
+      const statusResponse = await fetch('/api/admin/automation/status', {
+        method: 'GET',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!statusResponse.ok) {
+        throw new Error(`Error obteniendo estado: ${statusResponse.status}`);
+      }
+
+      const statusData = await statusResponse.json();
+      
+      if (!statusData.success) {
+        throw new Error(statusData.error || 'Error obteniendo estado de automatización');
+      }
+
+      const automation = statusData.automation;
+      const currentStatus = automation.enabled ? 'ACTIVADA' : 'DESACTIVADA';
+      const statusIcon = automation.enabled ? '🟢' : '🔴';
+      
+      // Mensaje principal para la secretaria
+      this.appendTaskOutput(taskId, `${statusIcon} AUTOMATIZACIÓN: ${currentStatus}\n\n`);
+      
+      if (automation.user_friendly) {
+        this.appendTaskOutput(taskId, `📋 ${automation.user_friendly.status}\n`);
+        this.appendTaskOutput(taskId, `💡 ${automation.user_friendly.what_it_does}\n\n`);
+        
+        if (automation.enabled) {
+          this.appendTaskOutput(taskId, `⏰ ${automation.user_friendly.next_check}\n`);
+          this.appendTaskOutput(taskId, `✅ ${automation.user_friendly.safe_to_leave}\n\n`);
+        } else {
+          this.appendTaskOutput(taskId, `🔧 ${automation.user_friendly.manual_steps}\n`);
+          this.appendTaskOutput(taskId, `💡 ${automation.user_friendly.recommendation}\n\n`);
+        }
+      }
+      
+      // Información técnica simple
+      this.appendTaskOutput(taskId, `📊 Modo: ${automation.mode}\n`);
+      
+      if (automation.last_modified && automation.last_modified !== 'No disponible') {
+        const lastModified = new Date(automation.last_modified).toLocaleString('es-CO');
+        this.appendTaskOutput(taskId, `🕒 Última modificación: ${lastModified}\n`);
+      }
+      
+      this.appendTaskOutput(taskId, `🌐 Sitios monitoreados: ${automation.monitoring.urls_count}\n\n`);
+      
+      // Mostrar controles interactivos
+      this.appendTaskOutput(taskId, '🎛️ CONTROLES DE AUTOMATIZACIÓN:\n\n');
+      
+      if (automation.enabled) {
+        this.appendTaskOutput(taskId, '⏸️ Para DESACTIVAR automatización:\n');
+        this.appendTaskOutput(taskId, '   [Clic en "Desactivar Automatización"]\n\n');
+        
+        this.appendTaskOutput(taskId, '📋 HORARIOS ACTIVOS:\n');
+        if (automation.schedules) {
+          this.appendTaskOutput(taskId, `   • Detección de cambios: ${automation.schedules.change_detection}\n`);
+          this.appendTaskOutput(taskId, `   • Actualización completa: ${automation.schedules.full_update}\n`);
+          this.appendTaskOutput(taskId, `   • Actualización inteligente: ${automation.schedules.smart_update}\n\n`);
+        }
+      } else {
+        this.appendTaskOutput(taskId, '▶️ Para ACTIVAR automatización:\n');
+        this.appendTaskOutput(taskId, '   [Clic en "Activar Automatización"]\n\n');
+      }
+      
+      // Agregar botones dinámicos
+      this.addAutomationButtons(taskId, automation.enabled);
+      
+    } catch (error) {
+      console.error('Error en setupAutomation:', error);
+      this.appendTaskOutput(taskId, `❌ Error: ${error.message}\n\n`);
+      
+      // Mostrar instrucciones manuales como fallback
+      this.appendTaskOutput(taskId, '📝 CONFIGURACIÓN MANUAL (FALLBACK):\n\n');
+      this.appendTaskOutput(taskId, '🖥️ WINDOWS:\n');
+      this.appendTaskOutput(taskId, '   1. Ejecutar como Administrador:\n');
+      this.appendTaskOutput(taskId, '      scripts\\setup-automation-windows.bat\n\n');
+      
+      this.appendTaskOutput(taskId, '🐧 LINUX/MAC:\n');
+      this.appendTaskOutput(taskId, '   1. Dar permisos: chmod +x scripts/setup-automation-unix.sh\n');
+      this.appendTaskOutput(taskId, '   2. Ejecutar: ./scripts/setup-automation-unix.sh\n\n');
+    }
+  }
+
+  addAutomationButtons(taskId, isEnabled) {
+    const outputElement = document.getElementById('configOutput');
+    if (!outputElement) return;
+
+    // Crear contenedor para botones si no existe
+    let buttonContainer = document.getElementById('automation-buttons');
+    if (buttonContainer) {
+      buttonContainer.remove();
+    }
+
+    buttonContainer = document.createElement('div');
+    buttonContainer.id = 'automation-buttons';
+    buttonContainer.className = 'automation-buttons';
+    buttonContainer.style.cssText = `
+      margin: 15px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    `;
+
+    if (isEnabled) {
+      // Botón para desactivar
+      const disableBtn = document.createElement('button');
+      disableBtn.textContent = '⏸️ Desactivar (Todo Manual)';
+      disableBtn.className = 'btn btn-warning';
+      disableBtn.style.cssText = 'margin-right: 10px;';
+      disableBtn.title = 'El sistema dejará de actualizarse automáticamente';
+      disableBtn.onclick = () => this.toggleAutomation(false);
+      buttonContainer.appendChild(disableBtn);
+    } else {
+      // Botón para activar
+      const enableBtn = document.createElement('button');
+      enableBtn.textContent = '▶️ Activar (Automático)';
+      enableBtn.className = 'btn btn-success';
+      enableBtn.style.cssText = 'margin-right: 10px;';
+      enableBtn.title = 'El sistema se actualizará solo, sin intervención';
+      enableBtn.onclick = () => this.toggleAutomation(true);
+      buttonContainer.appendChild(enableBtn);
+    }
+
+    // Botón para recargar estado
+    const reloadBtn = document.createElement('button');
+    reloadBtn.textContent = '🔄 Ver Estado Actual';
+    reloadBtn.className = 'btn btn-info';
+    reloadBtn.title = 'Revisar si la automatización está funcionando';
+    reloadBtn.onclick = () => this.setupAutomation();
+    buttonContainer.appendChild(reloadBtn);
+
+    outputElement.appendChild(buttonContainer);
+  }
+
+  async toggleAutomation(enable) {
+    if (!this.authenticated) return;
+
+    const taskId = 'config';
+    try {
+      const action = enable ? 'Activando' : 'Desactivando';
+      this.appendTaskOutput(taskId, `\n🔄 ${action} automatización...\n`);
+
+      const response = await fetch('/api/admin/automation/toggle', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          enable: enable,
+          mode: 'smart'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en toggle: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Error cambiando estado de automatización');
+      }
+
+      const statusIcon = enable ? '🟢' : '🔴';
+      const status = enable ? 'ACTIVADA' : 'DESACTIVADA';
+      
+      this.appendTaskOutput(taskId, `${statusIcon} ${data.message}\n`);
+      
+      // Mostrar información amigable para la secretaria
+      if (data.user_friendly) {
+        this.appendTaskOutput(taskId, `\n� ${data.user_friendly.status}\n`);
+        this.appendTaskOutput(taskId, `💡 ${data.user_friendly.what_it_does}\n`);
+        
+        if (enable) {
+          this.appendTaskOutput(taskId, `⏰ ${data.user_friendly.next_check}\n`);
+          this.appendTaskOutput(taskId, `✅ ${data.user_friendly.safe_to_leave}\n`);
+        } else {
+          this.appendTaskOutput(taskId, `🔧 ${data.user_friendly.manual_steps}\n`);
+          this.appendTaskOutput(taskId, `💡 ${data.user_friendly.recommendation}\n`);
+        }
+      }
+      
+      this.appendTaskOutput(taskId, `\n📊 Modo: ${data.mode}\n`);
+      this.appendTaskOutput(taskId, `🕒 Cambio realizado: ${new Date(data.timestamp).toLocaleString('es-CO')}\n`);
+      
+      // Mostrar tareas activas de forma simple
+      if (enable && data.active_tasks) {
+        this.appendTaskOutput(taskId, '\n📋 TAREAS PROGRAMADAS:\n');
+        data.active_tasks.forEach(task => {
+          const priority = task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢';
+          this.appendTaskOutput(taskId, `   ${priority} ${task.name}\n`);
+          this.appendTaskOutput(taskId, `      ⏰ ${task.frequency}\n`);
+        });
+      }
+      
+      // Recargar la interfaz
+      setTimeout(() => this.setupAutomation(), 1000);
+      
+      this.showAlert(`Automatización ${status.toLowerCase()} correctamente`, 'success');
+      
+    } catch (error) {
+      console.error('Error en toggleAutomation:', error);
+      this.appendTaskOutput(taskId, `❌ Error: ${error.message}\n`);
+      this.showAlert('Error cambiando estado de automatización', 'error');
+    }
   }
 
   async viewLogs() {
@@ -982,6 +1341,251 @@ class MaintenanceManager {
       }
     }, 5000);
   }
+
+  // Inicializar botón de automatización
+  async initAutomationButton() {
+    try {
+      const response = await fetch('/api/admin/automation/status', {
+        method: 'GET',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          this.updateAutomationButton(data.automation.enabled);
+        }
+      }
+    } catch (error) {
+      console.log('No se pudo verificar estado de automatización:', error);
+    }
+  }
+
+  // Actualizar botón de automatización
+  updateAutomationButton(isEnabled) {
+    const toggleBtn = document.getElementById('toggleAutomationBtn');
+    const toggleText = document.getElementById('toggleAutomationText');
+    
+    if (!toggleBtn || !toggleText) return;
+
+    toggleBtn.style.display = 'inline-flex';
+    
+    if (isEnabled) {
+      toggleBtn.className = 'btn btn-warning';
+      toggleText.textContent = 'Desactivar Automático';
+      toggleBtn.title = 'El sistema está funcionando automáticamente. Clic para desactivar.';
+    } else {
+      toggleBtn.className = 'btn btn-success';
+      toggleText.textContent = 'Activar Automático';  
+      toggleBtn.title = 'El sistema está en modo manual. Clic para activar automático.';
+    }
+  }
+
+  // Toggle rápido de automatización
+  async quickToggleAutomation() {
+    if (!this.authenticated) {
+      this.showAlert('Debe autenticarse primero', 'error');
+      return;
+    }
+
+    try {
+      // Obtener estado actual
+      const statusResponse = await fetch('/api/admin/automation/status', {
+        method: 'GET',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!statusResponse.ok) {
+        throw new Error('No se pudo obtener el estado actual');
+      }
+
+      const statusData = await statusResponse.json();
+      const currentState = statusData.automation.enabled;
+      const newState = !currentState;
+
+      // Cambiar estado
+      const toggleResponse = await fetch('/api/admin/automation/toggle', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          enable: newState,
+          mode: 'smart'
+        })
+      });
+
+      if (!toggleResponse.ok) {
+        throw new Error('Error en el cambio de estado');
+      }
+
+      const data = await toggleResponse.json();
+      
+      if (data.success) {
+        // Actualizar botón
+        this.updateAutomationButton(newState);
+        
+        // Mostrar mensaje amigable
+        const message = newState ? 
+          '✅ Automatización ACTIVADA - El sistema trabajará solo' :
+          '⏸️ Automatización DESACTIVADA - Debe actualizar manualmente';
+          
+        this.showAlert(message, newState ? 'success' : 'warning');
+      } else {
+        throw new Error(data.error || 'Error desconocido');
+      }
+
+    } catch (error) {
+      console.error('Error en quickToggleAutomation:', error);
+      this.showAlert(`Error: ${error.message}`, 'error');
+    }
+  }
+
+  // Ejecutar mantenimiento automático completo
+  async runAutoMaintenance() {
+    if (!this.authenticated) {
+      this.showAlert('Debe autenticarse primero', 'error');
+      return;
+    }
+
+    const taskId = 'config';
+    const btn = document.getElementById('autoMaintenanceBtn');
+    
+    try {
+      // Deshabilitar botón durante el proceso
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-icon">⏳</span>Ejecutando...';
+      }
+
+      this.showTaskOutput(taskId, '🤖 INICIANDO MANTENIMIENTO AUTOMÁTICO\n\n');
+      this.appendTaskOutput(taskId, '📋 Secuencia de tareas:\n');
+      this.appendTaskOutput(taskId, '   1. 🔍 Detectar cambios\n');
+      this.appendTaskOutput(taskId, '   2. 🌐 Ejecutar scrapers (si hay cambios)\n');
+      this.appendTaskOutput(taskId, '   3. 📚 Recargar base de conocimiento\n');
+      this.appendTaskOutput(taskId, '   4. 👥 Sincronizar docentes\n');
+      this.appendTaskOutput(taskId, '   5. 🎯 Mejorar palabras clave\n\n');
+
+      let hasChanges = false;
+
+      // PASO 1: Detectar cambios
+      this.appendTaskOutput(taskId, '🔍 PASO 1: Detectando cambios...\n');
+      const changesResponse = await fetch('/api/admin/detect-changes', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (changesResponse.ok) {
+        const changesData = await changesResponse.json();
+        hasChanges = changesData.hasChanges;
+        this.appendTaskOutput(taskId, hasChanges ? 
+          '✅ Se detectaron cambios - continuando...\n\n' : 
+          '✅ No hay cambios - saltando scrapers\n\n'
+        );
+      } else {
+        this.appendTaskOutput(taskId, '⚠️ Error en detección - continuando de todas formas\n\n');
+      }
+
+      // PASO 2: Scrapers (solo si hay cambios)
+      if (hasChanges) {
+        this.appendTaskOutput(taskId, '🌐 PASO 2: Ejecutando scrapers...\n');
+        const scrapersResponse = await fetch('/api/admin/run-scrapers', {
+          method: 'POST',
+          headers: {
+            'x-admin-token': this.adminToken,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (scrapersResponse.ok) {
+          this.appendTaskOutput(taskId, '✅ Scrapers completados\n\n');
+        } else {
+          this.appendTaskOutput(taskId, '⚠️ Error en scrapers - continuando\n\n');
+        }
+      } else {
+        this.appendTaskOutput(taskId, '⏭️ PASO 2: Saltando scrapers (no hay cambios)\n\n');
+      }
+
+      // PASO 3: Recargar KB
+      this.appendTaskOutput(taskId, '📚 PASO 3: Recargando base de conocimiento...\n');
+      const reloadResponse = await fetch('/api/admin/reload-kb', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (reloadResponse.ok) {
+        const reloadData = await reloadResponse.json();
+        this.appendTaskOutput(taskId, `✅ KB recargada: ${reloadData.entries || 'N/A'} entradas\n\n`);
+      } else {
+        this.appendTaskOutput(taskId, '⚠️ Error recargando KB - continuando\n\n');
+      }
+
+      // PASO 4: Sincronizar docentes
+      this.appendTaskOutput(taskId, '👥 PASO 4: Sincronizando docentes...\n');
+      const teachersResponse = await fetch('/api/admin/sync-teachers', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (teachersResponse.ok) {
+        const teachersData = await teachersResponse.json();
+        const stats = teachersData.stats || {};
+        this.appendTaskOutput(taskId, `✅ Docentes: ${stats.processed || 0} procesados\n\n`);
+      } else {
+        this.appendTaskOutput(taskId, '⚠️ Error sincronizando docentes - continuando\n\n');
+      }
+
+      // PASO 5: Mejorar keywords
+      this.appendTaskOutput(taskId, '🎯 PASO 5: Mejorando palabras clave...\n');
+      const keywordsResponse = await fetch('/api/admin/improve-keywords', {
+        method: 'POST',
+        headers: {
+          'x-admin-token': this.adminToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (keywordsResponse.ok) {
+        this.appendTaskOutput(taskId, '✅ Keywords mejoradas\n\n');
+      } else {
+        this.appendTaskOutput(taskId, '⚠️ Error mejorando keywords\n\n');
+      }
+
+      // FINAL
+      this.appendTaskOutput(taskId, '🎉 MANTENIMIENTO AUTOMÁTICO COMPLETADO\n');
+      this.appendTaskOutput(taskId, `⏰ Tiempo: ${new Date().toLocaleString('es-CO')}\n`);
+      this.appendTaskOutput(taskId, '✅ El sistema está actualizado y listo para usar\n');
+
+      this.showAlert('✅ Mantenimiento automático completado exitosamente', 'success');
+
+    } catch (error) {
+      console.error('Error en runAutoMaintenance:', error);
+      this.appendTaskOutput(taskId, `❌ Error en mantenimiento: ${error.message}\n`);
+      this.showAlert('Error durante el mantenimiento automático', 'error');
+    } finally {
+      // Restaurar botón
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="btn-icon">🤖</span>Mantenimiento Automático';
+      }
+    }
+  }
 }
 
 // Crear instancia global
@@ -989,13 +1593,19 @@ window.maintenanceManager = new MaintenanceManager();
 
 // Función de inicialización para el sistema de tabs
 window.initMaintenance = function() {
+  if (!window.maintenanceManager) {
+    window.maintenanceManager = new MaintenanceManager();
+  }
   window.maintenanceManager.init();
+  return window.maintenanceManager;
 };
 
-// Auto-inicializar si estamos en la página de maintenance
+// Auto-inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-  const maintenanceSection = document.getElementById('maintenance-section');
-  if (maintenanceSection && maintenanceSection.classList.contains('active')) {
-    window.initMaintenance();
-  }
+  window.initMaintenance();
+});
+
+// También inicializar cuando se carga la ventana por si acaso
+window.addEventListener('load', () => {
+  window.initMaintenance();
 });

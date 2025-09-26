@@ -1,63 +1,65 @@
 /* Knowledge CSS - Estilos para la sección de base de conocimiento */
 
-.kb-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Controles de búsqueda */
+.kb-search-controls {
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
-.info-text {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+.kb-search-row {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin-bottom: 0;
 }
 
-.kb-search {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.search-input {
+.kb-search-input {
   flex: 1;
-  min-width: 250px;
-}
-
-.kb-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.kb-stat {
-  background-color: var(--bg-primary);
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  text-align: center;
-}
-
-.kb-stat-label {
-  display: block;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-.kb-stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
+  min-width: 300px;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
+  font-size: 0.875rem;
+  height: auto;
+}
+
+.kb-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgb(201 215 47 / 0.1);
+}
+
+.kb-search-row .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  height: auto;
+  align-self: stretch;
+  width: auto !important;
+  margin-bottom: 0 !important;
+  justify-content: center;
+}
+
+/* Forzar layout horizontal en pantallas normales */
+@media (min-width: 769px) {
+  .kb-search-row {
+    flex-wrap: nowrap !important;
+  }
+  
+  .kb-search-row .btn {
+    display: inline-flex !important;
+  }
+}
+
+/* Contenedor de conocimiento */
+.knowledge-container {
+  padding: 1.5rem;
+  min-height: 400px;
 }
 
 /* Tabla de conocimiento */
@@ -66,6 +68,41 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+
+.kb-table-wrapper .data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
+}
+
+.kb-table-wrapper .data-table th {
+  background-color: var(--bg-tertiary);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.kb-table-wrapper .data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.kb-table-wrapper .data-table tr:hover {
+  background-color: var(--bg-secondary);
+}
+
+.kb-table-wrapper .data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.kb-table-wrapper .loading {
+  text-align: center;
+  padding: 2rem;
 }
 
 #knowledgeTable {
@@ -79,10 +116,11 @@
 }
 
 .kb-question {
-  max-width: 200px;
+  max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .kb-user-type {
@@ -175,12 +213,7 @@
   font-weight: bold;
 }
 
-.kb-last-update {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.kb-actions {
+.kb-entry-actions {
   display: flex;
   gap: 0.5rem;
 }
@@ -323,21 +356,19 @@
 
 /* Responsive para knowledge base */
 @media (max-width: 768px) {
-  .kb-search {
-    flex-direction: column;
-    align-items: stretch;
+  .kb-search-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
-  .search-input {
-    min-width: auto;
+  .kb-search-input {
+    min-width: 200px;
+    flex-basis: 100%;
+    margin-bottom: 0.5rem;
   }
   
   .kb-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .kb-actions {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .data-table {
@@ -352,4 +383,41 @@
     padding: 1.5rem;
     margin: 1rem;
   }
+}
+
+/* Estadísticas */
+.kb-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kb-stat {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.kb-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kb-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.kb-stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }

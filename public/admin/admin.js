@@ -90,6 +90,53 @@ function start() {
   const interval = setInterval(loadMetrics, 10000);
   els.reloadBtn.addEventListener('click', loadMetrics);
   window.addEventListener('beforeunload', () => clearInterval(interval));
+  
+  // Inicializar funcionalidad expandible
+  initExpandableSections();
+}
+
+// FUNCIONALIDAD PARA SECCIONES EXPANDIBLES
+function initExpandableSections() {
+  // Header expandible
+  const expandHeader = document.getElementById('expandSpecificFunctions');
+  const expandContent = document.getElementById('specificFunctionsContent');
+  
+  if (expandHeader && expandContent) {
+    expandHeader.addEventListener('click', function() {
+      const isExpanded = expandContent.classList.contains('expanded');
+      
+      if (isExpanded) {
+        // Colapsar
+        expandContent.classList.remove('expanded');
+        expandHeader.classList.remove('expanded');
+      } else {
+        // Expandir
+        expandContent.classList.add('expanded');
+        expandHeader.classList.add('expanded');
+      }
+    });
+  }
+  
+  // Navegación de tabs de funciones
+  const tabButtons = document.querySelectorAll('.function-tab-btn');
+  const tabContents = document.querySelectorAll('.function-tab-content');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      
+      // Remover active de todos los botones y contenidos
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      
+      // Agregar active al botón clickeado y su contenido
+      this.classList.add('active');
+      const targetContent = document.getElementById(targetId);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', start);
