@@ -120,13 +120,12 @@ node scripts/auto-update-system.cjs
    Iniciar en: C:\ruta\al\chatbot-uts
    ```
 
-### Linux/macOS (crontab)
-```bash
-# Editar crontab
-crontab -e
-
-# Agregar línea para ejecutar cada hora
-0 * * * * cd /path/to/chatbot-uts && node scripts/auto-update-system.cjs
+### Control desde Panel Admin (Recomendado)
+```
+✅ Acceder a /admin con token de autenticación
+✅ Usar botón "Auto Update" para ejecutar manualmente
+✅ Monitorear logs en tiempo real desde interfaz web
+✅ No requiere configuración de sistema operativo
 ```
 
 ## 🔍 Monitoreo y Logs

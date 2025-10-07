@@ -352,11 +352,10 @@ chatbot-uts/
 - **Estado**: ⚠️ OBSOLETO (conservado por compatibilidad)
 - **Razón**: UTS eliminó la sección de información de docentes
 
-#### ⚙️ **Scripts de Configuración Automática**
-- **`setup-automation-windows.bat`**: Configuración de Task Scheduler (Windows)
-- **`setup-automation-unix.sh`**: Configuración de Cron Jobs (Linux/Mac)
+#### ⚙️ **Scripts de Configuración y Validación**
 - **`deploy-init.cjs`**: ✅ Script de inicialización para deploy
 - **`setup-teacher-sync.cjs`**: ⚠️ OBSOLETO (configuración para sincronización de docentes)
+- **`validate-suggestions.mjs`**: ✅ Validador de sugerencias del sistema estático
 
 ### 📂 `/scrapers` - Extractores de Contenido Web
 
@@ -609,8 +608,8 @@ Si UTS restaura la información de docentes:
 - **Batch Processing**: Ejecución coordinada de múltiples scrapers
 
 #### 🤖 **Automation Layer**
-- **Smart Updates**: Actualizaciones solo cuando es necesario
-- **Scheduled Tasks**: Tareas programadas del SO
+- **Smart Updates**: Actualizaciones inteligentes desde panel admin
+- **Web Interface**: Control completo desde interfaz web autenticada
 - **Performance Monitoring**: Métricas de recursos y tiempo
 - **Error Recovery**: Manejo robusto de fallos
 

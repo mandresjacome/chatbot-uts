@@ -81,8 +81,8 @@ chatbot-uts/
 │   ├── deploy-init.cjs           # ✅ Script de inicialización para deploy
 │   ├── improve-keywords.cjs      # ✅ Mejorador de palabras clave
 │   ├── setup-teacher-sync.cjs    # ⚠️ Setup sincronización docentes (OBSOLETO)
-│   ├── setup-automation-unix.sh   # Automatización para Unix/Linux
-│   └── setup-automation-windows.bat # Automatización para Windows
+│   ├── sync-teacher-keywords.cjs # ⚠️ Keywords específicas docentes (OBSOLETO)  
+│   └── validate-suggestions.mjs  # ✅ Validador de sugerencias v1.3.0
 ├── 📁 scrapers/                   # 🕷️ SISTEMA DE SCRAPERS WEB
 │   ├── scraper_fixed.cjs          # ✅ Scraper principal (Ingeniería de Sistemas) 
 │   ├── scraper_docentes.cjs       # ⚠️ Scraper docentes (OBSOLETO - no extrae datos)
