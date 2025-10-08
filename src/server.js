@@ -45,18 +45,19 @@ app.use(express.static(publicDir));
 
 // 👉 Inicializar esquema de base de datos (crea tablas si no existen)
 async function initializeDatabase() {
+  const isRender = process.env.RENDER === 'true';
+  const isProduction = !!process.env.DATABASE_URL;
+  
+  logger.startup(`Inicializando base de datos... ${isRender ? '[RENDER]' : '[LOCAL]'}`);
+  
+  // En Render, usar configuración optimizada
+  if (isRender) {
+    console.log('🌐 Deploy en Render detectado - Configuración optimizada');
+    console.log('💾 Usando PostgreSQL + Cache fallback');
+  }
+  
   try {
-    const isRender = process.env.RENDER === 'true';
-    const isProduction = !!process.env.DATABASE_URL;
-    
-    logger.startup(`Inicializando base de datos... ${isRender ? '[RENDER]' : '[LOCAL]'}`);
-    
-    // En Render, usar configuración optimizada
-    if (isRender) {
-      console.log('🌐 Deploy en Render detectado - Configuración optimizada');
-      console.log('💾 Usando PostgreSQL + Cache fallback');
-    }
-    
+    // Intentar bootstrapSchema con tolerancia a fallos
     await bootstrapSchema();
     const engine = dbEngine();
     logger.dbConnected(engine, { 
@@ -65,19 +66,31 @@ async function initializeDatabase() {
       path: engine === 'sqlite' ? process.env.DB_SQLITE_PATH || './src/db/database.db' : 'PostgreSQL'
     });
     
-    // Cargar y verificar base de conocimiento
+    console.log('✅ Schema de base de datos verificado');
+  } catch (schemaError) {
+    console.error('⚠️ Error en schema PostgreSQL (continuando con fallback):', schemaError.message);
+  }
+  
+  try {
+    // Cargar y verificar base de conocimiento (con tolerancia a fallos)
     const { loadKB } = await import('./nlp/kbLoader.js');
-    await loadKB();
-    
-    // Recargar el retriever para usar la base de datos
+    const loaded = await loadKB();
+    console.log(`✅ LoadKB completado: ${loaded} registros`);
+  } catch (loadError) {
+    console.error('⚠️ Error en loadKB (retriever ya tiene fallback):', loadError.message);
+  }
+  
+  try {
+    // Recargar el retriever para usar la base de datos (opcional)
     const { reloadKB } = await import('./nlp/retriever.js');
     await reloadKB();
     logger.info('RETRIEVER', 'Base de conocimiento recargada en retriever');
-    
-  } catch (error) {
-    logger.error('DATABASE', 'Error inicializando base de datos', error);
-    process.exit(1);
+  } catch (reloadError) {
+    console.error('⚠️ Error recargando retriever (ya tiene datos de fallback):', reloadError.message);
   }
+  
+  // En lugar de process.exit(1), continuar con el sistema de fallback
+  console.log('✅ Inicialización de base de datos completada (con tolerancia a fallos)');
 }
 
 initializeDatabase();

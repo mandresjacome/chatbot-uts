@@ -121,6 +121,14 @@ export function dbEngine() { return engine; }
 // ------- Bootstrap de esquema (create tables if not exists) -------
 export async function bootstrapSchema() {
   if (engine === 'pg') {
+    // Test de conexión antes de crear tablas
+    try {
+      await pgPool.query('SELECT 1 as test');
+      console.log('✅ Conexión PostgreSQL confirmada');
+    } catch (connectionError) {
+      console.error('❌ Test de conexión PostgreSQL falló:', connectionError.message);
+      throw new Error(`PostgreSQL no disponible: ${connectionError.message}`);
+    }
     const sql = `
     CREATE TABLE IF NOT EXISTS conversations (
       id SERIAL PRIMARY KEY,
