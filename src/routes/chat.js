@@ -230,33 +230,47 @@ router.get('/suggestions/admin/static', async (req, res) => {
 
 /**
  * Analiza la calidad de la respuesta para determinar si sugerir búsqueda web
- * VERSIÓN SIMPLIFICADA - Solo verifica si la IA admite limitaciones
+ * VERSIÓN MEJORADA - Detecta múltiples patrones de limitación
  * @param {string} responseText - Texto de la respuesta generada
  * @param {string} query - Consulta original del usuario
  * @param {Array} evidenceChunks - Chunks de evidencia encontrados
  * @returns {boolean} - Si debe sugerir búsqueda web
  */
 function analyzeResponseQuality(responseText, query, evidenceChunks) {
-  // CRITERIO ÚNICO: Si la IA admite que tiene información limitada
+  // Patrones que indican limitaciones de información
   const limitedInfoPatterns = [
     /información limitada/i,
-    /no tengo información específica/i,
+    /base de conocimiento.*limitada/i,
     /mi base de conocimiento.*se centra/i,
+    /no tengo información específica/i,
     /no.*disponible.*información/i,
     /para obtener.*completa.*información/i,
     /te invito.*búsqueda.*web/i,
     /consultar.*sitio.*oficial/i,
-    /información.*general.*institución/i
+    /información.*general.*institución/i,
+    /mi alcance se restringe/i,
+    /te sugiero.*búsqueda.*web/i,
+    /buscar información complementaria/i
   ];
   
-  const hasLimitedInfo = limitedInfoPatterns.some(pattern => 
-    pattern.test(responseText)
-  );
+  const hasLimitedInfo = limitedInfoPatterns.some(pattern => {
+    const matches = pattern.test(responseText);
+    if (matches) {
+      const matchResult = pattern.exec(responseText);
+      logger.info('QUALITY', 'Patrón de limitación detectado', {
+        query: query.substring(0, 50),
+        pattern: pattern.toString(),
+        matchedText: matchResult ? matchResult[0] : 'N/A'
+      });
+    }
+    return matches;
+  });
   
   if (hasLimitedInfo) {
     logger.info('QUALITY', 'Respuesta admite limitaciones de información', {
       query: query.substring(0, 50),
-      hasLimitedInfoDisclaimer: true
+      hasLimitedInfoDisclaimer: true,
+      responsePreview: responseText.substring(0, 100) + '...'
     });
     return true;
   }
