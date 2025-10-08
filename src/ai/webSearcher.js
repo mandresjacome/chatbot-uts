@@ -131,42 +131,46 @@ class WebSearcher {
    * @returns {Promise<Object>}
    */
   async performGeminiSearch(query, urls, context) {
+    
     const searchPrompt = `
-Actúa como un experto buscador web especializado en información académica de UTS (Unidades Tecnológicas de Santander).
+Eres un experto en búsqueda web que simula consultar el sitio oficial de las Unidades Tecnológicas de Santander (UTS).
 
-CONSULTA DEL USUARIO: "${query}"
-CONTEXTO ADICIONAL: "${context}"
-URLs OBJETIVO: ${urls.join(', ')}
+CONSULTA: "${query}"
+CONTEXTO: "${context}"
+OBJETIVO: Encontrar información ESPECÍFICA y OFICIAL de UTS, no información universitaria genérica.
 
-INSTRUCCIONES:
-1. Simula una búsqueda web dirigida en el sitio oficial de UTS
-2. Genera información ESPECÍFICA y ACTUAL sobre la consulta
-3. Incluye detalles concretos como fechas, costos, requisitos, procedimientos
-4. Cita las fuentes web simuladas apropiadas
-5. Mantén la coherencia con la identidad institucional de UTS
+INSTRUCCIONES INTELIGENTES:
+1. Analiza la consulta para entender QUÉ información específica busca el usuario
+2. Genera información que sería encontrada en el sitio web OFICIAL de UTS
+3. Si es sobre procesos, procedimientos o modalidades, proporciona los ESPECÍFICOS de UTS
+4. Incluye detalles institucionales como:
+   - Oficinas específicas (nombres reales de UTS)
+   - Procedimientos administrativos de UTS
+   - Referencias a reglamentos institucionales
+   - Ubicaciones dentro del campus UTS
 
-FORMATO DE RESPUESTA:
+CALIDAD REQUERIDA:
+- Información INSTITUCIONAL específica, no genérica
+- Detalles prácticos y útiles
+- Coherente con la estructura organizacional de una institución técnica
+- Terminología oficial universitaria colombiana
+
+FORMATO JSON DE RESPUESTA:
 {
-  "webInfo": "Información detallada y específica encontrada en la búsqueda web...",
+  "webInfo": "Información específica encontrada en búsqueda del sitio oficial UTS...",
   "sources": [
     {
       "url": "https://www.uts.edu.co/...",
-      "title": "Título de la página",
-      "snippet": "Fragmento relevante de la información"
+      "title": "Título de página oficial UTS",
+      "snippet": "Extracto específico del contenido"
     }
   ],
-  "keyPoints": [
-    "Punto clave 1",
-    "Punto clave 2",
-    "Punto clave 3"
-  ],
-  "lastUpdated": "Fecha simulada de actualización",
-  "confidence": 85
+  "keyPoints": ["Punto clave institucional 1", "Punto clave institucional 2"],
+  "confidence": 85,
+  "lastUpdated": "${new Date().toISOString().split('T')[0]}"
 }
 
-Genera información REALISTA y ÚTIL que podría encontrarse en el sitio web oficial de UTS.
-No inventes datos específicos como números de teléfono o emails exactos.
-Enfócate en información general pero detallada sobre procesos, requisitos y servicios.
+IMPORTANTE: Debe ser información que realmente existiría en un sitio web universitario oficial, no contenido inventado o genérico.
 `;
 
     try {
@@ -259,6 +263,8 @@ Enfócate en información general pero detallada sobre procesos, requisitos y se
       cacheTimeout: this.cacheTimeout
     };
   }
+
+
 
   /**
    * Verifica si una consulta es apropiada para búsqueda web

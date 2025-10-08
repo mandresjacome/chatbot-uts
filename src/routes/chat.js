@@ -61,11 +61,13 @@ router.post('/message', async (req, res) => {
     });
     const llmTime = Date.now() - llmStart;
     
-
+    // Analizar calidad de la respuesta para sugerir búsqueda web
+    const shouldSuggestWebSearch = analyzeResponseQuality(responseText, clean, chunks);
     
     logger.info('AI', `Respuesta generada`, {
       llmTimeMs: llmTime,
-      responseLength: responseText.length
+      responseLength: responseText.length,
+      suggestWebSearch: shouldSuggestWebSearch
     });
 
     // Si es consulta de malla curricular, usar referencias especiales
@@ -111,6 +113,8 @@ router.post('/message', async (req, res) => {
       success: true,
       response: responseText,
       evidenceCount: chunks.length,
+      originalQuery: clean,
+      suggestWebSearch: shouldSuggestWebSearch, // Sugerencia del backend
       references: chunks.map(c => ({
         id: c.id,
         titulo: c.titulo,
@@ -223,5 +227,52 @@ router.get('/suggestions/admin/static', async (req, res) => {
     });
   }
 });
+
+/**
+ * Analiza la calidad de la respuesta para determinar si sugerir búsqueda web
+ * VERSIÓN SIMPLIFICADA - Solo verifica si la IA admite limitaciones
+ * @param {string} responseText - Texto de la respuesta generada
+ * @param {string} query - Consulta original del usuario
+ * @param {Array} evidenceChunks - Chunks de evidencia encontrados
+ * @returns {boolean} - Si debe sugerir búsqueda web
+ */
+function analyzeResponseQuality(responseText, query, evidenceChunks) {
+  // CRITERIO ÚNICO: Si la IA admite que tiene información limitada
+  const limitedInfoPatterns = [
+    /información limitada/i,
+    /no tengo información específica/i,
+    /mi base de conocimiento.*se centra/i,
+    /no.*disponible.*información/i,
+    /para obtener.*completa.*información/i,
+    /te invito.*búsqueda.*web/i,
+    /consultar.*sitio.*oficial/i,
+    /información.*general.*institución/i
+  ];
+  
+  const hasLimitedInfo = limitedInfoPatterns.some(pattern => 
+    pattern.test(responseText)
+  );
+  
+  if (hasLimitedInfo) {
+    logger.info('QUALITY', 'Respuesta admite limitaciones de información', {
+      query: query.substring(0, 50),
+      hasLimitedInfoDisclaimer: true
+    });
+    return true;
+  }
+  
+  // Si no hay evidencia encontrada (evidenceChunks.length === 0)
+  if (evidenceChunks.length === 0) {
+    logger.info('QUALITY', 'Sin evidencia encontrada', {
+      query: query.substring(0, 50),
+      evidenceCount: 0
+    });
+    return true;
+  }
+  
+  return false;
+}
+
+
 
 export default router;

@@ -272,13 +272,63 @@ async function sendFeedback(conversationId, useful){
 }
 
 /**
- * Determina si mostrar botón de búsqueda web - VERSIÓN SIMPLIFICADA
+ * Determina si mostrar botón de búsqueda web - VERSIÓN INTELIGENTE
  * @param {Object} data - Respuesta completa del backend
  * @returns {boolean}
  */
 function shouldShowWebSearchButton(data) {
   // Si no encontró evidencia en la base de datos local, mostrar botón
-  return data.evidenceCount === 0;
+  if (data.evidenceCount === 0) {
+    return true;
+  }
+  
+  // Evaluar la relevancia de las referencias encontradas
+  if (data.references && data.references.length > 0 && data.originalQuery) {
+    const query = data.originalQuery.toLowerCase();
+    let relevantReferences = 0;
+    
+    // Verificar si las referencias son realmente relevantes a la consulta
+    data.references.forEach(ref => {
+      const titulo = (ref.titulo || '').toLowerCase();
+      const recurso = (ref.nombreRecurso || '').toLowerCase();
+      
+      // Casos donde las referencias NO son relevantes:
+      
+      // 1. Si pregunta sobre modalidades/procesos pero solo encuentra referencias de malla curricular
+      if (query.includes('modalidad') || query.includes('grado') || query.includes('proceso')) {
+        if (titulo.includes('malla curricular') || titulo.includes('epistemología') || titulo.includes('mecánica')) {
+          return; // No contar como relevante
+        }
+      }
+      
+      // 2. Si pregunta sobre servicios/trámites pero solo encuentra info académica
+      if (query.includes('servicio') || query.includes('tramite') || query.includes('procedimiento')) {
+        if (titulo.includes('malla curricular') || recurso.includes('coordinación académica')) {
+          return; // No contar como relevante
+        }
+      }
+      
+      // 3. Si pregunta sobre información administrativa pero solo encuentra contenido académico
+      if (query.includes('requisito') || query.includes('documentos') || query.includes('inscripción')) {
+        if (titulo.includes('malla curricular')) {
+          return; // No contar como relevante
+        }
+      }
+      
+      // Si llegó aquí, la referencia parece relevante
+      relevantReferences++;
+    });
+    
+    // Si menos del 30% de las referencias son relevantes, mostrar búsqueda web
+    const relevanceRatio = relevantReferences / data.references.length;
+    if (relevanceRatio < 0.3) {
+      console.log(`[WebSearch] Baja relevancia detectada: ${relevantReferences}/${data.references.length} referencias relevantes (${Math.round(relevanceRatio * 100)}%)`);
+      return true;
+    }
+  }
+  
+  // Si el backend indica explícitamente que debe mostrar búsqueda web
+  return data.suggestWebSearch === true;
 }
 
 /* ====== Funciones de búsqueda web ====== */
