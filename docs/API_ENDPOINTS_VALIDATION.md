@@ -12,7 +12,7 @@
 ### 🏥 Health Check
 | Endpoint | Método | Implementación | Estado | Response |
 |----------|--------|---------------|--------|----------|
-| `/api/health` | GET | `server.js:75` | **✅ Válido** | `{ ok: true, name: "Chatbot UTS v1.2.0", env: string }` |
+| `/api/health` | GET | `server.js:75` | **✅ Válido** | `{ ok: true, name: "Chatbot UTS v1.3.1", env: string }` |
 
 ### 💬 Chat Principal
 | Endpoint | Método | Implementación | Estado | Response |

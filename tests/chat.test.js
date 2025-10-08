@@ -2,7 +2,7 @@ const request = require('supertest');
 const express = require('express');
 
 // Para las pruebas, vamos a usar una versión simplificada
-describe('Chatbot UTS v1.2.0 - Pruebas API', () => {
+describe('Chatbot UTS v1.3.1 - Pruebas API', () => {
   
   // Crear app básica para las pruebas
   const app = express();

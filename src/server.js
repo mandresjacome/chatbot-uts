@@ -99,7 +99,7 @@ initializeDatabase();
 app.get('/api/health', (_req, res) => {
   logger.info('HEALTH', 'Health check solicitado');
   // Responder con información del estado del servicio
-  res.json({ ok: true, name: 'Chatbot UTS v1.2.0', env: process.env.NODE_ENV });
+  res.json({ ok: true, name: 'Chatbot UTS v1.3.1', env: process.env.NODE_ENV });
 });
 
 // 👉 Rutas públicas de admin (sin protección)
@@ -284,7 +284,7 @@ const PORT = process.env.PORT || 3001;
 
 // Iniciar el servidor y escuchar en el puerto especificado
 app.listen(PORT, () => {
-  logger.serverStart(PORT, '1.2.0');
+  logger.serverStart(PORT, '1.3.1');
   
   // Log de configuración del sistema
   logger.startup('Configuración del sistema', {

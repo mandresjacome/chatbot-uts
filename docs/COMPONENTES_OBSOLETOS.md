@@ -70,6 +70,7 @@ académica del programa."
 #### ⏱️ Cronología
 - **Período activo**: v1.0.0 - v1.2.0
 - **Fecha migración**: v1.3.0 (Septiembre 2025)
+- **Estado actual**: v1.3.1 (Sistema inteligente implementado)
 - **Razón**: Optimización hacia sistema de sugerencias estáticas
 
 #### 📊 Beneficios de la Migración

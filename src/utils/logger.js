@@ -197,7 +197,7 @@ class Logger {
   }
 
   // Log especial para el arranque del servidor
-  serverStart(port, version = '1.2.0') {
+  serverStart(port, version = '1.3.1') {
     console.log(`\n${this.colors.green}${this.colors.bright}🚀 CHATBOT UTS v${version} → Puerto ${port} → ${this._formatTime()}${this.colors.reset}\n`);
     this._log('startup', 'SERVER', `Servidor iniciado exitosamente`, { version, port });
   }
