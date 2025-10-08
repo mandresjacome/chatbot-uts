@@ -1,26 +1,20 @@
-# 🚀 Guía de Deploy en Render.com - Chatbot UTS v1.3.0
+# 🚀 Guía de Deploy en Render.com - Chatbot UTS v1.3.1
 
 ## ⚙️ Configuración Optimizada para v1.3.0
 
-### 🎯 **Mejoras de Deploy en v1.3.0:**
-- **Sugerencias Estáticas**: No requieren A### 🎯 **Resultado Final:**
-Un chatbot **ultra-rápido, precisos y confiable** que:
-- Responde **instantáneamente** con sugerencias
-- Encuentra información que antes "no existía"
-- Permite búsquedas web **solo cuando el usuario quiere**
-- Funciona **24/7 sin fallos** por dependencias externas
-- **🆕 JAMÁS SE CAE** gracias al fallback automático
-- **🆕 SIEMPRE ARRANCA** con cache local de respaldo
-- **🆕 SE RECUPERA SOLO** con reintentos inteligentes
+### 🎯 **Mejoras de Deploy en v1.3.1:**
+- **Análisis Inteligente**: Sistema automático de detección de limitaciones sin hardcode
+- **Sistema Adaptativo**: Se evoluciona automáticamente sin modificaciones manuales
+- **Deploy más rápido**: Arquitectura simplificada mejora startup time
+- **Mayor Confiabilidad**: Menos lógica hardcodeada = menos puntos de fallo
+- **🆕 FALLBACK AUTOMÁTICO**: Cache local cuando PostgreSQL falla → **DEPLOY SIN CRASHES**
 
-**¡La revolución del Chatbot UTS está DESPLEGADA Y ES INDESTRUCTIBLE!** 🎊⚡🚀🛡️
-
----
-
-**📅 Actualizado**: 7 de Octubre de 2025  
-**🚀 Versión**: v1.3.0 - Deploy Bulletproof Edition  
-**🏫 Para**: Universidad Tecnológica de Santander  
-**🛡️ Status**: **CRASH-PROOF GARANTIZADO** deploy más rápido
+### 1. **Configuraciones del Servicio:**
+- **Build Command:** `npm install`
+- **Start Command:** `npm start`
+- **Node Version:** `18.x` o superior
+- **Health Check Path:** `/api/health` ✅ **Mejorado v1.3.1**
+- **🆕 Health Check Script:** `npm run health-check` (verificación pre-deploy)
 - **Sistema Híbrido**: Búsqueda web solo bajo demanda → menos recursos en startup
 - **Filtros Optimizados**: Mejor performance desde el primer arranque
 - **Arquitectura Simplificada**: Menos puntos de fallo durante deploy
@@ -46,10 +40,12 @@ QUICK_BOOT_MODE=true
 DEPLOY_MODE=true
 RENDER=true
 
-# ✨ NUEVO v1.3.0: Optimizaciones de performance
+# ✨ NUEVO v1.3.1: Optimizaciones inteligentes
 STATIC_SUGGESTIONS=true        # Activa sugerencias instantáneas
-HYBRID_SEARCH_MODE=user_controlled  # Búsqueda web controlada por usuario
+HYBRID_SEARCH_MODE=intelligent  # Búsqueda web con análisis automático
 OPTIMIZED_FILTERS=true         # Filtros de relevancia mejorados
+INTELLIGENT_ANALYSIS=true      # Análisis automático de calidad sin hardcode
+AUTO_ADAPTIVE_SYSTEM=true      # Sistema que evoluciona automáticamente
 
 # 🆕 CRÍTICO v1.3.0: Configuración PostgreSQL optimizada para Render
 DATABASE_URL=tu_postgresql_url_completa_con_ssl
@@ -181,15 +177,17 @@ SEARCH_TIMEOUT=10000           # Timeout para búsquedas web (10s)
 
 ¡Tu **Chatbot UTS v1.3.0** funcionará **ESPECTACULARMENTE** en Render! 🚀
 
-### 🏆 **Beneficios del Deploy v1.3.0:**
+### 🏆 **Beneficios del Deploy v1.3.1:**
 - ⚡ **Deploy ultra-rápido** con sugerencias instantáneas
-- 🎯 **Mayor precisión** con filtros optimizados desde el primer arranque  
-- 🛡️ **Máxima confiabilidad** con menos dependencias externas
-- 🎮 **Control total** del usuario sobre búsquedas complementarias
-- 📈 **Performance optimizada** en todos los aspectos
+- 🧠 **Sistema inteligente** que detecta automáticamente limitaciones sin hardcode
+- 🎯 **Mayor precisión** con análisis automático de calidad de respuestas  
+- 🛡️ **Máxima confiabilidad** con arquitectura adaptativa sin casos específicos
+- 🔄 **Auto-evolución** del sistema sin modificaciones manuales
+- 📈 **Performance optimizada** con análisis contextual en tiempo real
 - 🆕 **🛡️ RESISTENCIA TOTAL**: Fallback automático elimina crashes
 - 🆕 **⚡ STARTUP GARANTIZADO**: Cache local siempre disponible
 - 🆕 **🔄 RECOVERY AUTOMÁTICO**: Sistema de reintentos inteligente
+- 🆕 **🧠 INTELIGENCIA ESCALABLE**: Sistema aprende patrones automáticamente
 
 ### 🔄 **Actualizaciones Automáticas:**
 Cuando hagas `git push`, Render automáticamente:
@@ -214,6 +212,7 @@ Un chatbot **ultra-rápido, precisos y confiable** que:
 
 ---
 
-**📅 Actualizado**: 25 de Septiembre de 2025  
-**🚀 Versión**: v1.3.0 - Deploy Revolucionario  
-**🏫 Para**: Unidades Tecnológicas de Santander
+**📅 Actualizado**: 8 de Octubre de 2025  
+**🚀 Versión**: v1.3.1 - Deploy Inteligente Adaptativo  
+**🏫 Para**: Unidades Tecnológicas de Santander  
+**🧠 Status**: **SISTEMA INTELIGENTE SIN HARDCODE**

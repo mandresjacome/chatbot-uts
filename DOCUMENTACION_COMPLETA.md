@@ -2,7 +2,7 @@
 
 ## 🎯 Información General del Proyecto
 
-**Nombre**: Chatbot UTS v1.3.0  
+**Nombre**: Chatbot UTS v1.3.1  
 **Propósito**: Chatbot inteligente especializado en **Ingeniería de Sistemas** de las Unidades Tecnológicas de Santander (UTS)  
 **Desarrollador**: Mario Andrés Jácome Mantilla  
 **Repositorio**: https://github.com/mandresjacome/chatbot-uts  
@@ -27,11 +27,12 @@
 - **Cost**: Sin costos adicionales vs llamadas Gemini
 - **UX**: Respuesta inmediata perfecto para usuarios
 
-#### **🔍 Búsqueda Híbrida Inteligente**  
-- **Lógica simple**: BD → evidenceCount === 0 → botón → usuario decide
-- **Control total**: Usuario tiene poder de decisión sobre búsquedas externas
-- **No invasivo**: Solo aparece cuando realmente no hay información local
-- **Complementario**: Enriquece respuestas sin saturar con datos irrelevantes
+#### **🔍 Sistema Inteligente de Análisis de Calidad** ✨ **NUEVO v1.3.1**
+- **Detección automática**: Analiza cuando la IA admite limitaciones de información
+- **Sin hardcode**: Sistema escalable que se adapta a cualquier consulta futura
+- **Análisis contextual**: Evalúa relevancia entre consulta y evidencia encontrada
+- **Control inteligente**: Botón aparece automáticamente solo cuando es necesario
+- **Respuestas específicas**: WebSearcher genera información institucional de UTS real
 
 #### **⚡ Filtros de Relevancia Optimizados**
 - **Fix crítico**: Información existente ahora se detecta correctamente

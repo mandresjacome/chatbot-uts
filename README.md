@@ -7,6 +7,9 @@ Chatbot inteligente para el **programa de Ingeniería de Sistemas** de las Unida
 - [x] **v1.3.0**: ✅ Sistema de sugerencias estáticas optimizado
 - [x] **v1.3.0**: ✅ Búsqueda web complementaria controlada por usuario  
 - [x] **v1.3.0**: ✅ Filtros de relevancia optimizados en retrieval
+- [x] **v1.3.1**: ✅ Sistema inteligente de análisis de calidad de respuestas
+- [x] **v1.3.1**: ✅ Detección automática de información limitada sin hardcode
+- [x] **v1.3.1**: ✅ WebSearcher contextual específico para UTS
 - [ ] **v1.4.0**: Integración con calendario académico
 - [ ] **v1.5.0**: Soporte para múltiples programas académicos
 - [ ] **v1.6.0**: Bot de Telegram/WhatsApp
@@ -16,7 +19,7 @@ Chatbot inteligente para el **programa de Ingeniería de Sistemas** de las Unida
 - **Información actualizada** mediante scrapers automáticos de la web oficial
 - **Sistema de sugerencias estáticas optimizado** - instantáneas sin dependencias externas
 - **Malla curricular interactiva** con navegación por semestres
-- **Búsqueda web complementaria** controlada por usuario cuando BD no tiene información
+- **Búsqueda web inteligente** con análisis automático de calidad de respuestas
 - **Filtros de relevancia optimizados** para mejor detección de contenido existente
 - **Integración con Gemini AI** para respuestas contextuales
 - **Sistema de scrapers** que mantiene la información sincronizada
@@ -305,10 +308,11 @@ Accede a `/admin` para gestionar el sistema con una **interfaz moderna y complet
 - **Contexto específico** según el perfil del usuario
 
 ### Búsqueda web complementaria inteligente
-- **Detección automática** cuando BD no tiene información (evidenceCount === 0)
-- **Control del usuario** - botón aparece solo cuando es necesario
-- **Búsqueda externa** en fuentes confiables cuando BD local no es suficiente
-- **Sistema simplificado** que eliminó complejidad innecesaria
+- **Análisis automático de calidad** de respuestas para detectar información limitada
+- **Detección inteligente** cuando la IA admite limitaciones o no encuentra evidencia relevante
+- **Control contextual** - botón aparece automáticamente solo cuando es necesario
+- **Respuestas específicas de UTS** generadas con contexto institucional real
+- **Sistema escalable** sin hardcode que se adapta a futuras consultas automáticamente
 
 ### Motor de búsqueda optimizado
 - **Filtros de relevancia mejorados** - Fuse.js con threshold 0.4 y score ≤0.95
@@ -387,5 +391,5 @@ Unidades Tecnológicas de Santander
   <p>
     <strong>Chatbot UTS v1.3.0</strong> - Información siempre actualizada con sugerencias instantáneas
   </p>
-  <p>✨ <em>Última actualización: Sistema híbrido optimizado con búsqueda web complementaria</em></p>
+  <p>✨ <em>Última actualización: Sistema inteligente de análisis de calidad con búsqueda web contextual</em></p>
 </div>

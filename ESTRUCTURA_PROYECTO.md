@@ -1,18 +1,34 @@
-# 📁 Estructura del Proyecto - ChatBot UTS v1.3.0
+# 📁 Estructura del Proyecto - ChatBot UTS v1.3.1
 
 ## 🗂️ Organización General - Estado Actualizado (Septiembre 2025)
 
-### ## 📈 Estado Actual del Sistema (Septiembre 2025) - v1.3.0
+### ## 📈 Estado Actual del Sistema (Octubre 2025) - v1.3.1
 
-### ✅ Componentes Totalmente Funcionales y Optimizados
-- **Web Scrapin## 🎯 Beneficios del Sistema Actual (v1.3.0)
----
+### ✅ Componentes Totalmente Funcionales y Optimizados v1.3.1
+- **Web Scraping**: Extrae información actualizada de UTS (excepto docentes)
+- **Chat con ---
 
-📅 **Última actualización**: 25 de septiembre de 2025  
-🔄 **Estado**: Sistema híbrido optimizado con sugerencias instantáneas y búsqueda web complementaria  
+📅 **Última actualización**: 8 de Octubre de 2025  
+🔄 **Estado**: Sistema completamente funcional con análisis inteligente de calidad  
 👨‍💻 **Desarrollador**: Mario Andrés Jácome Mantilla  
 🏫 **Cliente**: Universidad Tecnológica de Santander - Ingeniería de Sistemas  
-✨ **Versión**: v1.3.0 - Sistema revolucionado con mejoras críticas en UX y performance*🚀 Sugerencias Instantáneas**: Sistema estático sin dependencias → respuesta inmediata
+✨ **Versión**: v1.3.1 - Sistema Inteligente AdaptativoGemini integrado con **análisis automático de calidad**
+- **Sistema de Sugerencias**: ✨ **RENOVADO** - Sugerencias estáticas instantáneas
+- **Búsqueda Híbrida Inteligente**: ✨ **MEJORADO** - BD local + búsqueda web **sin hardcode**
+- **Análisis de Respuestas**: 🆕 **NUEVO** - Detección automática de limitaciones
+- **Filtros Optimizados**: ✅ **MEJORADO** - Fuse.js con threshold 0.4 y score ≤0.95
+
+---
+
+📅 **Última actualización**: 8 de octubre de 2025  
+🔄 **Estado**: Sistema inteligente con análisis automático de calidad y detección sin hardcode  
+👨‍💻 **Desarrollador**: Mario Andrés Jácome Mantilla  
+🏫 **Cliente**: Universidad Tecnológica de Santander - Ingeniería de Sistemas  
+✨ **Versión**: v1.3.1 - Sistema inteligente adaptativo sin hardcode
+
+## 🎯 Beneficios del Sistema Actual (v1.3.1)
+
+1. **🧠 Análisis Inteligente**: Detección automática de limitaciones sin hardcode
 2. **🎯 Búsqueda Híbrida**: BD local + web complementaria controlada por usuario
 3. **🔍 Filtros Optimizados**: Balance perfecto entre relevancia y cobertura de resultados
 4. **🤖 IA Contextual**: Gemini integrado con detección inteligente de consultas

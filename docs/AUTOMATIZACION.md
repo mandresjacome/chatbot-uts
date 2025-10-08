@@ -1,4 +1,4 @@
-# 🤖 Sistema de Automatización - Chatbot UTS v1.3.0
+# 🤖 Sistema de Automatización - Chatbot UTS v1.3.1
 
 ## 📋 Overview
 El sistema de automatización mantiene el chatbot actualizado mediante **control web integrado** en el panel de administración. **No requiere configuración de tareas programadas del sistema operativo.**
@@ -152,12 +152,14 @@ graph TD
     I --> J[Sistema Actualizado]
 ```
 
-### **Integración con v1.3.0**
+### **Integración con v1.3.1**
 - ✅ **Compatible con sugerencias estáticas**
 - ✅ **Optimizado para sistema híbrido**
 - ✅ **Scrapers selectivos** (4 activos + 1 preservado)
 - ✅ **Cache invalidation automático**
 - ✅ **Logs estructurados** para debugging
+- 🆕 **Análisis automático de calidad** de respuestas
+- 🆕 **Sistema inteligente** de detección de limitaciones
 
 ---
 

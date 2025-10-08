@@ -1,8 +1,8 @@
 # 🔍 Validación de Endpoints API - Chatbot UTS
 
 ## Estado de Validación
-**Fecha**: 2025-10-07  
-**Versión**: v1.3.0  
+**Fecha**: 2025-10-08  
+**Versión**: v1.3.1  
 **Servidor**: `src/server.js`
 
 ---
@@ -79,14 +79,22 @@
 
 ## 🔄 Estructura de Respuestas - CONSISTENTE
 
-### Chat Response Format
+### Chat Response Format v1.3.1 - ACTUALIZADO
 ```json
 {
   "response": "string",
   "conversationId": "string", 
-  "timestamp": "ISO8601"
+  "timestamp": "ISO8601",
+  "evidenceCount": number,
+  "suggestWebSearch": boolean,
+  "originalQuery": "string"
 }
 ```
+
+#### **Nuevos Campos v1.3.1**:
+- `evidenceCount`: Cantidad de evidencia encontrada en base local
+- `suggestWebSearch`: Indica si mostrar botón de búsqueda web (análisis inteligente)
+- `originalQuery`: Query original del usuario para análisis en frontend
 
 ### Admin Metrics Response
 ```json
