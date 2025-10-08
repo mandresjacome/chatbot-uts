@@ -89,52 +89,140 @@ function expandQuery(query) {
   return expandedQuery;
 }
 
+// Función para cargar KB desde cache local como fallback
+async function loadKBFromCache() {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const cacheFile = path.join(__dirname, '../../cache/database.json');
+    
+    console.log('🔄 Intentando cargar cache local desde:', cacheFile);
+    
+    if (!fs.existsSync(cacheFile)) {
+      console.log('⚠️ No existe cache local, usando solo malla curricular');
+      return generateMallaKnowledgeEntries();
+    }
+    
+    const cacheData = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+    console.log(`📋 Cache local cargado: ${cacheData.data?.length || 0} registros`);
+    
+    // Convertir formato de cache a formato compatible
+    const cacheKB = (cacheData.data || []).map(item => ({
+      id: item.id,
+      pregunta: item.pregunta,
+      respuesta_texto: `Información disponible en cache local. ID: ${item.id}`,
+      tipo_usuario: 'todos',
+      palabras_clave: item.palabras_clave || '',
+      recurso_url: null,
+      nombre_recurso: 'Cache Local UTS',
+      searchText: normalize(`${item.pregunta} ${item.palabras_clave || ''}`)
+    }));
+    
+    return cacheKB;
+  } catch (error) {
+    console.error('❌ Error cargando cache local:', error);
+    return [];
+  }
+}
+
 // Función para cargar la base de conocimiento desde la base de datos
 async function loadKBFromDatabase() {
-  try {
-    const rows = await queryAll(`
-      SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave, recurso_url, nombre_recurso 
-      FROM knowledge_base 
-      WHERE activo = true
-    `);
-    
-    // Procesar los datos y agregar campo de búsqueda
-    const dbKB = rows.map(item => ({
-      ...item,
-      searchText: normalize(
-        `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
-      )
-    }));
+  const maxRetries = 3;
+  let attempt = 0;
+  
+  while (attempt < maxRetries) {
+    try {
+      console.log(`🔄 Cargando KB desde base de datos (intento ${attempt + 1}/${maxRetries})...`);
+      
+      const rows = await queryAll(`
+        SELECT id, pregunta, respuesta_texto, tipo_usuario, palabras_clave, recurso_url, nombre_recurso 
+        FROM knowledge_base 
+        WHERE activo = true
+        ORDER BY created_at DESC
+        LIMIT 1000
+      `);
+      
+      if (!rows || rows.length === 0) {
+        console.log('⚠️ No hay datos en knowledge_base, usando cache local...');
+        throw new Error('Base de datos vacía');
+      }
+      
+      // Procesar los datos y agregar campo de búsqueda
+      const dbKB = rows.map(item => ({
+        ...item,
+        searchText: normalize(
+          `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
+        )
+      }));
 
-    // Agregar entradas de malla curricular
-    const mallaKB = generateMallaKnowledgeEntries().map(item => ({
-      ...item,
-      searchText: normalize(
-        `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
-      )
-    }));
+      // Agregar entradas de malla curricular
+      const mallaKB = generateMallaKnowledgeEntries().map(item => ({
+        ...item,
+        searchText: normalize(
+          `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
+        )
+      }));
 
-    // Combinar ambas fuentes de conocimiento
-    KB = [...dbKB, ...mallaKB];
+      // Combinar ambas fuentes de conocimiento
+      KB = [...dbKB, ...mallaKB];
 
-    // Configurar Fuse.js para búsqueda difusa inteligente
-    fuse = new Fuse(KB, {
-      includeScore: true,
-      threshold: 0.4,         // Balance hacia encontrar más información de la BD
-      ignoreLocation: true,
-      minMatchCharLength: 2,
-      keys: [
-        { name: 'palabras_clave', weight: 0.5 },  // Mayor peso a palabras clave
-        { name: 'pregunta',       weight: 0.3 },  
-        { name: 'searchText',     weight: 0.2 }   // Búsqueda en contenido completo
-      ]
-    });
+      // Configurar Fuse.js para búsqueda difusa inteligente
+      fuse = new Fuse(KB, {
+        includeScore: true,
+        threshold: 0.4,         // Balance hacia encontrar más información de la BD
+        ignoreLocation: true,
+        minMatchCharLength: 2,
+        keys: [
+          { name: 'palabras_clave', weight: 0.5 },  // Mayor peso a palabras clave
+          { name: 'pregunta',       weight: 0.3 },  
+          { name: 'searchText',     weight: 0.2 }   // Búsqueda en contenido completo
+        ]
+      });
 
-    console.log(`📚 Base de conocimiento cargada: ${dbKB.length} entradas DB + ${mallaKB.length} entradas malla = ${KB.length} total`);
-    return KB.length;
-  } catch (error) {
-    console.error('Error cargando KB desde base de datos:', error);
-    return 0;
+      console.log(`✅ KB cargada exitosamente: ${dbKB.length} entradas DB + ${mallaKB.length} entradas malla = ${KB.length} total`);
+      return KB.length;
+      
+    } catch (error) {
+      attempt++;
+      console.error(`❌ Error cargando KB (intento ${attempt}):`, error.message);
+      
+      if (attempt >= maxRetries) {
+        console.log('🔄 Usando cache local como fallback...');
+        
+        // FALLBACK: Cargar desde cache local
+        const cacheKB = await loadKBFromCache();
+        const mallaKB = generateMallaKnowledgeEntries().map(item => ({
+          ...item,
+          searchText: normalize(
+            `${item.pregunta} ${item.respuesta_texto} ${item.palabras_clave || ''}`
+          )
+        }));
+        
+        KB = [...cacheKB, ...mallaKB];
+        
+        fuse = new Fuse(KB, {
+          includeScore: true,
+          threshold: 0.4,
+          ignoreLocation: true,
+          minMatchCharLength: 2,
+          keys: [
+            { name: 'palabras_clave', weight: 0.5 },
+            { name: 'pregunta',       weight: 0.3 },
+            { name: 'searchText',     weight: 0.2 }
+          ]
+        });
+        
+        console.log(`🆘 MODO FALLBACK: ${cacheKB.length} entradas cache + ${mallaKB.length} entradas malla = ${KB.length} total`);
+        return KB.length;
+      }
+      
+      // Esperar antes del siguiente intento
+      await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+    }
   }
 }
 

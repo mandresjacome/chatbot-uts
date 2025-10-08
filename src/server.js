@@ -46,11 +46,22 @@ app.use(express.static(publicDir));
 // 👉 Inicializar esquema de base de datos (crea tablas si no existen)
 async function initializeDatabase() {
   try {
-    logger.startup('Inicializando base de datos...');
+    const isRender = process.env.RENDER === 'true';
+    const isProduction = !!process.env.DATABASE_URL;
+    
+    logger.startup(`Inicializando base de datos... ${isRender ? '[RENDER]' : '[LOCAL]'}`);
+    
+    // En Render, usar configuración optimizada
+    if (isRender) {
+      console.log('🌐 Deploy en Render detectado - Configuración optimizada');
+      console.log('💾 Usando PostgreSQL + Cache fallback');
+    }
+    
     await bootstrapSchema();
     const engine = dbEngine();
     logger.dbConnected(engine, { 
-      isProduction: !!process.env.DATABASE_URL,
+      isProduction,
+      isRender,
       path: engine === 'sqlite' ? process.env.DB_SQLITE_PATH || './src/db/database.db' : 'PostgreSQL'
     });
     

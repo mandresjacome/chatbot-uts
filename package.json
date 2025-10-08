@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "health-check": "node scripts/render-health-check.cjs",
+    "start:render": "npm run health-check && npm start",
     "test": "jest",
     "scrapers": "node scripts/run-scrapers.cjs",
     "generate-synonyms": "node scripts/generate-synonyms.cjs",

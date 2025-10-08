@@ -16,6 +16,23 @@ if (engine === 'pg') {
   pgPool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }, // Render PG requiere SSL
+    // Configuración optimizada para Render
+    max: 20,                    // Máximo de conexiones
+    idleTimeoutMillis: 30000,   // Tiempo de inactividad
+    connectionTimeoutMillis: 10000,  // Timeout de conexión
+    acquireTimeoutMillis: 60000,     // Timeout para obtener conexión
+    // Configuración de reintentos
+    retryDelayMs: 1000,
+    maxRetriesPerRequest: 3
+  });
+  
+  // Manejar errores del pool
+  pgPool.on('error', (err) => {
+    console.error('❌ PostgreSQL pool error:', err.message);
+  });
+  
+  pgPool.on('connect', () => {
+    console.log('✅ PostgreSQL conexión establecida');
   });
 } else {
   // SQLite por defecto (dev)
